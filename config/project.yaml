@@ -1,0 +1,38 @@
+# Project configuration
+
+project:
+  name: HADA Website Operations Framework
+  id: hada-website-ops
+  version: "0.1.0"
+  mode: NEW  # NEW | RECOVERY | MIGRATION | MAINTENANCE
+
+repositories:
+  development: HADA_Website_Template_Dev
+  release: HADA_Website_Template
+  sample: HADA_Website_Template_Sample
+
+paths:
+  publication_root: site
+  content_master: content
+  references: references
+  tools_core: tools/core
+  tools_plugins: tools/plugins
+  cursor_workspace: Cursor
+  term_dictionary: config/term_dictionary.yaml
+
+locales:
+  master: jp
+  default: en
+  supported:
+    - en
+    - jp
+
+plugins:
+  # Capability plugins — directories created only when specified
+  registry: tools/plugins
+
+references:
+  registry_file: references/registry/references.example.yaml
+
+environments:
+  config_example: environments/environments.example.yaml

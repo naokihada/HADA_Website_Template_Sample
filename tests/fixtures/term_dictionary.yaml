@@ -1,0 +1,19 @@
+# Test fixture — fictional entries for unit tests (not production config)
+
+version: "0.1"
+
+entries:
+  - source: "株式会社サンプル製茶"
+    target: "Sample Tea Co."
+    type: company
+    enabled: true
+
+  - source: "佐藤花子"
+    target: "Hanako Sato"
+    type: person
+    enabled: true
+
+  - source: "HADA Website Operations Framework"
+    target: "HADA Website Operations Framework"
+    type: service
+    enabled: true

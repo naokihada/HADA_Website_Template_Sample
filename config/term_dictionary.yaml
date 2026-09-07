@@ -1,0 +1,23 @@
+# Site-wide authoritative term dictionary (single file — do not split)
+# Fictional sample entries for v0.1.0 demonstration.
+
+version: "0.1"
+
+entries:
+  - source: "株式会社サンプル製茶"
+    target: "Sample Tea Co."
+    type: company
+    enabled: true
+    note: "Fictional company name"
+
+  - source: "佐藤花子"
+    target: "Hanako Sato"
+    type: person
+    enabled: true
+    note: "Fictional person name"
+
+  - source: "HADA Website Operations Framework"
+    target: "HADA Website Operations Framework"
+    type: service
+    enabled: true
+    note: "Product name"

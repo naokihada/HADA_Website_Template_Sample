@@ -1,0 +1,22 @@
+# Local-only configuration example — copy to config/local.yaml (gitignored)
+
+local:
+  environment: LOCAL  # LOCAL | STAGING | PRODUCTION
+
+paths:
+  # Override only when needed; use relative paths where possible
+  publication_root: site
+  xampp_root: C:/xampp
+
+development:
+  # Local test hostnames — align with environments/environments.example.yaml
+  test_base_domain: null
+
+secrets:
+  # Never commit real values — store outside Git
+  ftp: null
+  api_keys: null
+
+notes: |
+  Copy this file to config/local.yaml for machine-specific settings.
+  config/local.yaml is excluded by .gitignore.

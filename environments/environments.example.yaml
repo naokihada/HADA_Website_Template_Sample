@@ -1,0 +1,33 @@
+# Environment definitions example — customize per project; no secrets here
+
+environments:
+  LOCAL:
+    description: Local developer environment
+    approval_required: false
+    publication_root: site
+    web:
+      protocol: http
+      # Example: test.example.com mapped via hosts + Apache vhosts
+      hostname: null
+    notes: Align with local XAMPP or equivalent setup
+
+  STAGING:
+    description: Pre-production verification
+    approval_required: true
+    publication_root: site
+    web:
+      protocol: https
+      hostname: null
+    deployment:
+      method: null  # e.g. ftp when ftp plugin implemented
+
+  PRODUCTION:
+    description: Live production site
+    approval_required: true
+    publication_root: site
+    web:
+      protocol: https
+      hostname: null
+    deployment:
+      method: null
+    notes: All production changes require human approval

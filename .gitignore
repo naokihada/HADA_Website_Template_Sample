@@ -1,0 +1,40 @@
+# Local configuration (never commit secrets)
+config/local.yaml
+config/*.local.yaml
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+secrets.yaml
+
+# Reference cache (rebuildable)
+references/cache/**/*
+!references/cache/.gitkeep
+
+# Cursor workspace runtime output
+Cursor/logs/**/*
+!Cursor/logs/.gitkeep
+Cursor/state/**/*
+!Cursor/state/.gitkeep
+Cursor/backup/**/*
+!Cursor/backup/.gitkeep
+Cursor/screenshots/**/*
+!Cursor/screenshots/.gitkeep
+Cursor/inventory/**/*
+!Cursor/inventory/.gitkeep
+Cursor/changelog/**/*
+!Cursor/changelog/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# OS / editor
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+*.swo

@@ -1,0 +1,23 @@
+# External reference registry example
+# Copy to project-specific registry file when needed; omit private paths and secrets
+
+version: "0.1"
+
+references:
+  - id: web-local-xampp-settings
+    type: configuration
+    description: Local XAMPP and hosts configuration repository
+    readonly: true
+    # path or url filled in locally — not committed if private
+
+  - id: hada-business-research-template-dev
+    type: framework
+    description: Completed agent-operable research framework (structural reference)
+    readonly: true
+
+  # Example external content source (not implemented yet)
+  # - id: wordpress-com-example
+  #   type: external_content_source
+  #   adapter: wordpress-com
+  #   readonly: false
+  #   notes: WordPress.com as External Content Source per Architecture v0.1

@@ -1,0 +1,40 @@
+# Site configuration example — copy and customize locally; do not commit secrets
+
+site:
+  id: example-site
+  name: Example Site
+  publication_root: site
+
+locales:
+  default: en
+  supported:
+    - en
+    - jp
+
+content:
+  master_root: content
+
+publication:
+  # Only publication_root is deployed
+  deploy_target: site
+  locales:
+    en: site/en
+    jp: site/jp
+  assets: site/assets
+
+plugins:
+  enabled: []
+  # Example when implemented:
+  # - name: rss
+  #   state: ENABLED
+  # - name: static-cache
+  #   state: ENABLED
+
+rss:
+  # Capability states: FULL | PARTIAL | NO_CONTENT
+  default_state: NO_CONTENT
+
+external_sources:
+  # WordPress.com is external source — use wordpress-com adapter when implemented
+  wordpress_com: null
+  self_hosted_wordpress: null
