@@ -41,3 +41,7 @@ python tests/test_translation.py
 | `HADA_Website_Template` | Clean public template (no sample content) |
 
 See `AGENTS.md` for the canonical agent contract.
+
+## Disclaimer
+
+See [DISCLAIMER.md](DISCLAIMER.md).
