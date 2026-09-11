@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1020">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <title>03:00 — HADA Timer</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #0b1020; color: #f7f9ff; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: radial-gradient(circle at top, #1d2b55, #0b1020 60%); }
+    main { width: min(92vw, 32rem); padding: 2rem; box-sizing: border-box; }
+    a { color: #b9c9ff; }
+    .card { padding: 2rem; border: 1px solid #405180; border-radius: 1.5rem; background: #121a31e8; box-shadow: 0 1.5rem 4rem #05081299; text-align: center; }
+    h1 { margin-top: 0; font-size: 1.5rem; }
+    [data-timer-display] { margin: 1rem 0 1.5rem; font: 700 clamp(4rem, 20vw, 7rem)/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .04em; }
+    fieldset { display: flex; justify-content: center; gap: .75rem; border: 0; padding: 0; }
+    label { display: grid; gap: .35rem; font-size: .9rem; color: #c5d0eb; }
+    input { width: 5rem; padding: .65rem; border: 1px solid #6375a8; border-radius: .6rem; background: #0b1020; color: inherit; font: inherit; text-align: center; }
+    .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin-top: 1.5rem; }
+    button { padding: .7rem 1rem; border: 1px solid #7086c2; border-radius: .6rem; background: #243762; color: inherit; font: inherit; cursor: pointer; }
+    button:hover, button:focus-visible { background: #34518e; }
+    [data-timer-status] { min-height: 1.5rem; margin: 1.25rem 0 0; color: #c5d0eb; }
+    .back { display: inline-block; margin-top: 1.5rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="card" aria-labelledby="timer-title">
+      <h1 id="timer-title">HADA Timer</h1>
+      <div data-timer-display role="timer" aria-live="polite">03:00</div>
+      <fieldset>
+        <legend class="sr-only">Timer duration</legend>
+        <label>Minutes <input id="minutes" type="number" min="0" max="99" value="3" inputmode="numeric"></label>
+        <label>Seconds <input id="seconds" type="number" min="0" max="59" value="0" inputmode="numeric"></label>
+      </fieldset>
+      <div class="actions">
+        <button type="button" data-action="start">Start</button>
+        <button type="button" data-action="pause">Pause / Resume</button>
+        <button type="button" data-action="reset">Reset</button>
+        <button type="button" data-action="notify">Enable notifications</button>
+      </div>
+      <p data-timer-status aria-live="polite">Ready</p>
+    </section>
+    <a class="back" href="./index.html">Back to home</a>
+  </main>
+  <script src="./assets/timer.js?v=2" defer></script>
+</body>
+</html>

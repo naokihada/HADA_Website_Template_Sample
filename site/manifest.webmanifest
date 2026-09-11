@@ -1,0 +1,9 @@
+{
+  "name": "HADA Timer Demo",
+  "short_name": "HADA Timer",
+  "start_url": "./timer.html",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
+  "icons": []
+}
