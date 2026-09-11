@@ -1,5 +1,5 @@
 const CACHE_NAME = "hada-timer-v2";
-const APP_SHELL = ["./timer.html", "./assets/timer.js?v=2", "./manifest.webmanifest"];
+const APP_SHELL = ["./timer.html", "./assets/timer.js?v=2", "./manifest.webmanifest", "./assets/icons/icon-192.png", "./assets/icons/icon-512.png"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));

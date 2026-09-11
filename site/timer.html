@@ -21,6 +21,8 @@
     button { padding: .7rem 1rem; border: 1px solid #7086c2; border-radius: .6rem; background: #243762; color: inherit; font: inherit; cursor: pointer; }
     button:hover, button:focus-visible { background: #34518e; }
     [data-timer-status] { min-height: 1.5rem; margin: 1.25rem 0 0; color: #c5d0eb; }
+    [data-install-help] { min-height: 1.5rem; margin: .75rem 0 0; color: #c5d0eb; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
     .back { display: inline-block; margin-top: 1.5rem; }
   </style>
 </head>
@@ -39,8 +41,10 @@
         <button type="button" data-action="pause">Pause / Resume</button>
         <button type="button" data-action="reset">Reset</button>
         <button type="button" data-action="notify">Enable notifications</button>
+        <button type="button" data-action="install" hidden>Install this timer</button>
       </div>
       <p data-timer-status aria-live="polite">Ready</p>
+      <p data-install-help role="status" aria-live="polite" hidden></p>
     </section>
     <a class="back" href="./index.html">Back to home</a>
   </main>

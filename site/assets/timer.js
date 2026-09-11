@@ -8,14 +8,27 @@
   const pauseButton = document.querySelector("[data-action='pause']");
   const resetButton = document.querySelector("[data-action='reset']");
   const notifyButton = document.querySelector("[data-action='notify']");
+  const installButton = document.querySelector("[data-action='install']");
+  const installHelp = document.querySelector("[data-install-help]");
   const status = document.querySelector("[data-timer-status]");
   let remaining = DEFAULT_SECONDS;
   let endAt = null;
   let intervalId = null;
   let completed = false;
+  let deferredInstallPrompt = null;
 
   const format = (value) => `${String(Math.floor(value / 60)).padStart(2, "0")}:${String(value % 60).padStart(2, "0")}`;
   const setStatus = (message) => { status.textContent = message; };
+  const isStandalone = () => window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  const showInstallHelp = () => {
+    if (isStandalone()) return;
+    const isAppleMobile = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    installHelp.textContent = isAppleMobile
+      ? "To install this timer, use Safari Share, then Add to Home Screen."
+      : "To install this timer, use your browser menu and choose Install or Add to Home Screen.";
+    installHelp.hidden = false;
+  };
+  const hideInstallUi = () => { installButton.hidden = true; installHelp.hidden = true; deferredInstallPrompt = null; };
   const readInputs = () => {
     const minutes = Math.min(99, Math.max(0, Number(minutesInput.value || 0)));
     const seconds = Math.min(59, Math.max(0, Number(secondsInput.value || 0)));
@@ -74,7 +87,25 @@
     const permission = await Notification.requestPermission();
     setStatus(permission === "granted" ? "Notifications enabled" : "Notifications not enabled");
   });
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    installButton.hidden = false;
+    installHelp.hidden = true;
+  });
+  installButton.addEventListener("click", async () => {
+    if (!deferredInstallPrompt) return;
+    const promptEvent = deferredInstallPrompt;
+    deferredInstallPrompt = null;
+    await promptEvent.prompt();
+    const choice = await promptEvent.userChoice;
+    if (choice.outcome === "accepted") setStatus("Install requested");
+  });
+  window.addEventListener("appinstalled", () => { hideInstallUi(); setStatus("Timer installed"); });
+  window.matchMedia("(display-mode: standalone)").addEventListener?.("change", (event) => { if (event.matches) hideInstallUi(); });
   window.addEventListener("beforeunload", () => clearInterval(intervalId));
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(() => setStatus("Timer ready; offline support unavailable."));
   reset();
+  if (isStandalone()) hideInstallUi();
+  else window.setTimeout(() => { if (!deferredInstallPrompt) showInstallHelp(); }, 1500);
 })();
