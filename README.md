@@ -1,13 +1,13 @@
-# HADA Website Operations Framework — Sample (v0.1.3)
+# HADA Website Operations Framework — Sample (v0.2.0)
 
-Working example of the v0.1.3 framework. This repository contains a verified fictional
+Working example of the v0.2.0 framework. This repository contains a verified fictional
 sample site built from `HADA_Website_Template_Dev`.
 
 日本語の情報は、このページの下にあります。
 
 **Release template:** [HADA_Website_Template](https://github.com/naokihada/HADA_Website_Template) — reusable public framework template this sample is based on.
 
-This repository is a **complete sample/demo** of the HADA Web Site Operations Framework v0.1.3.
+This repository is a **complete sample/demo** of the HADA Web Site Operations Framework v0.2.0.
 All site content uses **fictional data** (Sample Tea Co. / Hanako Sato). It does **not**
 endorse any real company or service.
 
@@ -44,7 +44,7 @@ python tests/test_translation.py
 | Repo | Role |
 |---|---|
 | `HADA_Website_Template_Dev` | Development and verification |
-| `HADA_Website_Template_Sample` | This repo — verified v0.1.3 example |
+| `HADA_Website_Template_Sample` | This repo — verified v0.2.0 example |
 | `HADA_Website_Template` | Clean public template (no sample content) |
 
 See `AGENTS.md` for the canonical agent contract.
@@ -59,14 +59,14 @@ See [DISCLAIMER.md](DISCLAIMER.md).
 
 ## 概要
 
-v0.1.3 フレームワークの動作例です。本リポジトリには、`HADA_Website_Template_Dev` で
+v0.2.0 フレームワークの動作例です。本リポジトリには、`HADA_Website_Template_Dev` で
 検証した架空データによるサンプルサイトが含まれます。
 
-AI Agent対応Webサイト運用フレームワーク v0.1.3 のサンプル実装リポジトリ。
+AI Agent対応Webサイト運用フレームワーク v0.2.0 のサンプル実装リポジトリ。
 
 **Release template:** [HADA_Website_Template](https://github.com/naokihada/HADA_Website_Template) — 本サンプルのベースとなる再利用可能な公開 Framework テンプレート。
 
-本リポジトリは HADA Web Site Operations Framework v0.1.3 の **完全なサンプル／デモ** です。
+本リポジトリは HADA Web Site Operations Framework v0.2.0 の **完全なサンプル／デモ** です。
 サイト内容はすべて **架空データ**（Sample Tea Co. / 佐藤花子）であり、
 **実在の企業・サービスを推薦するものではありません**。
 
@@ -107,7 +107,7 @@ python tests/test_translation.py
 | Repo | Role |
 |---|---|
 | `HADA_Website_Template_Dev` | Development and verification |
-| `HADA_Website_Template_Sample` | 本リポジトリ — verified v0.1.3 example |
+| `HADA_Website_Template_Sample` | 本リポジトリ — verified v0.2.0 example |
 | `HADA_Website_Template` | Clean public template (no sample content) |
 
 正規のエージェント契約は `AGENTS.md` を参照してください。

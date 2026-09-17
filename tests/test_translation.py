@@ -69,7 +69,7 @@ def copy_minimal_project(target: Path) -> None:
             content_dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(src, content_dst)
     for rel_dir in (
-        "Cursor",
+        "AI",
         "content/en",
         "content/jp",
         "site/en",
@@ -84,12 +84,8 @@ def copy_minimal_project(target: Path) -> None:
         "tests",
         "docs",
         "config",
-        ".cursor/rules",
     ):
         (target / rel_dir).mkdir(parents=True, exist_ok=True)
-    for rule_file in (REPO_ROOT / ".cursor" / "rules").iterdir():
-        if rule_file.is_file():
-            shutil.copy2(rule_file, target / ".cursor" / "rules" / rule_file.name)
 
 
 class TranslationTests(unittest.TestCase):

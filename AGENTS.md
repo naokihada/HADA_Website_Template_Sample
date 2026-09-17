@@ -1,8 +1,19 @@
 # AGENTS.md — HADA Website Operations Framework
 
+## Text File Line Endings
+
+Coding-agent related files and repository text files must use CRLF line endings.
+This includes Markdown, plain text, Python, YAML, JSON, HTML, CSS, JavaScript,
+web manifests, Git configuration files, and operational records. Binary files are
+excluded. New or edited text files must be checked for CRLF before release.
+
 Canonical Agent Contract for this repository. Any agent (Cursor, CLI, CI, or other)
-must follow these rules. Cursor-specific settings live in `.cursor/rules/` as an adapter;
-they must not contradict this document.
+must follow these rules. `AI/` is the agent-neutral operation workspace. Retired `.cursor/`
+and `Cursor/` contents are migration inputs only; preserve and classify them before removal.
+Keep active tasks in `AI/tasks/` and history in `AI/history/`; unknown ownership requires
+REVIEW_REQUIRED. This Sample consumes the Public template and preserves its content,
+assets, configuration, presentation and bilingual README. `TEMPLATE_BASE.md` records
+verified adoption without commit SHA or execution history.
 
 ---
 
@@ -26,7 +37,7 @@ stable engine to Release; demonstrate usage in Sample.
 ### Agent independence
 
 - `AGENTS.md` is the canonical contract.
-- `.cursor/rules/` is a Cursor adapter only.
+- `AI/` is the shared agent workspace; retired adapters are not active configuration.
 - Deterministic work belongs in `tools/`. Semantic work may use AI.
 - Generated artifacts must be rebuildable from sources and configuration.
 
@@ -71,7 +82,7 @@ Planned capability names (not yet implemented in Foundation phase):
 Default publication root: `site/`
 
 Only configured Publication Root content is deployed to the web server document root.
-Never deploy `Cursor/`, `content/`, `tools/`, `references/`, `environments/`, `docs/`,
+Never deploy `AI/`, `content/`, `tools/`, `references/`, `environments/`, `docs/`,
 or `config/` unless explicitly instructed for a non-production purpose.
 
 ---
@@ -81,8 +92,8 @@ or `config/` unless explicitly instructed for a non-production purpose.
 | Path | Role |
 |---|---|
 | `AGENTS.md` | Canonical agent contract |
-| `.cursor/rules/` | Cursor adapter rules |
-| `Cursor/` | Agent workspace: tasks, reports, logs, state (not published) |
+| `TEMPLATE_BASE.md` | Current adopted Template Base |
+| `AI/` | Agent workspace: tasks, reports, logs, state (not published) |
 | `content/` | Content Master by locale (`en/`, `jp/`) |
 | `site/` | Publication Root — deployable web output |
 | `references/` | External reference registry, cache, reports |
@@ -170,7 +181,7 @@ Task → Validate → Analyze → Plan → Approval?
   → Release Candidate → Human Approval → Release
 ```
 
-Track active work in `Cursor/tasks/CURRENT.md`. Backlog in `BACKLOG.md`. Completed
+Track active work in `AI/tasks/CURRENT.md`. Backlog in `BACKLOG.md`. Completed
 items move through `TODO.md` or changelog as appropriate.
 
 Before `Implement`:
@@ -180,7 +191,7 @@ Before `Implement`:
 
 Before `Release`:
 
-- All required tests and checks documented in `Cursor/reports/`.
+- All required tests and checks documented in `AI/reports/`.
 - Human approval obtained for production-impacting changes.
 
 ---
@@ -220,7 +231,7 @@ Preflight → Backup → Apply → Verify → Commit
 ```
 
 - **Disable** and **Uninstall** are different operations.
-- Plugin logs go to shared `Cursor/logs/`, `Cursor/state/`, and `Cursor/reports/` — not inside
+- Plugin logs go to shared `AI/logs/`, `AI/state/`, and `AI/reports/` — not inside
   the plugin directory.
 - Each plugin requires `manifest.yaml` when implemented.
 - Do not create plugin directories without a written specification.
@@ -259,9 +270,9 @@ Preflight → Backup → Apply → Verify → Commit
 ## Testing Rules
 
 - Tests live under `tests/` and may be invoked from `tools/core/`.
-- Record results in `Cursor/reports/TEST.md` or linked report files.
+- Record results in `AI/reports/TEST.md` or linked report files.
 - `VERIFY` checks may be read-only; `TEST` may mutate fixtures in non-production paths only.
-- Security checks documented in `Cursor/reports/SECURITY.md` before release candidates.
+- Security checks documented in `AI/reports/SECURITY.md` before release candidates.
 
 ---
 
@@ -300,17 +311,17 @@ Required before:
 - Destructive operations on Content Master or external references
 - Enabling plugins that mutate live external systems (WordPress.com, cron, n8n)
 
-Record approval context in `Cursor/reports/RELEASE.md` or task notes.
+Record approval context in `AI/reports/RELEASE.md` or task notes.
 
 ---
 
 ## Logging
 
-- Operational logs: `Cursor/logs/`
-- Persistent state: `Cursor/state/`
-- Human-readable reports: `Cursor/reports/`
-- Inventories and audits: `Cursor/inventory/`
-- Change history: `Cursor/changelog/`
+- Operational logs: `AI/logs/`
+- Persistent state: `AI/state/`
+- Human-readable reports: `AI/reports/`
+- Inventories and audits: `AI/inventory/`
+- Change history: `AI/changelog/`
 
 Use structured, factual entries. Separate **fact**, **unverified**, and **inference**.
 
@@ -321,7 +332,7 @@ Use structured, factual entries. Separate **fact**, **unverified**, and **infere
 On failure:
 
 1. Stop the current automated step.
-2. Record the error in `Cursor/logs/` or the active report.
+2. Record the error in `AI/logs/` or the active report.
 3. Do not commit partial or broken foundation changes.
 4. Do not push if diff contains secrets, unexpected deletions, or unrelated changes.
 5. Report `BLOCKED` or `NEEDS_REVIEW` with concrete next steps.
@@ -365,7 +376,7 @@ A task is complete when:
 - Requested scope is implemented within declared mode and phase.
 - Tests and checks specified for the task have passed or are explicitly deferred with reason.
 - Diff is limited to intended files; no secrets present.
-- `Cursor/tasks/CURRENT.md` and relevant reports are updated.
+- `AI/tasks/CURRENT.md` and relevant reports are updated.
 - Human approval obtained if required.
 - Git status is clean or commit message accurately describes remaining intentional state.
 

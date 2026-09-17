@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Core framework validator — implements tools/core/SPEC.md v0.1."""
+"""Core framework validator — implements SPEC.md §11 (core-validator v0.1)."""
 
 from __future__ import annotations
 
@@ -37,7 +37,7 @@ LIFECYCLE_STATES = {
 RSS_STATES = {"FULL", "PARTIAL", "NO_CONTENT"}
 FOUNDATION_LOCALES = {"en", "jp"}
 CONTENT_IGNORE_NAMES = {".gitkeep"}
-FORBIDDEN_SEGMENTS = {"Cursor", "content", "tools", "config", "references", "docs", ".cursor"}
+FORBIDDEN_SEGMENTS = {"ai", "cursor", ".cursor", "content", "tools", "config", "references", "docs"}
 SAFE_SECRET_VALUES = {
     "",
     "null",
@@ -143,7 +143,7 @@ def forbidden_segment(path_value: Optional[str]) -> Optional[str]:
     if not path_value or not isinstance(path_value, str):
         return None
     for segment in path_segments(path_value):
-        if segment in FORBIDDEN_SEGMENTS:
+        if segment.lower() in FORBIDDEN_SEGMENTS:
             return segment
     return None
 
@@ -219,7 +219,7 @@ def validate_structure(ctx: ValidationContext) -> None:
         ("STRUCT-001", root / "AGENTS.md", False, "AGENTS.md"),
         ("STRUCT-002", root / "README.md", False, "README.md"),
         ("STRUCT-003", root / ".gitignore", False, ".gitignore"),
-        ("STRUCT-004", root / "Cursor", True, "Cursor/"),
+        ("STRUCT-004", root / "AI", True, "AI/"),
         ("STRUCT-005", root / "content" / "en", True, "content/en/"),
         ("STRUCT-006", root / "content" / "jp", True, "content/jp/"),
         ("STRUCT-007", root / "site", True, "site/"),
@@ -236,21 +236,12 @@ def validate_structure(ctx: ValidationContext) -> None:
         ("STRUCT-018", root / "tests", True, "tests/"),
         ("STRUCT-019", root / "docs", True, "docs/"),
         ("STRUCT-020", root / "config", True, "config/"),
-        ("STRUCT-021", root / ".cursor" / "rules", True, ".cursor/rules/"),
     ]
     for rule_id, path, is_dir, rel in checks:
         ctx.mark_checked(rule_id)
         exists = path.is_dir() if is_dir else path.is_file()
         if not exists:
             ctx.add(rule_id, "ERROR", f"Required {'directory' if is_dir else 'file'} missing", file=rel)
-
-    ctx.mark_checked("STRUCT-022")
-    rules_dir = root / ".cursor" / "rules"
-    if rules_dir.is_dir():
-        rule_files = sorted(p for p in rules_dir.iterdir() if p.is_file())
-        if len(rule_files) < 8:
-            ctx.add("STRUCT-022", "WARNING", "Fewer than 8 files in .cursor/rules/", file=".cursor/rules/")
-
 
 def validate_project_config(ctx: ValidationContext) -> None:
     root = ctx.root
@@ -668,6 +659,12 @@ def discover_plugin_manifests(root: Path) -> list[tuple[str, Path]]:
 def run_validation(root: Path, include_local: bool = False) -> ValidationContext:
     ctx = ValidationContext(root=root.resolve(), include_local=include_local)
     validate_structure(ctx)
+    try:
+        import template_base
+        template_base.check(root)
+        ctx.mark_checked('BASE-001')
+    except (ValueError, KeyError, TypeError, OSError) as exc:
+        ctx.add('BASE-001', 'ERROR', str(exc), file='TEMPLATE_BASE.md')
     validate_project_config(ctx)
     validate_environment_file(ctx, "environments/environments.example.yaml", root / "environments" / "environments.example.yaml")
     env_active = root / "environments" / "environments.yaml"

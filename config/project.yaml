@@ -17,7 +17,7 @@ paths:
   references: references
   tools_core: tools/core
   tools_plugins: tools/plugins
-  cursor_workspace: Cursor
+  agent_workspace: AI
   term_dictionary: config/term_dictionary.yaml
 
 locales:

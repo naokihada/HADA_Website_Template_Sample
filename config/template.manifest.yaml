@@ -1,0 +1,100 @@
+# HADA Website Template — machine-readable upgrade contract (v0.2.0)
+# Template version is independent of config/project.yaml → project.version
+
+schema_version: "0.1"
+
+template:
+  id: hada-website-template
+  name: HADA Website Operations Framework
+  version: "0.2.0"
+  release_repository: naokihada/HADA_Website_Template
+
+ownership:
+  template:
+    - "tools/core/**"
+    - "tools/plugins/.gitkeep"
+    - "tools/README.md"
+    - "tests/**"
+    - "docs/VALIDATION.md"
+    - "docs/UPGRADE.md"
+    - "docs/README.md"
+    - "CHANGELOG.md"
+    - "AGENTS.md"
+    - "README.md"
+    - "LICENSE"
+    - "DISCLAIMER.md"
+    - ".gitignore"
+    - "config/template.manifest.yaml"
+    - "config/project.yaml"
+    - "config/site.example.yaml"
+    - "config/local.example.yaml"
+    - "config/term_dictionary.example.yaml"
+    - "environments/environments.example.yaml"
+    - "environments/README.md"
+    - "references/registry/references.example.yaml"
+    - "references/registry/README.md"
+    - "content/README.md"
+    - "site/README.md"
+    - "site/index.html"
+    - "site/timer.html"
+    - "site/manifest.webmanifest"
+    - "site/sw.js"
+    - "site/assets/timer.js"
+    - "site/assets/.gitkeep"
+    - "AI/README.md"
+    - "tools/core/upgrade_from_release.py"
+  user:
+    - "TEMPLATE_BASE.md"
+    - "TEMPLATE_UPDATES.md"
+    - "AI/tasks/**"
+    - "AI/reports/**"
+    - "AI/inbox/**"
+    - "AI/outbox/**"
+    - "content/jp/**"
+    - "content/en/**"
+    - "config/term_dictionary.yaml"
+    - "config/site.yaml"
+    - "config/local.yaml"
+    - "site/assets/**"
+    - "site/en/**"
+    - "site/jp/**"
+    - "references/registry/**"
+    - "references/cache/**"
+    - "AI/logs/**"
+    - "AI/state/**"
+    - "AI/history/**"
+    - "AI/inventory/**"
+    - "AI/changelog/**"
+    - "AI/screenshots/**"
+  generated:
+    - "content/en/**"
+    - "site/en/**"
+    - "site/jp/**"
+
+merge_policies:
+  config/project.yaml:
+    strategy: yaml_merge_preserve_user_keys
+    preserve_keys:
+      - project.name
+      - project.mode
+  site/index.html:
+    strategy: three_way_text
+  "AI/reports/**":
+    strategy: preserve_if_modified
+
+migrations:
+  "0.1.1":
+    to:
+      - "0.1.2"
+    notes: "Introduces template.manifest.yaml and upgrade_from_release.py"
+  "0.1.2":
+    to:
+      - "0.1.3"
+    notes: "Adds the client-only PWA timer demo with best-effort local notifications"
+  "0.1.3":
+    to:
+      - "0.2.0"
+    notes: "Migrates the agent workspace from .cursor/Cursor to AI and adds legacy workspace migration safeguards"
+  "0.2.0":
+    to: []
+    notes: "Current baseline with AI workspace, validator structure updates, and documented upgrade migration workflow"

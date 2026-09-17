@@ -36,7 +36,7 @@ def copy_foundation_skeleton(target: Path) -> None:
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dst)
     for rel_dir in (
-        "Cursor",
+        "AI",
         "content/en",
         "content/jp",
         "site/en",
@@ -51,13 +51,8 @@ def copy_foundation_skeleton(target: Path) -> None:
         "tests",
         "docs",
         "config",
-        ".cursor/rules",
     ):
         (target / rel_dir).mkdir(parents=True, exist_ok=True)
-    rules_src = REPO_ROOT / ".cursor" / "rules"
-    for rule_file in rules_src.iterdir():
-        if rule_file.is_file():
-            shutil.copy2(rule_file, target / ".cursor" / "rules" / rule_file.name)
     for rel in (
         "content/en/index.md",
         "content/en/about.md",

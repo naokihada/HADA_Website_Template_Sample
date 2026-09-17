@@ -113,8 +113,17 @@ def build_site(root: Path, provider: Optional[MockTranslationProvider] = None) -
 
     jp_dir = root / "content" / MASTER_LOCALE
     en_dir = root / "content" / TARGET_LOCALE
-    site_jp = root / "site" / MASTER_LOCALE
-    site_en = root / "site" / TARGET_LOCALE
+    config_path = root / 'config/project.yaml'
+    config = yaml.safe_load(config_path.read_text(encoding='utf-8')) if config_path.exists() else {}
+    publication = (config or {}).get('paths', {}).get('publication_root', 'site')
+    from validate_framework import forbidden_segment
+    if not isinstance(publication, str) or forbidden_segment(publication):
+        raise ValueError('Unsafe publication root')
+    output = (root / publication).resolve()
+    if output == root.resolve() or not output.is_relative_to(root.resolve()):
+        raise ValueError('Publication root must be inside the project')
+    site_jp = output / MASTER_LOCALE
+    site_en = output / TARGET_LOCALE
     site_jp.mkdir(parents=True, exist_ok=True)
     site_en.mkdir(parents=True, exist_ok=True)
 
