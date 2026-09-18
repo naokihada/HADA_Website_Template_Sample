@@ -1,13 +1,28 @@
-# HADA Website Template — machine-readable upgrade contract (v0.2.0)
+# HADA Website Template — machine-readable upgrade contract (v0.2.1)
 # Template version is independent of config/project.yaml → project.version
+
+manifest_version: "1.0"
 
 schema_version: "0.1"
 
 template:
   id: hada-website-template
   name: HADA Website Operations Framework
-  version: "0.2.0"
+  version: "0.2.1"
+  release: "v0.2.1"
   release_repository: naokihada/HADA_Website_Template
+
+compatibility:
+  schema_version: "0.1"
+  data_format_version: "0.1"
+
+files:
+  template_base: TEMPLATE_BASE.md
+
+repository:
+  dev: HADA_Website_Template_Dev
+  public: HADA_Website_Template
+  sample: HADA_Website_Template_Sample
 
 ownership:
   template:
@@ -96,5 +111,9 @@ migrations:
       - "0.2.0"
     notes: "Migrates the agent workspace from .cursor/Cursor to AI and adds legacy workspace migration safeguards"
   "0.2.0":
+    to:
+      - "0.2.1"
+    notes: "Adds the common manifest schema and compatibility metadata contract"
+  "0.2.1":
     to: []
-    notes: "Current baseline with AI workspace, validator structure updates, and documented upgrade migration workflow"
+    notes: "Current baseline with common manifest schema and v0.2.0 compatibility"

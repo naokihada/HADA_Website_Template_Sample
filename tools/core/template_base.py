@@ -2,6 +2,7 @@
 from pathlib import Path
 import re
 import yaml
+import manifest_schema
 
 FIELDS = ('Template ID', 'Template Name', 'Version', 'Release', 'Repository')
 
@@ -23,8 +24,9 @@ def parse(text):
     return values
 
 def from_manifest(manifest):
+    manifest_schema.validate(manifest)
     t = manifest['template']
-    values = dict(zip(FIELDS, (t['id'], t['name'], t['version'], 'v' + t['version'], t['release_repository'])))
+    values = dict(zip(FIELDS, (t['id'], t['name'], t['version'], t['release'], t['release_repository'])))
     parse(render(values))
     return values
 

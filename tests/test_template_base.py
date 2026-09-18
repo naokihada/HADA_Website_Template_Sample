@@ -17,8 +17,11 @@ class BaseTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         (self.root / 'config').mkdir()
-        self.manifest = {'template': {'id': 'hada-website-template', 'name': 'HADA Website Operations Framework',
-            'version': '0.1.3', 'release_repository': 'naokihada/HADA_Website_Template'}}
+        self.manifest = {'manifest_version': '1.0', 'schema_version': '0.1',
+            'template': {'id': 'hada-website-template', 'name': 'HADA Website Operations Framework',
+            'version': '0.1.3', 'release': 'v0.1.3', 'release_repository': 'naokihada/HADA_Website_Template'},
+            'compatibility': {'schema_version': '0.1', 'data_format_version': '0.1'},
+            'files': {'template_base': 'TEMPLATE_BASE.md'}}
         (self.root / 'config/template.manifest.yaml').write_text(yaml.safe_dump(self.manifest))
 
     def test_legacy_absence_detects_manifest(self):
