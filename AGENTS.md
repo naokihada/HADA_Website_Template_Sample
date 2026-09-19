@@ -1,12 +1,5 @@
 # AGENTS.md — HADA Website Operations Framework
 
-## Text File Line Endings
-
-Coding-agent related files and repository text files must use CRLF line endings.
-This includes Markdown, plain text, Python, YAML, JSON, HTML, CSS, JavaScript,
-web manifests, Git configuration files, and operational records. Binary files are
-excluded. New or edited text files must be checked for CRLF before release.
-
 Canonical Agent Contract for this repository. Any agent (Cursor, CLI, CI, or other)
 must follow these rules. `AI/` is the agent-neutral operation workspace. Retired `.cursor/`
 and `Cursor/` contents are migration inputs only; preserve and classify them before removal.

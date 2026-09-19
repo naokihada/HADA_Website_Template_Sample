@@ -22,6 +22,7 @@ if str(SCRIPT_DIR) not in sys.path:
 
 from term_dictionary import load_term_dictionary  # noqa: E402
 from translation_provider import MockTranslationProvider, translate_with_dictionary  # noqa: E402
+from i18n_pipeline import master_files, parse_blocks, snapshot_path, source_hash, translate_blocks  # noqa: E402
 
 MASTER_LOCALE = "jp"
 TARGET_LOCALE = "en"
@@ -103,11 +104,75 @@ def translate_jp_file(
     return "\n".join(translated_lines) + trailing_newline
 
 
+def build_master_pages(root: Path, provider: MockTranslationProvider) -> None:
+    """Build locale snapshots and minimal HTML from *_master.md sources."""
+    if yaml is None or markdown is None:
+        raise RuntimeError(dependency_error_message())
+
+    project_path = root / "config" / "project.yaml"
+    config = yaml.safe_load(project_path.read_text(encoding="utf-8")) if project_path.is_file() else {}
+    locales_cfg = ((config or {}).get("locales") or {}).get("supported") or ["jp", "en"]
+    locales = [str(locale) for locale in locales_cfg]
+    publication = ((config or {}).get("paths") or {}).get("publication_root", "site")
+    pages_root = root / "content" / "pages"
+    if not pages_root.is_dir() or not master_files(root):
+        return
+    output_root = (root / publication).resolve()
+    if output_root == root.resolve() or not output_root.is_relative_to(root.resolve()):
+        raise ValueError("Publication root must be inside the project")
+    entries = load_term_dictionary(root / "config" / "term_dictionary.yaml")
+
+    for master_path in master_files(root):
+        master_text = master_path.read_text(encoding="utf-8")
+        master_meta, master_body = parse_front_matter(master_text)
+        digest = source_hash(master_text)
+
+        def translate(text: str, target: str) -> str:
+            return translate_with_dictionary(
+                text,
+                entries,
+                provider,
+                str(master_meta.get("source_locale", "mixed")),
+                target,
+            )
+
+        for locale in locales:
+            target_path = snapshot_path(master_path, locale)
+            existing = target_path.read_text(encoding="utf-8") if target_path.is_file() else ""
+            existing_meta, existing_body = parse_front_matter(existing) if existing else ({}, "")
+            if locale.lower() in {"jp", "ja"}:
+                body = master_body
+                status = "SOURCE"
+            elif existing_meta.get("source_hash") == digest and existing_body:
+                body = existing_body
+                status = existing_meta.get("translation_status", "REVIEWED")
+            else:
+                body = translate_blocks(parse_blocks(master_body), lambda value: translate(value, locale))
+                status = "TRANSLATED"
+
+            metadata = dict(master_meta)
+            metadata.update(
+                {
+                    "source_file": str(master_path.relative_to(root)).replace("\\", "/"),
+                    "source_hash": digest,
+                    "source_locale": master_meta.get("source_locale", "mixed"),
+                    "target_locale": locale.upper(),
+                    "translation_status": status,
+                }
+            )
+            target_path.write_text(format_front_matter(metadata, body), encoding="utf-8")
+            site_dir = output_root / locale
+            site_dir.mkdir(parents=True, exist_ok=True)
+            html_name = master_path.name[: -len("_master.md")] + ".html"
+            site_dir.joinpath(html_name).write_text(markdown_to_html(body, locale), encoding="utf-8")
+
+
 def build_site(root: Path, provider: Optional[MockTranslationProvider] = None) -> None:
     if yaml is None or markdown is None:
         raise RuntimeError(dependency_error_message())
 
     provider = provider or MockTranslationProvider()
+    build_master_pages(root, provider)
     dictionary_path = root / "config" / "term_dictionary.yaml"
     entries = load_term_dictionary(dictionary_path)
 

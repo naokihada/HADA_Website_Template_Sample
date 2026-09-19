@@ -23,6 +23,8 @@ class MockTranslationProvider:
             return f"[en]{text}[/en]"
         if source_locale == "en" and target_locale == "jp":
             return f"[jp]{text}[/jp]"
+        if source_locale != target_locale:
+            return f"[{target_locale}]{text}[/{target_locale}]"
         return text
 
 

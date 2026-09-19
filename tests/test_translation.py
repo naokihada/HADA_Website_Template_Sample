@@ -22,7 +22,8 @@ if str(TOOLS_CORE) not in sys.path:
 
 from term_dictionary import load_term_dictionary  # noqa: E402
 from translation_provider import MockTranslationProvider, translate_with_dictionary  # noqa: E402
-from build_site import markdown_to_html, parse_front_matter, should_preserve_en  # noqa: E402
+from build_site import build_master_pages, markdown_to_html, parse_front_matter, should_preserve_en  # noqa: E402
+from i18n_pipeline import parse_blocks, source_hash  # noqa: E402
 
 
 def run_validator(args: list[str], cwd: Path) -> subprocess.CompletedProcess[str]:
@@ -182,6 +183,46 @@ class TranslationTests(unittest.TestCase):
         self.assertTrue(
             should_preserve_en({"translation_status": "REVIEW_REQUIRED", "en_only_terms": ["John Smith"]})
         )
+
+    def test_master_pipeline_supports_three_locales_and_protected_blocks(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            copy_minimal_project(root)
+            project = (root / "config" / "project.yaml").read_text(encoding="utf-8")
+            project = project.replace("    - jp\n", "    - jp\n    - de\n", 1)
+            (root / "config" / "project.yaml").write_text(project, encoding="utf-8")
+            pages = root / "content" / "pages"
+            pages.mkdir(parents=True, exist_ok=True)
+            master = pages / "demo_master.md"
+            master.write_text(
+                "---\n"
+                "title: Demo\n"
+                "source_locale: mixed\n"
+                "logical_page: demo\n"
+                "---\n\n"
+                "# サンプルページ\n\n"
+                "<!-- i18n: no-translate -->\n"
+                "HADA Website Template\n"
+                "<!-- i18n: end -->\n\n"
+                "```python i18n-comments\n"
+                "# ビルド処理\n"
+                "value = 'HADA'\n"
+                "```\n",
+                encoding="utf-8",
+            )
+
+            build_master_pages(root, self.provider)
+
+            self.assertTrue((pages / "demo_JP.md").is_file())
+            self.assertTrue((pages / "demo_EN.md").is_file())
+            self.assertTrue((pages / "demo_DE.md").is_file())
+            self.assertTrue((root / "site" / "de" / "demo.html").is_file())
+            en = (pages / "demo_EN.md").read_text(encoding="utf-8")
+            de = (pages / "demo_DE.md").read_text(encoding="utf-8")
+            self.assertIn("HADA Website Template", en)
+            self.assertIn("value = 'HADA'", de)
+            self.assertIn("source_hash: " + source_hash(master.read_text(encoding="utf-8")), en)
+            self.assertEqual(len(parse_blocks(master.read_text(encoding="utf-8"))), 4)
 
 
 if __name__ == "__main__":

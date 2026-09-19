@@ -1,13 +1,13 @@
-# HADA Website Operations Framework — Sample (v0.2.0)
+# HADA Website Operations Framework — Sample (v0.2.2)
 
-Working example of the v0.2.0 framework. This repository contains a verified fictional
+Working example of the v0.2.2 framework. This repository contains a verified fictional
 sample site built from `HADA_Website_Template_Dev`.
 
 日本語の情報は、このページの下にあります。
 
 **Release template:** [HADA_Website_Template](https://github.com/naokihada/HADA_Website_Template) — reusable public framework template this sample is based on.
 
-This repository is a **complete sample/demo** of the HADA Web Site Operations Framework v0.2.0.
+This repository is a **complete sample/demo** of the HADA Web Site Operations Framework v0.2.2.
 All site content uses **fictional data** (Sample Tea Co. / Hanako Sato). It does **not**
 endorse any real company or service.
 
@@ -17,11 +17,12 @@ endorse any real company or service.
 
 | Feature | Location |
 |---|---|
-| Japanese Content Master | `content/jp/` |
-| English derived locale | `content/en/` |
+| Master i18n source | `content/pages/*_master.md` |
+| Locale snapshots | `content/pages/*_JP.md`, `*_EN.md`, `*_DE.md` |
+| Tested locales | Japanese, English, German |
 | Site-wide term dictionary | `config/term_dictionary.yaml` |
-| jp → en translation (mock provider) | `tools/core/build_site.py` |
-| Markdown → HTML | `site/jp/`, `site/en/` |
+| Block-aware translation (mock provider) | `tools/core/build_site.py` |
+| Markdown → HTML | `site/jp/`, `site/en/`, `site/de/` |
 | Publication Root | `site/` |
 | PWA Timer Demo | `site/timer.html` — client-only, `03:00` default, best-effort notifications |
 
@@ -44,7 +45,7 @@ python tests/test_translation.py
 | Repo | Role |
 |---|---|
 | `HADA_Website_Template_Dev` | Development and verification |
-| `HADA_Website_Template_Sample` | This repo — verified v0.2.0 example |
+| `HADA_Website_Template_Sample` | This repo — verified v0.2.2 example |
 | `HADA_Website_Template` | Clean public template (no sample content) |
 
 See `AGENTS.md` for the canonical agent contract.
@@ -59,10 +60,10 @@ See [DISCLAIMER.md](DISCLAIMER.md).
 
 ## 概要
 
-v0.2.0 フレームワークの動作例です。本リポジトリには、`HADA_Website_Template_Dev` で
+v0.2.2 フレームワークの動作例です。本リポジトリには、`HADA_Website_Template_Dev` で
 検証した架空データによるサンプルサイトが含まれます。
 
-AI Agent対応Webサイト運用フレームワーク v0.2.0 のサンプル実装リポジトリ。
+AI Agent対応Webサイト運用フレームワーク v0.2.2 のサンプル実装リポジトリ。
 
 **Release template:** [HADA_Website_Template](https://github.com/naokihada/HADA_Website_Template) — 本サンプルのベースとなる再利用可能な公開 Framework テンプレート。
 
@@ -76,11 +77,12 @@ AI Agent対応Webサイト運用フレームワーク v0.2.0 のサンプル実�
 
 | Feature | Location |
 |---|---|
-| Japanese Content Master | `content/jp/` |
-| English derived locale | `content/en/` |
+| Master i18n source | `content/pages/*_master.md` |
+| Locale snapshots | `content/pages/*_JP.md`, `*_EN.md`, `*_DE.md` |
+| Tested locales | Japanese, English, German |
 | Site-wide term dictionary | `config/term_dictionary.yaml` |
-| jp → en translation (mock provider) | `tools/core/build_site.py` |
-| Markdown → HTML | `site/jp/`, `site/en/` |
+| Block-aware translation (mock provider) | `tools/core/build_site.py` |
+| Markdown → HTML | `site/jp/`, `site/en/`, `site/de/` |
 | Publication Root | `site/` |
 | PWA Timer Demo | `site/timer.html` — client-only, `03:00` default, best-effort notifications |
 
@@ -107,7 +109,7 @@ python tests/test_translation.py
 | Repo | Role |
 |---|---|
 | `HADA_Website_Template_Dev` | Development and verification |
-| `HADA_Website_Template_Sample` | 本リポジトリ — verified v0.2.0 example |
+| `HADA_Website_Template_Sample` | 本リポジトリ — verified v0.2.2 example |
 | `HADA_Website_Template` | Clean public template (no sample content) |
 
 正規のエージェント契約は `AGENTS.md` を参照してください。

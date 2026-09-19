@@ -35,7 +35,7 @@ LIFECYCLE_STATES = {
     "FAILED",
 }
 RSS_STATES = {"FULL", "PARTIAL", "NO_CONTENT"}
-FOUNDATION_LOCALES = {"en", "jp"}
+LOCALE_CODE_PATTERN = re.compile(r"^[a-z]{2,3}(?:-[a-z0-9]{2,8})?$", re.IGNORECASE)
 CONTENT_IGNORE_NAMES = {".gitkeep"}
 FORBIDDEN_SEGMENTS = {"ai", "cursor", ".cursor", "content", "tools", "config", "references", "docs"}
 SAFE_SECRET_VALUES = {
@@ -279,8 +279,11 @@ def validate_project_config(ctx: ValidationContext) -> None:
 
     ctx.mark_checked("CFG-006")
     supported = locales.get("supported", [])
-    if not isinstance(supported, list) or any(item not in FOUNDATION_LOCALES for item in supported):
-        ctx.add("CFG-006", "ERROR", "Each locales.supported entry must be en or jp", file="config/project.yaml", field="locales.supported")
+    if not isinstance(supported, list) or any(
+        not isinstance(item, str) or not LOCALE_CODE_PATTERN.fullmatch(item)
+        for item in supported
+    ):
+        ctx.add("CFG-006", "ERROR", "Each locales.supported entry must be a valid locale code", file="config/project.yaml", field="locales.supported")
 
     pub_root = paths.get("publication_root")
     content_root = paths.get("content_master")

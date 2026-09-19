@@ -82,6 +82,18 @@ class ValidateFrameworkTests(unittest.TestCase):
         payload = json.loads(result.stdout)
         self.assertEqual(payload["status"], "PASS")
 
+    def test_additional_locale_is_supported(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            copy_foundation_skeleton(root)
+            project = (root / "config" / "project.yaml").read_text(encoding="utf-8")
+            project = project.replace("    - jp\n", "    - jp\n    - de\n", 1)
+            (root / "config" / "project.yaml").write_text(project, encoding="utf-8")
+            (root / "content" / "de").mkdir(parents=True, exist_ok=True)
+            (root / "site" / "de").mkdir(parents=True, exist_ok=True)
+            result = run_validator(["--root", str(root), "--format", "json"])
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_json_output_is_valid(self) -> None:
         result = run_validator(["--root", str(REPO_ROOT), "--format", "json"])
         payload = json.loads(result.stdout)

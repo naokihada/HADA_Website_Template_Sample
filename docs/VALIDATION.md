@@ -155,7 +155,7 @@ Rule IDs help interpret validator output. Findings are sorted by `(rule_id, file
 | CFG-003 | ERROR | `project.mode` is NEW, RECOVERY, MIGRATION, or MAINTENANCE |
 | CFG-004 | ERROR | `paths.publication_root`, `content_master`, `tools_core`, `tools_plugins` present |
 | CFG-005 | ERROR | `locales.default` is listed in `locales.supported` |
-| CFG-006 | ERROR | Each supported locale is `en` or `jp` |
+| CFG-006 | ERROR | Each supported locale is a valid locale code such as `en`, `jp`, or `de` |
 | CFG-007 | ERROR | `paths.publication_root` resolves to existing directory |
 | CFG-008 | ERROR | `paths.content_master` resolves to existing directory |
 | CFG-009 | ERROR | `config/site.example.yaml` valid YAML |
@@ -227,6 +227,10 @@ Zero plugin directories with manifests is expected in v0.1.0.
 | I18N-004 | INFO | No content master files in either locale (ignores `.gitkeep`) |
 
 Content master files are immediate children of locale directories only (no recursive scan).
+
+The built-in master i18n pipeline also supports `content/pages/*_master.md` sources and
+locale snapshots such as `*_JP.md`, `*_EN.md`, and `*_DE.md`. Fenced code is protected by
+default; `i18n-comments` translates comments only.
 
 ### SEC-* (security / publication safety)
 

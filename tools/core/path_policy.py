@@ -4,12 +4,14 @@ from pathlib import Path
 MAX_ABSOLUTE_PATH = 240
 
 def ensure_path(path, *, label='path'):
+    """Reject paths that are too close to the Windows MAX_PATH boundary."""
     value = Path(path).absolute()
     if len(str(value)) > MAX_ABSOLUTE_PATH:
         raise ValueError(f'{label} exceeds {MAX_ABSOLUTE_PATH} characters: {value}')
     return value
 
 def scan_tree(root, *, limit=MAX_ABSOLUTE_PATH):
+    """Return path-length records over the requested limit without following links."""
     root = ensure_path(root, label='root')
     records = []
     for item in root.rglob('*'):
