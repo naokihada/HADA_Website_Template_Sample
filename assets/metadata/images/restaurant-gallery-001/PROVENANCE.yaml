@@ -1,0 +1,10 @@
+image_id: restaurant-gallery-001
+source_route: generated
+source_filename: restaurant-gallery-001.png
+source_sha256: 6bc8bfacb229ec2af8948b443be2f8f426030e893cf45622d0b3da41bf7d3022
+provider: chatgpt_image
+prompt_profile: default-editorial
+prompt: ''
+imported_at: '2026-09-19T11:20:29.730884+00:00'
+tracking_metadata_policy: stripped from web derivative
+review: human approval recorded by assets.py --approve

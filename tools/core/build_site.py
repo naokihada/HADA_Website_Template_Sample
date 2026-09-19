@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import re
+import shutil
 import sys
 from pathlib import Path
 from typing import Any, Optional, Tuple
@@ -23,6 +24,7 @@ if str(SCRIPT_DIR) not in sys.path:
 from term_dictionary import load_term_dictionary  # noqa: E402
 from translation_provider import MockTranslationProvider, translate_with_dictionary  # noqa: E402
 from i18n_pipeline import master_files, parse_blocks, snapshot_path, source_hash, translate_blocks  # noqa: E402
+from assets import load_manifest, safe_relative, validate_assets  # noqa: E402
 
 MASTER_LOCALE = "jp"
 TARGET_LOCALE = "en"
@@ -57,7 +59,31 @@ def format_front_matter(meta: dict[str, Any], body: str) -> str:
     return f"---\n{header}\n---\n\n{body.lstrip()}"
 
 
-def markdown_to_html(body: str, lang: str, title: Optional[str] = None) -> str:
+def background_visual(root: Path, metadata: dict[str, Any]) -> Optional[str]:
+    visual = metadata.get("visual") or {}
+    fade = visual.get("background_fade") if isinstance(visual, dict) else None
+    image_id = fade.get("image_id") if isinstance(fade, dict) else None
+    if not isinstance(image_id, str):
+        return None
+    try:
+        manifest = load_manifest(root)
+    except (OSError, ValueError, RuntimeError):
+        return None
+    for item in manifest.get("images", []):
+        if not isinstance(item, dict) or item.get("image_id") != image_id or item.get("status") != "approved":
+            continue
+        web = str(item.get("web", ""))
+        if web.startswith("assets/images/web/"):
+            return Path(web).name
+    return None
+
+
+def markdown_to_html(
+    body: str,
+    lang: str,
+    title: Optional[str] = None,
+    background_image: Optional[str] = None,
+) -> str:
     if markdown is None:
         raise RuntimeError(dependency_error_message())
     rendered = markdown.markdown(body, extensions=["extra"])
@@ -69,12 +95,24 @@ def markdown_to_html(body: str, lang: str, title: Optional[str] = None) -> str:
         switch = '<p><a href="../index.html">Language</a> | <a href="../en/index.html" hreflang="en">English</a></p>\n'
     else:
         switch = '<p><a href="../index.html">Language</a> | <a href="../jp/index.html" hreflang="ja">日本語</a></p>\n'
+    visual = ""
+    visual_css = ""
+    if background_image:
+        visual_css = (
+            "  .background-fade{position:fixed;inset:0;z-index:-1;pointer-events:none;"
+            "background-image:linear-gradient(135deg,rgba(255,255,255,0) 0%,"
+            "rgba(255,255,255,.72) 55%,rgba(255,255,255,1) 100%),"
+            f"url('../assets/images/{background_image}');background-position:right top;"
+            "background-repeat:no-repeat;background-size:cover;opacity:.72;}\n"
+            "  @media (max-width: 700px){.background-fade{opacity:.32;background-size:72% auto;}}\n"
+        )
+        visual = '<div class="background-fade" aria-hidden="true"></div>\n'
     return (
         f"<!DOCTYPE html>\n<html lang=\"{lang}\">\n<head>\n"
         f"  <meta charset=\"UTF-8\">\n"
         f"  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"
-        f"  <title>{title}</title>\n</head>\n<body>\n"
-        f"{switch}{rendered}\n</body>\n</html>\n"
+        f"  <title>{title}</title>\n{visual_css}</head>\n<body>\n"
+        f"{visual}{switch}{rendered}\n</body>\n</html>\n"
     )
 
 
@@ -164,7 +202,29 @@ def build_master_pages(root: Path, provider: MockTranslationProvider) -> None:
             site_dir = output_root / locale
             site_dir.mkdir(parents=True, exist_ok=True)
             html_name = master_path.name[: -len("_master.md")] + ".html"
-            site_dir.joinpath(html_name).write_text(markdown_to_html(body, locale), encoding="utf-8")
+            site_dir.joinpath(html_name).write_text(
+                markdown_to_html(body, locale, background_image=background_visual(root, master_meta)),
+                encoding="utf-8",
+            )
+
+
+def publish_web_assets(root: Path, output: Path) -> None:
+    """Copy only approved JPEG derivatives into the configured publication root."""
+    manifest_path = root / "config" / "media.manifest.yaml"
+    if not manifest_path.is_file():
+        return
+    if validate_assets(root) != 0:
+        raise ValueError("Image asset validation failed")
+    manifest = load_manifest(root)
+    for item in manifest.get("images", []):
+        if not isinstance(item, dict) or item.get("status") != "approved":
+            continue
+        source = root / safe_relative(root, str(item.get("web", "")))
+        if source.suffix.lower() != ".jpg" or not source.is_file():
+            raise ValueError(f"Invalid approved web derivative: {item.get('image_id', '')}")
+        target = output / "assets" / "images" / source.name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
 
 
 def build_site(root: Path, provider: Optional[MockTranslationProvider] = None) -> None:
@@ -187,6 +247,7 @@ def build_site(root: Path, provider: Optional[MockTranslationProvider] = None) -
     output = (root / publication).resolve()
     if output == root.resolve() or not output.is_relative_to(root.resolve()):
         raise ValueError('Publication root must be inside the project')
+    publish_web_assets(root, output)
     site_jp = output / MASTER_LOCALE
     site_en = output / TARGET_LOCALE
     site_jp.mkdir(parents=True, exist_ok=True)
@@ -217,11 +278,11 @@ def build_site(root: Path, provider: Optional[MockTranslationProvider] = None) -
 
         _, current_en_body = parse_front_matter(en_text)
         site_jp.joinpath(html_basename(basename)).write_text(
-            markdown_to_html(jp_body, "ja"),
+            markdown_to_html(jp_body, "ja", background_image=background_visual(root, jp_meta)),
             encoding="utf-8",
         )
         site_en.joinpath(html_basename(basename)).write_text(
-            markdown_to_html(current_en_body, "en"),
+            markdown_to_html(current_en_body, "en", background_image=background_visual(root, jp_meta)),
             encoding="utf-8",
         )
 

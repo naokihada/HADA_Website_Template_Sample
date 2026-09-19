@@ -1,0 +1,12 @@
+{
+  "schema_version": "0.1",
+  "items": [
+    {
+      "image_id": "restaurant-background-001",
+      "source": "AI/inbox/assets/generated/restaurant-background-001.png",
+      "route": "generated",
+      "status": "pending_approval",
+      "issues": []
+    }
+  ]
+}

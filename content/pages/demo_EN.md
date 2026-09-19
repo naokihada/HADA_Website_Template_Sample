@@ -4,8 +4,11 @@ description: Three-locale i18n demonstration
 logical_page: demo
 source_locale: mixed
 role: page
+visual:
+  background_fade:
+    image_id: restaurant-background-001
 source_file: content/pages/demo_master.md
-source_hash: sha256:2eaebe20fe693036634c4dfd310b4b490e9b50854c9750994d4afa315e8c8ff3
+source_hash: sha256:a0e9272d05d8b68c1348c3b8ec7638c7194b03d083e11fd5e4a78c92d8af9872
 target_locale: EN
 translation_status: TRANSLATED
 ---

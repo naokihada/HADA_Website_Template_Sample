@@ -4,8 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Page</title>
+  .background-fade{position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(135deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.72) 55%,rgba(255,255,255,1) 100%),url('../assets/images/restaurant-background-001.jpg');background-position:right top;background-repeat:no-repeat;background-size:cover;opacity:.72;}
+  @media (max-width: 700px){.background-fade{opacity:.32;background-size:72% auto;}}
 </head>
 <body>
+<div class="background-fade" aria-hidden="true"></div>
 <p><a href="../index.html">Language</a> | <a href="../jp/index.html" hreflang="ja">日本語</a></p>
 <p>[de]# Sample i18n Demo
 [/de][de]This page demonstrates a shared structure for Japanese, English, and German output.

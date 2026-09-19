@@ -1,0 +1,10 @@
+image_id: restaurant-home-001
+source_route: generated
+source_filename: restaurant-home-001.png
+source_sha256: 2df8af55e41ecdfaa6891fc045ecfaa057988e07e34da949ddf223f0769b256a
+provider: chatgpt_image
+prompt_profile: default-editorial
+prompt: ''
+imported_at: '2026-09-19T11:20:29.847931+00:00'
+tracking_metadata_policy: stripped from web derivative
+review: human approval recorded by assets.py --approve

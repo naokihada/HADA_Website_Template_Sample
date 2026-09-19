@@ -4,6 +4,9 @@ description: "Three-locale i18n demonstration"
 logical_page: demo
 source_locale: mixed
 role: page
+visual:
+  background_fade:
+    image_id: restaurant-background-001
 ---
 
 # Sample i18n Demo

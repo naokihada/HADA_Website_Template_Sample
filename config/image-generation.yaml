@@ -1,0 +1,17 @@
+schema_version: "0.1"
+provider:
+  default: chatgpt_image
+prompt_profile:
+  name: default-editorial
+  common_prompt: |
+    Create a refined visual for this sample website.
+  style_prompt: |
+    restrained editorial style, calm composition, controlled colors
+  negative_prompt: |
+    no readable text, no logos, no watermark, no recognizable brand
+output:
+  composition: square
+  generated_master_format: png
+  web_format: jpeg
+  web_quality: 88
+  direct_generated_output_for_web: false

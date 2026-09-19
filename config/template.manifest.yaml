@@ -42,6 +42,7 @@ ownership:
     - "config/template.manifest.yaml"
     - "config/project.yaml"
     - "config/site.example.yaml"
+    - "config/media.manifest.example.yaml"
     - "config/local.example.yaml"
     - "config/term_dictionary.example.yaml"
     - "environments/environments.example.yaml"
@@ -58,6 +59,7 @@ ownership:
     - "site/assets/.gitkeep"
     - "AI/README.md"
     - "tools/core/upgrade_from_release.py"
+    - "tools/core/assets.py"
   user:
     - "TEMPLATE_BASE.md"
     - "TEMPLATE_UPDATES.md"

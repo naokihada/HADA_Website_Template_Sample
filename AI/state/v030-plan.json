@@ -1,0 +1,42 @@
+{
+  "schema_version": "0.1",
+  "items": [
+    {
+      "image_id": "restaurant-about-001",
+      "source": "AI/inbox/assets/generated/restaurant-about-001.png",
+      "route": "generated",
+      "status": "pending_approval",
+      "issues": []
+    },
+    {
+      "image_id": "restaurant-background-001",
+      "source": "AI/inbox/assets/generated/restaurant-background-001.png",
+      "route": "generated",
+      "status": "review_required",
+      "issues": [
+        "image_id already exists"
+      ]
+    },
+    {
+      "image_id": "restaurant-gallery-001",
+      "source": "AI/inbox/assets/generated/restaurant-gallery-001.png",
+      "route": "generated",
+      "status": "pending_approval",
+      "issues": []
+    },
+    {
+      "image_id": "restaurant-home-001",
+      "source": "AI/inbox/assets/generated/restaurant-home-001.png",
+      "route": "generated",
+      "status": "pending_approval",
+      "issues": []
+    },
+    {
+      "image_id": "restaurant-menu-001",
+      "source": "AI/inbox/assets/generated/restaurant-menu-001.png",
+      "route": "generated",
+      "status": "pending_approval",
+      "issues": []
+    }
+  ]
+}

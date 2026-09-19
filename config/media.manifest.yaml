@@ -1,0 +1,120 @@
+schema_version: '0.1'
+images:
+- image_id: restaurant-background-001
+  master: assets/images/master/restaurant-background-001.png
+  web: assets/images/web/restaurant-background-001.jpg
+  thumbnail: assets/images/thumbnails/restaurant-background-001.jpg
+  source: chatgpt_image
+  usage:
+  - background_fade
+  - gallery
+  title:
+    en: Original Background
+    jp: Original Background
+  alt:
+    en: Original restaurant background visual
+    jp: Original restaurant background visual
+  gallery:
+    visible: true
+  composition: square
+  status: approved
+  license: generated
+  master_sha256: sha256:375c0b222d9858e0e775e459b969c04a0d77f286b5e9cd48d849db97f9b44276
+  web_sha256: sha256:3494f7fd84c54cb0008d1de982f4ed267625c316de88fffdf6e013c011230064
+  thumbnail_sha256: sha256:bdb3634a072f1977f2db37bd58b444c0b98dd43f5b632da220a98f55af928d88
+- image_id: restaurant-about-001
+  master: assets/images/master/restaurant-about-001.png
+  web: assets/images/web/restaurant-about-001.jpg
+  thumbnail: assets/images/thumbnails/restaurant-about-001.jpg
+  source: chatgpt_image
+  provider: chatgpt_image
+  prompt_profile: default-editorial
+  usage:
+  - background_fade
+  - gallery
+  title:
+    en: Quiet Interior
+    jp: Quiet Interior
+  alt:
+    en: Quiet modern restaurant interior
+    jp: Quiet modern restaurant interior
+  gallery:
+    visible: true
+  composition: square
+  status: approved
+  license: generated
+  master_sha256: sha256:1782a430f17775c0fb2e1df0d5675963e0fbc01a2cbcaee88fe16ec8b430cd46
+  web_sha256: sha256:1677b92017746f4bdb7cecbd3f164bbfc791744ea6116ea2bfe9c7c1c5c9d60d
+  thumbnail_sha256: sha256:59e9d344e95fe735d6fc0ad6026ae9ed005692a7ec6f4589d6b6aec7592fb2ee
+- image_id: restaurant-gallery-001
+  master: assets/images/master/restaurant-gallery-001.png
+  web: assets/images/web/restaurant-gallery-001.jpg
+  thumbnail: assets/images/thumbnails/restaurant-gallery-001.jpg
+  source: chatgpt_image
+  provider: chatgpt_image
+  prompt_profile: default-editorial
+  usage:
+  - background_fade
+  - gallery
+  title:
+    en: Table Detail
+    jp: Table Detail
+  alt:
+    en: Handmade plates and linen in soft light
+    jp: Handmade plates and linen in soft light
+  gallery:
+    visible: true
+  composition: square
+  status: approved
+  license: generated
+  master_sha256: sha256:6bc8bfacb229ec2af8948b443be2f8f426030e893cf45622d0b3da41bf7d3022
+  web_sha256: sha256:490b8f55def879df6afe9ce33bacc659b8d320bc91e9da0685c1ee07848521ea
+  thumbnail_sha256: sha256:3e82bebc5937a233820a1878f07d6fe61b143e36a4861494d1917dd6887f2eaa
+- image_id: restaurant-home-001
+  master: assets/images/master/restaurant-home-001.png
+  web: assets/images/web/restaurant-home-001.jpg
+  thumbnail: assets/images/thumbnails/restaurant-home-001.jpg
+  source: chatgpt_image
+  provider: chatgpt_image
+  prompt_profile: default-editorial
+  usage:
+  - background_fade
+  - gallery
+  title:
+    en: Warm Light
+    jp: Warm Light
+  alt:
+    en: Abstract warm light and architectural lines
+    jp: Abstract warm light and architectural lines
+  gallery:
+    visible: true
+  composition: square
+  status: approved
+  license: generated
+  master_sha256: sha256:2df8af55e41ecdfaa6891fc045ecfaa057988e07e34da949ddf223f0769b256a
+  web_sha256: sha256:995a588228ad774df32a4d672b560fa1cf71175cfc12a1fa04b3b5e9371fb3a9
+  thumbnail_sha256: sha256:3f5101ba7a693b8a335c5e1b99fa861ab64de7370b36af925368f7a06c0ee514
+- image_id: restaurant-menu-001
+  master: assets/images/master/restaurant-menu-001.png
+  web: assets/images/web/restaurant-menu-001.jpg
+  thumbnail: assets/images/thumbnails/restaurant-menu-001.jpg
+  source: chatgpt_image
+  provider: chatgpt_image
+  prompt_profile: default-editorial
+  usage:
+  - background_fade
+  - gallery
+  title:
+    en: Seasonal Dish
+    jp: Seasonal Dish
+  alt:
+    en: Seasonal dish on a quiet ceramic table
+    jp: Seasonal dish on a quiet ceramic table
+  gallery:
+    visible: true
+  composition: square
+  status: approved
+  license: generated
+  master_sha256: sha256:b56390643a5513122a12d13f516a7f16af536b02aff45be8712ce5ba5a2c4dec
+  web_sha256: sha256:e16aa722baedbac077a4ffc3f3e273a77d6af9f5320239e458e8f5f0a24ff2b8
+  thumbnail_sha256: sha256:be216d8c4b314a2bb9bd63ad7a754b0651e0e04ee1af03b4e77d3475bfe05742

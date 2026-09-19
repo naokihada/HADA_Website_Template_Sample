@@ -1,0 +1,10 @@
+image_id: restaurant-menu-001
+source_route: generated
+source_filename: restaurant-menu-001.png
+source_sha256: b56390643a5513122a12d13f516a7f16af536b02aff45be8712ce5ba5a2c4dec
+provider: chatgpt_image
+prompt_profile: default-editorial
+prompt: ''
+imported_at: '2026-09-19T11:20:29.969181+00:00'
+tracking_metadata_policy: stripped from web derivative
+review: human approval recorded by assets.py --approve

@@ -1,0 +1,5 @@
+schema_version: "0.1"
+
+# Public-safe asset registry. Provider identifiers and generation prompts belong
+# in AI/history/assets/<image_id>/PROVENANCE.yaml, never in this file.
+images: []
