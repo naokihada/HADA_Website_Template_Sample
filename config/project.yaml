@@ -13,6 +13,9 @@ repositories:
 
 paths:
   publication_root: site
+  generated_root: build
+  page_registry: config/page-registry.yaml
+  template_references: references/template-releases
   content_master: content
   references: references
   tools_core: tools/core

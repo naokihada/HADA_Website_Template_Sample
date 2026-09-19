@@ -38,14 +38,36 @@ class AssetPipelineTests(unittest.TestCase):
         self.assertEqual(assets.import_plan(root, plan, approve=True), 0)
         master = root / "assets/images/master/restaurant-hero.png"
         web = root / "assets/images/web/restaurant-hero.jpg"
+        thumbnail = root / "assets/images/thumbnails/restaurant-hero.jpg"
         self.assertTrue(master.is_file())
         self.assertTrue(web.is_file())
+        self.assertTrue(thumbnail.is_file())
         self.assertEqual(web.suffix, ".jpg")
         with Image.open(web) as image:
             self.assertNotIn("provider_tracking_id", image.info)
             self.assertNotIn("comment", image.info)
         manifest = assets.load_manifest(root)
         self.assertEqual(manifest["images"][0]["status"], "approved")
+        provenance = root / "assets/metadata/images/restaurant-hero/PROVENANCE.yaml"
+        self.assertTrue(provenance.is_file())
+        self.assertNotIn("AI", provenance.parts)
+        self.assertIn("chatgpt_image", provenance.read_text(encoding="utf-8"))
+
+    def test_new_image_id_preserves_previous_page_asset_for_revert(self) -> None:
+        root, holder = self.make_root()
+        self.addCleanup(holder.cleanup)
+        first = root / "AI/inbox/assets/generated/page-background-001.png"
+        second = root / "AI/inbox/assets/generated/page-background-002.png"
+        self.make_png(first)
+        self.make_png(second)
+        plan = root / "AI/state/plan.json"
+        assets.scan_inbox(root, plan)
+        self.assertEqual(assets.import_plan(root, plan, approve=True), 0)
+        manifest = assets.load_manifest(root)
+        ids = {item["image_id"] for item in manifest["images"]}
+        self.assertEqual(ids, {"page-background-001", "page-background-002"})
+        self.assertTrue((root / "assets/images/master/page-background-001.png").is_file())
+        self.assertTrue((root / "assets/images/master/page-background-002.png").is_file())
 
     def test_generated_non_png_is_review_required_and_cannot_import(self) -> None:
         root, holder = self.make_root()
@@ -56,7 +78,7 @@ class AssetPipelineTests(unittest.TestCase):
         assets.scan_inbox(root, plan)
         item = json.loads(plan.read_text(encoding="utf-8"))["items"][0]
         self.assertEqual(item["status"], "review_required")
-        self.assertEqual(assets.import_plan(root, plan, approve=True), 2)
+        self.assertEqual(assets.import_plan(root, plan, approve=True), 1)
 
     def test_validate_rejects_master_hash_drift(self) -> None:
         root, holder = self.make_root()
@@ -69,6 +91,27 @@ class AssetPipelineTests(unittest.TestCase):
         master = root / "assets/images/master/hero.png"
         master.write_bytes(master.read_bytes() + b"drift")
         self.assertEqual(assets.validate_assets(root), 1)
+
+    def test_validate_requires_persistent_provenance_for_approved_asset(self) -> None:
+        root, holder = self.make_root()
+        self.addCleanup(holder.cleanup)
+        source = root / "AI/inbox/assets/generated/hero.png"
+        self.make_png(source)
+        plan = root / "AI/state/plan.json"
+        assets.scan_inbox(root, plan)
+        assets.import_plan(root, plan, approve=True)
+        (root / "assets/metadata/images/hero/PROVENANCE.yaml").unlink()
+        self.assertEqual(assets.validate_assets(root), 1)
+
+    def test_legacy_provenance_migration_preserves_source(self) -> None:
+        root, holder = self.make_root()
+        self.addCleanup(holder.cleanup)
+        source = root / "AI/history/assets/hero/PROVENANCE.yaml"
+        source.parent.mkdir(parents=True)
+        source.write_text("image_id: hero\n", encoding="utf-8")
+        self.assertEqual(assets.migrate_legacy_provenance(root, apply=True), 0)
+        self.assertTrue(source.is_file())
+        self.assertTrue((root / "assets/metadata/images/hero/PROVENANCE.yaml").is_file())
 
     def test_validate_rejects_web_reference_to_master(self) -> None:
         root, holder = self.make_root()
