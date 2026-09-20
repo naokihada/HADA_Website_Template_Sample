@@ -224,6 +224,33 @@ class TranslationTests(unittest.TestCase):
             self.assertIn("source_hash: " + source_hash(master.read_text(encoding="utf-8")), en)
             self.assertEqual(len(parse_blocks(master.read_text(encoding="utf-8"))), 4)
 
+    def test_candidate_build_keeps_generated_snapshots_inside_candidate(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            copy_minimal_project(root)
+            pages = root / "content" / "pages"
+            pages.mkdir(parents=True, exist_ok=True)
+            master = pages / "candidate_master.md"
+            master.write_text(
+                "---\n"
+                "title: Candidate\n"
+                "source_locale: mixed\n"
+                "logical_page: candidate\n"
+                "---\n\n"
+                "# Candidate page\n\n"
+                "Candidate output must stay isolated.\n",
+                encoding="utf-8",
+            )
+            candidate = root / "candidate"
+            candidate.mkdir()
+
+            build_master_pages(root, self.provider, publication_override=candidate)
+
+            self.assertTrue((candidate / ".generated/content/pages/candidate_JP.md").is_file())
+            self.assertTrue((candidate / ".generated/content/pages/candidate_EN.md").is_file())
+            self.assertFalse((root / "build/content/pages/candidate_JP.md").exists())
+            self.assertFalse((pages / "candidate_EN.md").exists())
+
 
 if __name__ == "__main__":
     unittest.main()

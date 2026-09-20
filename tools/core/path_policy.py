@@ -15,6 +15,13 @@ def scan_tree(root, *, limit=MAX_ABSOLUTE_PATH):
     root = ensure_path(root, label='root')
     records = []
     for item in root.rglob('*'):
+        # Git metadata and agent checkpoint paths are repository internals, not
+        # governed project artifacts. They must not fail the product path scan.
+        try:
+            item.relative_to(root / '.git')
+            continue
+        except ValueError:
+            pass
         if item.is_symlink() or (hasattr(item, 'is_junction') and item.is_junction()):
             continue
         length = len(str(item.absolute()))

@@ -1,4 +1,4 @@
-# HADA Website Template — machine-readable upgrade contract (v0.3.2)
+# HADA Website Template — machine-readable upgrade contract (v0.3.3)
 # Template version is independent of config/project.yaml → project.version
 
 manifest_version: "1.0"
@@ -8,8 +8,8 @@ schema_version: "0.1"
 template:
   id: hada-website-template
   name: HADA Website Operations Framework
-  version: "0.3.2"
-  release: "v0.3.2"
+  version: "0.3.3"
+  release: "v0.3.3"
   release_repository: naokihada/HADA_Website_Template
 
 compatibility:
@@ -156,5 +156,9 @@ migrations:
       - "0.3.2"
     notes: "Adds v0.3.2 static Web and optional display enhancement foundation"
   "0.3.2":
+    to:
+      - "0.3.3"
+    notes: "Adds page-to-page Display State persistence with localStorage fallback safety"
+  "0.3.3":
     to: []
-    notes: "Current baseline with long-lived static Web policy and optional display enhancement"
+    notes: "Current baseline with local Display State persistence"

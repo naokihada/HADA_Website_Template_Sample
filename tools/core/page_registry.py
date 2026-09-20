@@ -99,14 +99,14 @@ def build_html_masters(root: Path, candidate_root: Path) -> list[dict[str, Any]]
             existing = publication / target_rel
             if existing.is_file():
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(existing.read_text(encoding="utf-8"), encoding="utf-8", newline="\n")
+                target.write_text(existing.read_text(encoding="utf-8"), encoding="utf-8", newline="\r\n")
                 status = "OUTDATED" if old_hash and old_hash != source_hash else "PRESERVED"
             else:
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(_copy_with_language(master_text, str(locale)), encoding="utf-8", newline="\n")
+                target.write_text(_copy_with_language(master_text, str(locale)), encoding="utf-8", newline="\r\n")
                 status = "SOURCE" if str(locale) == str(source.get("master_locale", "jp")) else "REVIEW_REQUIRED"
             statuses.append({"page_id": page_id, "locale": str(locale), "status": status, "source_hash": source_hash, "path": str(target_rel).replace("\\", "/")})
     report = candidate_root / ".build" / "page-status.json"
     report.parent.mkdir(parents=True, exist_ok=True)
-    report.write_text(json.dumps({"pages": statuses}, indent=2) + "\n", encoding="utf-8", newline="\n")
+    report.write_text(json.dumps({"pages": statuses}, indent=2) + "\n", encoding="utf-8", newline="\r\n")
     return statuses

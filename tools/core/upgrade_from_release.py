@@ -771,7 +771,7 @@ def run_upgrade(
                 'before': semantic_before,
                 'after': semantic_after,
                 'diff': semantic_diff,
-            }, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
+            }, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\r\n')
             if semantic_diff['status'] != 'PASS':
                 findings.append(Finding('UPG-060', 'WARNING', 'Candidate semantic site diff requires review', file='build/upgrade-semantic-diff.json'))
             # Candidate build output is verification only, never copied over styled output.

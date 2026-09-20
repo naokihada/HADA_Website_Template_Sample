@@ -26,6 +26,7 @@ from term_dictionary import load_term_dictionary  # noqa: E402
 from translation_provider import MockTranslationProvider, translate_with_dictionary  # noqa: E402
 from i18n_pipeline import master_files, parse_blocks, snapshot_path, source_hash, translate_blocks  # noqa: E402
 from assets import load_manifest, safe_relative, validate_assets  # noqa: E402
+from display_config import display_runtime_settings  # noqa: E402
 from page_registry import build_html_masters  # noqa: E402
 
 MASTER_LOCALE = "jp"
@@ -85,6 +86,7 @@ def markdown_to_html(
     lang: str,
     title: Optional[str] = None,
     background_image: Optional[str] = None,
+    display_settings: Optional[dict[str, Any]] = None,
 ) -> str:
     if markdown is None:
         raise RuntimeError(dependency_error_message())
@@ -120,12 +122,19 @@ def markdown_to_html(
         '<button type="button" data-set-text-size="xlarge" aria-pressed="false">Extra large</button>'
         '</div>\n'
     )
+    display_settings = display_settings or {
+        "persistence_enabled": True,
+        "storage": "local_storage",
+        "storage_key": "hada.display.v1",
+    }
+    persistence = "true" if display_settings.get("persistence_enabled") else "false"
+    storage_key = html.escape(str(display_settings.get("storage_key", "hada.display.v1")), quote=True)
     return (
         f"<!DOCTYPE html>\n<html lang=\"{lang}\">\n<head>\n"
         f"  <meta charset=\"UTF-8\">\n"
         f"  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"
         f"  <link rel=\"stylesheet\" href=\"../assets/css/core.css\">\n"
-        f"  <title>{title}</title>\n{visual_css}</head>\n<body data-theme=\"light\" data-text-size=\"standard\" data-mode=\"standard\">\n"
+        f"  <title>{title}</title>\n{visual_css}</head>\n<body data-theme=\"light\" data-text-size=\"standard\" data-mode=\"standard\" data-display-persistence=\"{persistence}\" data-display-storage-key=\"{storage_key}\">\n"
         f"{visual}{switch}{controls}{rendered}\n"
         '<script src="../assets/js/display-preferences.js" defer></script>\n'
         "</body>\n</html>\n"
@@ -175,10 +184,12 @@ def build_master_pages(root: Path, provider: MockTranslationProvider, publicatio
     if output_root == root.resolve() or not output_root.is_relative_to(root.resolve()):
         raise ValueError("Publication root must be inside the project")
     entries = load_term_dictionary(root / "config" / "term_dictionary.yaml")
+    display_settings = display_runtime_settings(root)
     generated_snapshot_root = None
     if publication_override:
-        generated_root = ((config or {}).get("paths") or {}).get("generated_root", "build")
-        generated_snapshot_root = (root / generated_root / "content" / "pages").resolve()
+        # Keep candidate-only snapshots inside the isolated candidate tree.
+        # Never write a candidate build back into the project's source tree.
+        generated_snapshot_root = (publication_override / ".generated" / "content" / "pages").resolve()
 
     for master_path in master_files(root):
         master_text = master_path.read_text(encoding="utf-8")
@@ -220,12 +231,18 @@ def build_master_pages(root: Path, provider: MockTranslationProvider, publicatio
                     "translation_status": status,
                 }
             )
+            target_path.parent.mkdir(parents=True, exist_ok=True)
             target_path.write_text(format_front_matter(metadata, body), encoding="utf-8")
             site_dir = output_root / locale
             site_dir.mkdir(parents=True, exist_ok=True)
             html_name = master_path.name[: -len("_master.md")] + ".html"
             site_dir.joinpath(html_name).write_text(
-                markdown_to_html(body, locale, background_image=background_visual(root, master_meta)),
+                markdown_to_html(
+                    body,
+                    locale,
+                    background_image=background_visual(root, master_meta),
+                    display_settings=display_settings,
+                ),
                 encoding="utf-8",
             )
 
@@ -277,7 +294,7 @@ def gallery_entries(root: Path) -> list[dict[str, Any]]:
 
 def write_generated_html(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(content, encoding="utf-8", newline="\n")
+    path.write_text(content, encoding="utf-8", newline="\r\n")
 
 
 def build_gallery(root: Path, output: Path, locales: list[str]) -> None:
@@ -353,6 +370,7 @@ def build_site(root: Path, provider: Optional[MockTranslationProvider] = None, c
         raise RuntimeError(dependency_error_message())
 
     provider = provider or MockTranslationProvider()
+    display_settings = display_runtime_settings(root)
     build_master_pages(root, provider, publication_override=candidate_root)
     dictionary_path = root / "config" / "term_dictionary.yaml"
     entries = load_term_dictionary(dictionary_path)
@@ -386,7 +404,10 @@ def build_site(root: Path, provider: Optional[MockTranslationProvider] = None, c
         if en_path.is_file():
             existing_en_meta, _ = parse_front_matter(en_path.read_text(encoding="utf-8"))
 
-        if should_preserve_en(existing_en_meta):
+        if en_path.is_file():
+            # Existing locale content is maintained content. Never regenerate
+            # or overwrite it during a normal build; translate only when the
+            # locale file is missing.
             en_text = en_path.read_text(encoding="utf-8")
         else:
             translated_body = translate_jp_file(jp_body, entries, provider)
@@ -401,11 +422,21 @@ def build_site(root: Path, provider: Optional[MockTranslationProvider] = None, c
 
         _, current_en_body = parse_front_matter(en_text)
         site_jp.joinpath(html_basename(basename)).write_text(
-            markdown_to_html(jp_body, "ja", background_image=background_visual(root, jp_meta)),
+            markdown_to_html(
+                jp_body,
+                "ja",
+                background_image=background_visual(root, jp_meta),
+                display_settings=display_settings,
+            ),
             encoding="utf-8",
         )
         site_en.joinpath(html_basename(basename)).write_text(
-            markdown_to_html(current_en_body, "en", background_image=background_visual(root, jp_meta)),
+            markdown_to_html(
+                current_en_body,
+                "en",
+                background_image=background_visual(root, jp_meta),
+                display_settings=display_settings,
+            ),
             encoding="utf-8",
         )
     build_gallery(root, output, supported_locales)

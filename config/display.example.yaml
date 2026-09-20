@@ -18,7 +18,9 @@ display:
     allowed:
       - standard
   persistence:
-    enabled: false
+    enabled: true
+    storage: local_storage
+    key: hada.display.v1
 
 javascript:
   external: false

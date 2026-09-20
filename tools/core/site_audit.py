@@ -72,7 +72,7 @@ def main() -> int:
     result = audit(Path(args.root).resolve())
     text = json.dumps(result, indent=2, ensure_ascii=False) + "\n"
     if args.output:
-        Path(args.output).write_text(text, encoding="utf-8", newline="\n")
+        Path(args.output).write_text(text, encoding="utf-8", newline="\r\n")
     sys.stdout.buffer.write(text.encode("utf-8"))
     return 0
 
