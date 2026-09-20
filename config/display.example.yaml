@@ -1,0 +1,26 @@
+display:
+  enabled: true
+  theme:
+    enabled: true
+    default: light
+    dark_mode:
+      enabled: true
+      respect_system_preference: true
+  text_size:
+    enabled: true
+    default: standard
+    levels:
+      - standard
+      - large
+      - xlarge
+  mode:
+    default: standard
+    allowed:
+      - standard
+  persistence:
+    enabled: false
+
+javascript:
+  external: false
+  required_for_content: false
+  local_optional: true

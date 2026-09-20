@@ -109,12 +109,26 @@ def markdown_to_html(
             "  @media (max-width: 700px){.background-fade{opacity:.32;background-size:72% auto;}}\n"
         )
         visual = '<div class="background-fade" aria-hidden="true"></div>\n'
+    controls = (
+        '<div class="display-controls" data-display-controls hidden aria-label="Display settings">'
+        '<span>Theme:</span>'
+        '<button type="button" data-set-theme="light" aria-pressed="true">Light</button>'
+        '<button type="button" data-set-theme="dark" aria-pressed="false">Dark</button>'
+        '<span>Text size:</span>'
+        '<button type="button" data-set-text-size="standard" aria-pressed="true">Standard</button>'
+        '<button type="button" data-set-text-size="large" aria-pressed="false">Large</button>'
+        '<button type="button" data-set-text-size="xlarge" aria-pressed="false">Extra large</button>'
+        '</div>\n'
+    )
     return (
         f"<!DOCTYPE html>\n<html lang=\"{lang}\">\n<head>\n"
         f"  <meta charset=\"UTF-8\">\n"
         f"  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"
-        f"  <title>{title}</title>\n{visual_css}</head>\n<body>\n"
-        f"{visual}{switch}{rendered}\n</body>\n</html>\n"
+        f"  <link rel=\"stylesheet\" href=\"../assets/css/core.css\">\n"
+        f"  <title>{title}</title>\n{visual_css}</head>\n<body data-theme=\"light\" data-text-size=\"standard\" data-mode=\"standard\">\n"
+        f"{visual}{switch}{controls}{rendered}\n"
+        '<script src="../assets/js/display-preferences.js" defer></script>\n'
+        "</body>\n</html>\n"
     )
 
 
@@ -263,7 +277,7 @@ def gallery_entries(root: Path) -> list[dict[str, Any]]:
 
 def write_generated_html(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(content, encoding="utf-8", newline="\r\n")
+    path.write_text(content, encoding="utf-8", newline="\n")
 
 
 def build_gallery(root: Path, output: Path, locales: list[str]) -> None:
@@ -330,7 +344,11 @@ def build_gallery(root: Path, output: Path, locales: list[str]) -> None:
         write_generated_html(gallery_root / "index.html", index)
 
 
-def build_site(root: Path, provider: Optional[MockTranslationProvider] = None, candidate_root: Optional[Path] = None) -> None:
+def build_site(root: Path, provider: Optional[MockTranslationProvider] = None, candidate_root: Optional[Path] = None, mode: str = "build-content") -> None:
+    if mode not in {"build-content", "build-html-master", "build-safe", "build-force"}:
+        raise ValueError(f"Unsupported build mode: {mode}")
+    if mode in {"build-safe", "build-force"} and candidate_root is None:
+        raise ValueError(f"{mode} requires --candidate-root; publication is never written directly")
     if yaml is None or markdown is None:
         raise RuntimeError(dependency_error_message())
 
@@ -397,6 +415,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Build translated content and HTML")
     parser.add_argument("--root", default=".", help="Repository root")
     parser.add_argument("--candidate-root", help="Clean candidate output directory; publication root is not written")
+    parser.add_argument("--mode", choices=["build-content", "build-html-master", "build-safe", "build-force"], default="build-content")
     args = parser.parse_args(argv)
 
     if yaml is None or markdown is None:
@@ -406,7 +425,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     root = Path(args.root).resolve()
     try:
         candidate = Path(args.candidate_root).resolve() if args.candidate_root else None
-        build_site(root, candidate_root=candidate)
+        build_site(root, candidate_root=candidate, mode=args.mode)
     except (OSError, ValueError, RuntimeError) as exc:
         print(str(exc), file=sys.stderr)
         return 2

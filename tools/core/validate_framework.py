@@ -19,6 +19,17 @@ try:
 except ImportError:
     yaml = None  # type: ignore[assignment]
 
+try:
+    from site_contract import allows_absent_scaffold, resolve_site
+except ImportError:  # pragma: no cover - direct import fallback
+    allows_absent_scaffold = None  # type: ignore[assignment]
+    resolve_site = None  # type: ignore[assignment]
+
+try:
+    from display_config import validate_display
+except ImportError:  # pragma: no cover
+    validate_display = None  # type: ignore[assignment]
+
 VALIDATOR_NAME = "core-validator"
 VALIDATOR_VERSION = "0.1"
 SCHEMA_VERSION = "0.1"
@@ -289,12 +300,21 @@ def validate_project_config(ctx: ValidationContext) -> None:
     content_root = paths.get("content_master")
     ctx.publication_root_value = pub_root if isinstance(pub_root, str) else None
 
+    contract = resolve_site(root) if resolve_site else {"template_scaffold": "present", "publication_root": pub_root or "site"}
+    scaffold = contract.get("template_scaffold")
+    ctx.mark_checked("CFG-014")
+    if scaffold not in {"present", "absent", "managed"}:
+        ctx.add("CFG-014", "ERROR", "site.template_scaffold must be present, absent, or managed", file="config/project.yaml", field="site.template_scaffold")
+
     publication_missing = False
     ctx.mark_checked("CFG-007")
     pub_resolved = resolve_repo_path(root, ctx.publication_root_value)
     if not pub_root or pub_resolved is None or not pub_resolved.is_dir():
         publication_missing = True
-        ctx.add("CFG-007", "ERROR", "paths.publication_root does not resolve to an existing directory", file="config/project.yaml", field="paths.publication_root")
+        if scaffold == "absent":
+            ctx.add("CFG-007", "INFO", "publication root is intentionally absent by site.template_scaffold", file="config/project.yaml", field="site.template_scaffold")
+        else:
+            ctx.add("CFG-007", "ERROR", "paths.publication_root does not resolve to an existing directory", file="config/project.yaml", field="paths.publication_root")
 
     ctx.mark_checked("CFG-008")
     content_resolved = resolve_repo_path(root, content_root if isinstance(content_root, str) else None)
@@ -302,7 +322,7 @@ def validate_project_config(ctx: ValidationContext) -> None:
         ctx.add("CFG-008", "ERROR", "paths.content_master does not resolve to an existing directory", file="config/project.yaml", field="paths.content_master")
 
     ctx.mark_checked("STRUCT-023")
-    if publication_missing and not any(
+    if publication_missing and scaffold != "absent" and not any(
         item.rule_id == "CFG-007" for item in ctx.findings
     ):
         ctx.add(
@@ -326,6 +346,16 @@ def validate_project_config(ctx: ValidationContext) -> None:
         ctx.add("CFG-010", "WARNING", "config/site.yaml missing", file="config/site.yaml")
     else:
         validate_site_config(ctx, site_path)
+
+    display_path = root / "config" / "display.yaml"
+    ctx.mark_checked("CFG-015")
+    if display_path.is_file() and yaml is not None and validate_display is not None:
+        display_data, display_error = load_yaml_file(display_path)
+        if display_error:
+            ctx.add("CFG-015", "ERROR", f"Invalid display configuration: {display_error}", file="config/display.yaml")
+        else:
+            for message in validate_display(display_data or {}):
+                ctx.add("CFG-016", "ERROR", message, file="config/display.yaml")
 
 
 def validate_site_config(ctx: ValidationContext, site_path: Path) -> None:

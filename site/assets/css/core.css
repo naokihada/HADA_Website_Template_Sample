@@ -1,0 +1,44 @@
+:root,
+[data-theme="light"] {
+  --color-page-bg: #ffffff;
+  --color-surface: rgba(255, 255, 255, 0.92);
+  --color-text: #111111;
+  --color-muted: #666666;
+  --color-border: rgba(0, 0, 0, 0.16);
+  --color-focus: #9b001b;
+  --font-scale: 1;
+}
+
+[data-theme="dark"] {
+  --color-page-bg: #111111;
+  --color-surface: rgba(30, 30, 34, 0.94);
+  --color-text: #f2f2f2;
+  --color-muted: #b8b8b8;
+  --color-border: rgba(255, 255, 255, 0.18);
+  --color-focus: #ff8a9b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-page-bg: #111111;
+    --color-surface: rgba(30, 30, 34, 0.94);
+    --color-text: #f2f2f2;
+    --color-muted: #b8b8b8;
+    --color-border: rgba(255, 255, 255, 0.18);
+    --color-focus: #ff8a9b;
+  }
+}
+
+[data-text-size="large"] { --font-scale: 1.12; }
+[data-text-size="xlarge"] { --font-scale: 1.28; }
+
+html { background: var(--color-page-bg); color: var(--color-text); }
+body { background: var(--color-page-bg); color: var(--color-text); font-size: calc(1rem * var(--font-scale)); }
+a { color: inherit; }
+button, select { color: inherit; background: var(--color-surface); border: 1px solid var(--color-border); }
+:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.display-controls { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+.display-controls[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; scroll-behavior: auto !important; transition-duration: 0.001ms !important; }
+}

@@ -276,7 +276,7 @@ class UpgradeMigrationTests(unittest.TestCase):
         manifest, error = ufr.load_yaml(RELEASE_MANIFEST)
         self.assertIsNone(error)
         assert manifest is not None
-        self.assertEqual(manifest["template"]["version"], "0.3.1")
+        self.assertEqual(manifest["template"]["version"], "0.3.2")
 
     def test_case_o_target_git_untouched(self) -> None:
         prev = self.base / "P"

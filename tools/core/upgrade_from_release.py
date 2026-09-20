@@ -20,6 +20,8 @@ import urllib.request
 import zipfile
 import template_base
 import file_transaction as tx
+from site_audit import audit as audit_site, compare as compare_site  # noqa: E402
+from site_contract import publication_path  # noqa: E402
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
@@ -758,6 +760,20 @@ def run_upgrade(
                     return UpgradeResult('FAILED', EXIT_FAILED, str(root.resolve()), current_ver,
                         detection, target_ver, target_tag, str(candidate), plan=plan,
                         findings=[Finding('UPG-051', 'ERROR', 'Candidate verification failed: ' + Path(command[1]).name)])
+            before_publication = publication_path(root)
+            after_publication = publication_path(candidate)
+            semantic_before = audit_site(before_publication)
+            semantic_after = audit_site(after_publication)
+            semantic_diff = compare_site(semantic_before, semantic_after)
+            semantic_report = candidate / 'build' / 'upgrade-semantic-diff.json'
+            semantic_report.parent.mkdir(parents=True, exist_ok=True)
+            semantic_report.write_text(json.dumps({
+                'before': semantic_before,
+                'after': semantic_after,
+                'diff': semantic_diff,
+            }, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
+            if semantic_diff['status'] != 'PASS':
+                findings.append(Finding('UPG-060', 'WARNING', 'Candidate semantic site diff requires review', file='build/upgrade-semantic-diff.json'))
             # Candidate build output is verification only, never copied over styled output.
             operations = []
             for item in plan:

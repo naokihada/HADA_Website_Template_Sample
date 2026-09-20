@@ -1,4 +1,4 @@
-# HADA Website Template — machine-readable upgrade contract (v0.3.1)
+# HADA Website Template — machine-readable upgrade contract (v0.3.2)
 # Template version is independent of config/project.yaml → project.version
 
 manifest_version: "1.0"
@@ -8,8 +8,8 @@ schema_version: "0.1"
 template:
   id: hada-website-template
   name: HADA Website Operations Framework
-  version: "0.3.1"
-  release: "v0.3.1"
+  version: "0.3.2"
+  release: "v0.3.2"
   release_repository: naokihada/HADA_Website_Template
 
 compatibility:
@@ -33,6 +33,7 @@ ownership:
     - "docs/VALIDATION.md"
     - "docs/UPGRADE.md"
     - "docs/README.md"
+    - "docs/DISPLAY.md"
     - "CHANGELOG.md"
     - "AGENTS.md"
     - "README.md"
@@ -46,6 +47,7 @@ ownership:
     - "config/image-generation.example.yaml"
     - "config/gallery.example.yaml"
     - "config/page-registry.example.yaml"
+    - "config/display.example.yaml"
     - "config/local.example.yaml"
     - "config/term_dictionary.example.yaml"
     - "environments/environments.example.yaml"
@@ -60,12 +62,20 @@ ownership:
     - "site/sw.js"
     - "site/assets/timer.js"
     - "site/assets/.gitkeep"
+    - "site/assets/css/core.css"
+    - "site/assets/js/display-preferences.js"
     - "AI/README.md"
     - "tools/core/upgrade_from_release.py"
     - "tools/core/assets.py"
     - "tools/core/page_registry.py"
     - "tools/core/tree_parity.py"
     - "tools/core/release_snapshot.py"
+    - "tools/core/site_contract.py"
+    - "tools/core/site_audit.py"
+    - "tools/core/display_config.py"
+    - "tools/core/external_dependency_scan.py"
+    - "tests/test_v032_contracts.py"
+    - "tests/test_display.py"
   user:
     - "TEMPLATE_BASE.md"
     - "TEMPLATE_UPDATES.md"
@@ -142,5 +152,9 @@ migrations:
       - "0.3.1"
     notes: "Adds HTML Master registry, isolated candidate build, release snapshots, and tree parity checks"
   "0.3.1":
+    to:
+      - "0.3.2"
+    notes: "Adds v0.3.2 static Web and optional display enhancement foundation"
+  "0.3.2":
     to: []
-    notes: "Current baseline with safe HTML Master upgrade support"
+    notes: "Current baseline with long-lived static Web policy and optional display enhancement"

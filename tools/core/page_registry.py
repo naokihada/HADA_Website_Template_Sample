@@ -12,6 +12,8 @@ from typing import Any
 
 import yaml
 
+MASTER_TYPES = {"html", "markdown", "generated", "project-template", "unknown", "review_required"}
+
 
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
@@ -36,6 +38,13 @@ def load_registry(root: Path) -> dict[str, Any]:
     if not isinstance(data, dict) or not isinstance(data.get("pages", []), list):
         raise ValueError("page registry must contain a pages list")
     return data
+
+
+def classify_page(page: dict[str, Any]) -> str:
+    master = page.get("master") if isinstance(page.get("master"), dict) else {}
+    source = page.get("source") if isinstance(page.get("source"), dict) else {}
+    value = master.get("type") or source.get("type") or page.get("master_type") or "unknown"
+    return str(value) if str(value) in MASTER_TYPES else "review_required"
 
 
 def safe_rel(root: Path, value: str) -> Path:
@@ -90,14 +99,14 @@ def build_html_masters(root: Path, candidate_root: Path) -> list[dict[str, Any]]
             existing = publication / target_rel
             if existing.is_file():
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(existing.read_text(encoding="utf-8"), encoding="utf-8", newline="\r\n")
+                target.write_text(existing.read_text(encoding="utf-8"), encoding="utf-8", newline="\n")
                 status = "OUTDATED" if old_hash and old_hash != source_hash else "PRESERVED"
             else:
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(_copy_with_language(master_text, str(locale)), encoding="utf-8", newline="\r\n")
+                target.write_text(_copy_with_language(master_text, str(locale)), encoding="utf-8", newline="\n")
                 status = "SOURCE" if str(locale) == str(source.get("master_locale", "jp")) else "REVIEW_REQUIRED"
             statuses.append({"page_id": page_id, "locale": str(locale), "status": status, "source_hash": source_hash, "path": str(target_rel).replace("\\", "/")})
     report = candidate_root / ".build" / "page-status.json"
     report.parent.mkdir(parents=True, exist_ok=True)
-    report.write_text(json.dumps({"pages": statuses}, indent=2) + "\n", encoding="utf-8", newline="\r\n")
+    report.write_text(json.dumps({"pages": statuses}, indent=2) + "\n", encoding="utf-8", newline="\n")
     return statuses
