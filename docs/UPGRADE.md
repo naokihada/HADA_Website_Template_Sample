@@ -30,6 +30,22 @@ Dry-run and failed upgrades do not advance the Base.
 
 Do not use `project.version` as the template version.
 
+### v0.4.0 media data change
+
+The v0.4.0 media catalog is a new data structure and may require migration from
+the v0.3 image registry. Before merging or applying the upgrade, preserve the
+existing manifest and review its assets and page bindings. The optional
+`python tools/core/media_library.py migrate-legacy --root . --apply` command
+writes a separate `config/media.manifest.v0.4.yaml` candidate; it does not
+replace the active manifest, rewrite publication HTML, or delete files. Review
+the candidate and media paths before merging it manually. Ambiguous ownership or
+missing source data remains `REVIEW_REQUIRED`.
+
+Generated originals are private and are not copied into the publication root.
+Video and PDF metadata processing is best-effort and reports when local tools
+are unavailable. See `docs/MEDIA.md` for media intake, page bindings, and
+collection behavior.
+
 ---
 
 ## 3. Check current template version
@@ -165,7 +181,17 @@ python tests/test_validate_framework.py
 python tests/test_translation.py
 python tools/core/validate_framework.py --root .
 python tools/core/build_site.py --root .
+python tests/test_browser_ui.py
 ```
+
+When the optional browser capability is enabled, the Upgrade candidate must pass
+the browser UI contract before any safe apply. A missing Playwright runtime,
+unsupported route profile, visual contract mismatch, console fatal error, or
+responsive overflow is `REVIEW_REQUIRED`; it is not silently accepted.
+
+The candidate/publication boundary is explicit. Use an isolated candidate build
+and review it with `tools/core/promote_build.py` before applying it. The promotion
+tool preserves project-owned CSS, HTML, images, route profiles, and extensions.
 
 See `docs/VALIDATION.md` for validator rules and baseline.
 

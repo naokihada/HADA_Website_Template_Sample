@@ -21,6 +21,25 @@ display:
     enabled: true
     storage: local_storage
     key: hada.display.v1
+  accessibility:
+    normal_text_min_contrast: 4.5
+    large_text_min_contrast: 3.0
+    minimum_font_size: "1rem"
+    preserve_background_treatment: true
+    foreground_adjustment_order:
+      - color
+      - font_weight
+      - font_size
+      - font_family
+    contrast_pairs:
+      - name: standard-text-on-page
+        foreground: "#111111"
+        background: "#ffffff"
+        minimum: 4.5
+      - name: muted-text-on-page
+        foreground: "#555555"
+        background: "#ffffff"
+        minimum: 4.5
 
 javascript:
   external: false

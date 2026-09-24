@@ -8,13 +8,15 @@ visual:
   background_fade:
     image_id: restaurant-background-001
 source_file: content/pages/demo_master.md
-source_hash: sha256:a0e9272d05d8b68c1348c3b8ec7638c7194b03d083e11fd5e4a78c92d8af9872
+source_hash: sha256:555b4c0de6d897c1326fdd4245ee3b314a57edaa6358a24f3c935d568f48840b
 target_locale: DE
 translation_status: TRANSLATED
 ---
 
 [de]# Sample i18n Demo
 [/de][de]This page demonstrates a shared structure for Japanese, English, and German output.
+[/de][de]## Sample Artwork
+[/de][de]The same logical-page artwork is reused across all three locales.
 [/de]HADA Website Template
 Human-AI Development Architecture
 ```python i18n-comments

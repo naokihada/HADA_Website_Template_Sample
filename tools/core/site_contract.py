@@ -36,8 +36,10 @@ def resolve_site(root: Path) -> dict[str, Any]:
         "publication_root": publication,
         "template_scaffold": scaffold,
         "generated_root": str(paths.get("generated_root") or "build"),
+        "local_test_root": str(paths.get("local_test_root") or publication),
         "page_registry": str(paths.get("page_registry") or "config/page-registry.yaml"),
         "template_references": str(paths.get("template_references") or "references/template-releases"),
+        "browser": ((data.get("verification") or {}).get("browser") if isinstance(data.get("verification"), dict) else {}) or {},
     }
 
 

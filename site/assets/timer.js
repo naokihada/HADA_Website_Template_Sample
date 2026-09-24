@@ -104,7 +104,7 @@
   window.addEventListener("appinstalled", () => { hideInstallUi(); setStatus("Timer installed"); });
   window.matchMedia("(display-mode: standalone)").addEventListener?.("change", (event) => { if (event.matches) hideInstallUi(); });
   window.addEventListener("beforeunload", () => clearInterval(intervalId));
-  if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(() => setStatus("Timer ready; offline support unavailable."));
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => setStatus("Timer ready; offline support unavailable."));
   reset();
   if (isStandalone()) hideInstallUi();
   else window.setTimeout(() => { if (!deferredInstallPrompt) showInstallHelp(); }, 1500);

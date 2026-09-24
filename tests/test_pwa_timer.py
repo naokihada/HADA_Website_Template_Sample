@@ -34,7 +34,8 @@ class PwaTimerContractTests(unittest.TestCase):
         self.assertIn("512x512", icons)
         for icon in icons.values():
             self.assertEqual(icon["type"], "image/png")
-            self.assertTrue((ROOT / "site" / icon["src"][2:]).is_file())
+            self.assertTrue(icon["src"].startswith("/"))
+            self.assertTrue((ROOT / "site" / icon["src"].lstrip("/")).is_file())
 
     def test_unsupported_browser_copy_covers_apple_and_other(self):
         script = SCRIPT.read_text(encoding="utf-8")

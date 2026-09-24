@@ -1,4 +1,4 @@
-schema_version: '0.1'
+schema_version: '0.2'
 images:
 - image_id: restaurant-background-001
   master: assets/images/master/restaurant-background-001.png
@@ -118,3 +118,281 @@ images:
   master_sha256: sha256:b56390643a5513122a12d13f516a7f16af536b02aff45be8712ce5ba5a2c4dec
   web_sha256: sha256:e16aa722baedbac077a4ffc3f3e273a77d6af9f5320239e458e8f5f0a24ff2b8
   thumbnail_sha256: sha256:be216d8c4b314a2bb9bd63ad7a754b0651e0e04ee1af03b4e77d3475bfe05742
+media:
+- media_id: restaurant-background-001
+  type: image
+  source:
+    file: assets/images/master/restaurant-background-001.png
+    visibility: private
+    origin: generated
+    sha256: sha256:375c0b222d9858e0e775e459b969c04a0d77f286b5e9cd48d849db97f9b44276
+  public_file: assets/media/web/restaurant-background-001.jpg
+  thumbnail: assets/media/thumbnails/restaurant-background-001.jpg
+  title:
+    en: Restaurant Background
+    jp: Restaurant Background
+    de: Restaurant Background
+  alt:
+    en: Abstract warm light and architectural lines
+    jp: 抽象的な光と建築的な線
+    de: Abstraktes Licht und architektonische Linien
+  status: approved
+  processing:
+    metadata_strip: true
+    embedded_signal_transform: false
+    domain_mark: true
+    metadata_result: stripped:new image derivative
+  public_sha256: sha256:88c25734441a83d967a594489ce82ed175311139c00a10053e37c25992a68061
+- media_id: restaurant-about-001
+  type: image
+  source:
+    file: assets/images/master/restaurant-about-001.png
+    visibility: private
+    origin: generated
+    sha256: sha256:1782a430f17775c0fb2e1df0d5675963e0fbc01a2cbcaee88fe16ec8b430cd46
+  public_file: assets/media/web/restaurant-about-001.jpg
+  thumbnail: assets/media/thumbnails/restaurant-about-001.jpg
+  title:
+    en: Quiet Interior
+    jp: Quiet Interior
+    de: Ruhiger Innenraum
+  alt:
+    en: Quiet modern restaurant interior
+    jp: 静かな現代的レストランの内装
+    de: Ruhiger moderner Restaurantinnenraum
+  status: approved
+  processing:
+    metadata_strip: true
+    embedded_signal_transform: false
+    domain_mark: true
+    metadata_result: stripped:new image derivative
+  public_sha256: sha256:eb9042845a1d881028975ca086def5febb82c65615e8668274cbfe4164231966
+- media_id: restaurant-gallery-001
+  type: image
+  source:
+    file: assets/images/master/restaurant-gallery-001.png
+    visibility: private
+    origin: generated
+    sha256: sha256:6bc8bfacb229ec2af8948b443be2f8f426030e893cf45622d0b3da41bf7d3022
+  public_file: assets/media/web/restaurant-gallery-001.jpg
+  thumbnail: assets/media/thumbnails/restaurant-gallery-001.jpg
+  title:
+    en: Gallery Selection
+    jp: Gallery Selection
+    de: Galerie-Auswahl
+  alt:
+    en: Selected restaurant gallery visual
+    jp: レストランギャラリーの画像
+    de: Ausgewähltes Restaurantmotiv
+  status: approved
+  processing:
+    metadata_strip: true
+    embedded_signal_transform: false
+    domain_mark: true
+    metadata_result: stripped:new image derivative
+  public_sha256: sha256:26f16b2246ce3411bba8e87a9ff01ea41f085ccb2533c0788bee20ae80f86320
+- media_id: restaurant-home-001
+  type: image
+  source:
+    file: assets/images/master/restaurant-home-001.png
+    visibility: private
+    origin: generated
+    sha256: sha256:2df8af55e41ecdfaa6891fc045ecfaa057988e07e34da949ddf223f0769b256a
+  public_file: assets/media/web/restaurant-home-001.jpg
+  thumbnail: assets/media/thumbnails/restaurant-home-001.jpg
+  title:
+    en: Restaurant Home
+    jp: Restaurant Home
+    de: Restaurant-Startseite
+  alt:
+    en: Restaurant homepage visual
+    jp: レストランのホームページ画像
+    de: Titelmotiv der Restaurantseite
+  status: approved
+  processing:
+    metadata_strip: true
+    embedded_signal_transform: false
+    domain_mark: true
+    metadata_result: stripped:new image derivative
+  public_sha256: sha256:7093aef2386cd03d6beeca42c88f3e5f1fb52eca7d7562e26cb1940ea55c7cb4
+- media_id: restaurant-menu-001
+  type: image
+  source:
+    file: assets/images/master/restaurant-menu-001.png
+    visibility: private
+    origin: generated
+    sha256: sha256:b56390643a5513122a12d13f516a7f16af536b02aff45be8712ce5ba5a2c4dec
+  public_file: assets/media/web/restaurant-menu-001.jpg
+  thumbnail: assets/media/thumbnails/restaurant-menu-001.jpg
+  title:
+    en: Seasonal Dish
+    jp: Seasonal Dish
+    de: Saisonales Gericht
+  alt:
+    en: Seasonal dish on a quiet ceramic table
+    jp: 静かな陶器のテーブルに置かれた季節の料理
+    de: Saisonales Gericht auf einem ruhigen Keramiktisch
+  status: approved
+  processing:
+    metadata_strip: true
+    embedded_signal_transform: false
+    domain_mark: true
+    metadata_result: stripped:new image derivative
+  public_sha256: sha256:e8b82b957d780a94a4e1e35f7dd29c72ec4186d9ac8feb560446e5fc3eace4a6
+collections:
+- collection_id: sample-media-library
+  route: media-library
+  title:
+    en: Media Library
+    jp: メディアライブラリ
+    de: Medienbibliothek
+  presentation: gallery
+  listing:
+    enabled: true
+  media_ids:
+  - restaurant-home-001
+  - restaurant-about-001
+  - restaurant-menu-001
+  - restaurant-gallery-001
+  - restaurant-background-001
+  children:
+  - collection_id: sample-single-series
+    route: media-reader/single
+    title:
+      en: Single-page Reader
+      jp: 単ページリーダー
+      de: Einzelseiten-Leser
+    presentation: gallery
+    children:
+    - collection_id: sample-single-volume
+      route: media-reader/single/volume-01
+      title:
+        en: Volume 1
+        jp: 第1巻
+        de: Band 1
+      presentation: gallery
+      children:
+      - collection_id: sample-single-chapter
+        route: media-reader/single/volume-01/chapter-01
+        title:
+          en: Chapter 1 — Single Pages
+          jp: 第1話 — 単ページ
+          de: Kapitel 1 — Einzelseiten
+        presentation: sequence
+        listing:
+          enabled: false
+        media_ids:
+        - restaurant-home-001
+        - restaurant-about-001
+        - restaurant-menu-001
+        - restaurant-gallery-001
+        - restaurant-background-001
+        sequence:
+          order: manual
+          reading_direction: rtl
+          first_page_side: right
+          view: single
+          spread_enabled: true
+          labels:
+            next: Next
+            previous: Prev
+            locales:
+              jp:
+                next: Next
+                previous: Prev
+              en:
+                next: Next
+                previous: Prev
+              de:
+                next: Next
+                previous: Prev
+  - collection_id: sample-spread-series
+    route: media-reader/spread
+    title:
+      en: Two-page Spread Reader
+      jp: 見開きリーダー
+      de: Doppelseiten-Leser
+    presentation: gallery
+    children:
+    - collection_id: sample-spread-volume
+      route: media-reader/spread/volume-01
+      title:
+        en: Volume 1
+        jp: 第1巻
+        de: Band 1
+      presentation: gallery
+      children:
+      - collection_id: sample-spread-chapter
+        route: media-reader/spread/volume-01/chapter-01
+        title:
+          en: Chapter 1 — Spreads
+          jp: 第1話 — 見開き
+          de: Kapitel 1 — Doppelseiten
+        presentation: sequence
+        listing:
+          enabled: true
+        media_ids:
+        - restaurant-home-001
+        - restaurant-about-001
+        - restaurant-menu-001
+        - restaurant-gallery-001
+        - restaurant-background-001
+        sequence:
+          order: manual
+          reading_direction: rtl
+          first_page_side: right
+          view: spread
+          spread_enabled: true
+          labels:
+            next: Next
+            previous: Prev
+            locales:
+              jp:
+                next: Next
+                previous: Prev
+              en:
+                next: Next
+                previous: Prev
+              de:
+                next: Next
+                previous: Prev
+page_bindings:
+- page_id: demo
+  role: page_header
+  media_ids:
+  - restaurant-home-001
+- page_id: demo
+  role: illustration
+  heading_id: sample-artwork
+  align: right
+  media_ids:
+  - restaurant-menu-001
+  - restaurant-gallery-001
+- page_id: demo
+  role: background
+  media_id: restaurant-background-001
+processing:
+  domain: sample.hada.test
+  defaults:
+    metadata_strip: true
+    embedded_signal_transform: false
+    domain_mark: true
+  by_type:
+    image:
+      metadata_strip: true
+      domain_mark: true
+    video:
+      metadata_strip: true
+      domain_mark: false
+    document:
+      metadata_strip: true
+      domain_mark: false
+  domain_mark_style:
+    position: bottom-left
+    uppercase: true
+    color: '#ffffff'
+    opacity: 0.88
+    shadow_color: '#000000'
+    shadow_opacity: 0.38
+    font_size_ratio: 0.035
+    margin_ratio: 0.025

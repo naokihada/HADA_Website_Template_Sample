@@ -12,6 +12,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 try:
     import yaml
@@ -19,9 +20,11 @@ except ImportError:
     yaml = None  # type: ignore[assignment]
 
 try:
-    from PIL import Image
+    from PIL import Image, ImageDraw, ImageFont
 except ImportError:
     Image = None  # type: ignore[assignment]
+    ImageDraw = None  # type: ignore[assignment]
+    ImageFont = None  # type: ignore[assignment]
 
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".avif"}
@@ -35,6 +38,8 @@ THUMB_ROOT = Path("assets/images/thumbnails")
 METADATA_ROOT = Path("assets/metadata/images")
 INBOX_ROOT = Path("AI/inbox/assets")
 LEGACY_PROVENANCE_ROOT = Path("AI/history/assets")
+OVERLAY_TYPES = {"none", "text_logo"}
+OVERLAY_POSITIONS = {"bottom-left", "bottom-right", "top-left", "top-right"}
 
 
 def fail(message: str) -> int:
@@ -96,6 +101,129 @@ def load_generation_config(root: Path) -> dict[str, Any]:
     return data
 
 
+def effective_overlay_config(generation_config: dict[str, Any]) -> dict[str, Any]:
+    """Return normalized Web-derivative overlay settings."""
+    configured = generation_config.get("web_overlay")
+    values = configured if isinstance(configured, dict) else {}
+    defaults: dict[str, Any] = {
+        "enabled": False,
+        "type": "none",
+        "text_source": "domain",
+        "domain": "",
+        "text": "",
+        "uppercase": True,
+        "omit_www_prefix": True,
+        "position": "bottom-left",
+        "color": "#ffffff",
+        "opacity": 0.88,
+        "shadow_color": "#000000",
+        "shadow_opacity": 0.38,
+        "font_size_ratio": 0.035,
+        "margin_ratio": 0.025,
+    }
+    defaults.update(values)
+    if not defaults["enabled"]:
+        defaults["type"] = "none"
+    return defaults
+
+
+def validate_overlay_config(config: dict[str, Any]) -> list[str]:
+    """Validate settings that affect only published Web derivatives."""
+    errors: list[str] = []
+    if not isinstance(config.get("enabled"), bool):
+        errors.append("web_overlay.enabled must be boolean")
+    if config.get("type") not in OVERLAY_TYPES:
+        errors.append("web_overlay.type must be none or text_logo")
+    if config.get("position") not in OVERLAY_POSITIONS:
+        errors.append("web_overlay.position is invalid")
+    for key in ("opacity", "shadow_opacity"):
+        value = config.get(key)
+        if not isinstance(value, (int, float)) or not 0 <= float(value) <= 1:
+            errors.append(f"web_overlay.{key} must be between 0 and 1")
+    for key in ("font_size_ratio", "margin_ratio"):
+        value = config.get(key)
+        if not isinstance(value, (int, float)) or not 0 < float(value) <= 0.25:
+            errors.append(f"web_overlay.{key} must be greater than 0 and at most 0.25")
+    if config.get("enabled") and config.get("type") == "text_logo":
+        if config.get("text_source") not in {"domain", "text"}:
+            errors.append("web_overlay.text_source must be domain or text")
+        if config.get("text_source") == "domain" and not str(config.get("domain", "")).strip():
+            errors.append("web_overlay.domain is required for domain text_source")
+        if config.get("text_source") == "text" and not str(config.get("text", "")).strip():
+            errors.append("web_overlay.text is required for text text_source")
+    return errors
+
+
+def overlay_text(config: dict[str, Any]) -> str:
+    """Resolve a stable logo label without retaining URL paths or credentials."""
+    if config.get("text_source") == "text":
+        value = str(config.get("text", "")).strip()
+    else:
+        raw = str(config.get("domain", "")).strip()
+        parsed = urlparse(raw if "://" in raw else f"//{raw}")
+        value = (parsed.hostname or raw.split("/", 1)[0]).strip().lower()
+        if config.get("omit_www_prefix") and value.startswith("www."):
+            value = value[4:]
+    return value.upper() if config.get("uppercase", True) else value
+
+
+def overlay_fingerprint(config: dict[str, Any]) -> str:
+    """Hash normalized overlay settings for deterministic derivative sync."""
+    payload = json.dumps(config, ensure_ascii=True, sort_keys=True, separators=(",", ":"))
+    return f"sha256:{hashlib.sha256(payload.encode('utf-8')).hexdigest()}"
+
+
+def _color(value: Any, alpha: float = 1.0) -> tuple[int, int, int, int]:
+    text = str(value or "#ffffff").strip().lstrip("#")
+    if len(text) == 3:
+        text = "".join(char * 2 for char in text)
+    if len(text) != 6 or not re.fullmatch(r"[0-9a-fA-F]{6}", text):
+        raise ValueError(f"invalid overlay color: {value}")
+    return tuple(int(text[index : index + 2], 16) for index in (0, 2, 4)) + (round(255 * alpha),)
+
+
+def _font(config: dict[str, Any], size: int) -> Any:
+    if ImageFont is None:
+        raise RuntimeError("Pillow is required")
+    configured = str(config.get("font_path", "")).strip()
+    if configured:
+        path = Path(configured)
+        if path.is_file():
+            return ImageFont.truetype(str(path), size=size)
+    try:
+        return ImageFont.truetype("DejaVuSans.ttf", size=size)
+    except OSError:
+        return ImageFont.load_default()
+
+
+def apply_web_overlay(image: Any, config: dict[str, Any]) -> Any:
+    """Apply an optional text logo to a Web derivative only."""
+    if Image is None or ImageDraw is None:
+        raise RuntimeError("Pillow is required")
+    base = image.convert("RGBA")
+    if not config.get("enabled") or config.get("type") == "none":
+        return base
+    text = overlay_text(config)
+    if not text:
+        return base
+    width, height = base.size
+    minimum = min(width, height)
+    size = max(12, round(minimum * float(config.get("font_size_ratio", 0.035))))
+    margin = max(4, round(minimum * float(config.get("margin_ratio", 0.025))))
+    font = _font(config, size)
+    draw = ImageDraw.Draw(base)
+    left, top, right, bottom = draw.textbbox((0, 0), text, font=font)
+    text_width, text_height = right - left, bottom - top
+    position = str(config.get("position", "bottom-left"))
+    x = margin if position.endswith("left") else width - text_width - margin
+    y = margin if position.startswith("top") else height - text_height - margin
+    shadow = _color(config.get("shadow_color"), float(config.get("shadow_opacity", 0.38)))
+    foreground = _color(config.get("color"), float(config.get("opacity", 0.88)))
+    draw.text((x + 2, y + 2), text, font=font, fill=shadow)
+    draw.text((x, y), text, font=font, fill=foreground)
+    return base
+
+
 def write_manifest(root: Path, data: dict[str, Any]) -> None:
     if yaml is None:
         raise RuntimeError("PyYAML is required")
@@ -113,6 +241,7 @@ def write_provenance(
     provider: str,
     prompt_profile: str,
     prompt: str,
+    overlay_config: dict[str, Any],
 ) -> None:
     if yaml is None:
         raise RuntimeError("PyYAML is required")
@@ -128,6 +257,8 @@ def write_provenance(
         "prompt": prompt,
         "imported_at": datetime.now(timezone.utc).isoformat(),
         "tracking_metadata_policy": "stripped from web derivative",
+        "web_overlay_fingerprint": overlay_fingerprint(overlay_config),
+        "web_overlay": overlay_config,
         "review": "human approval recorded by assets.py --approve",
     }
     (directory / "PROVENANCE.yaml").write_text(
@@ -137,12 +268,12 @@ def write_provenance(
     )
 
 
-def convert_to_jpeg(source: Path, target: Path) -> None:
+def convert_to_jpeg(source: Path, target: Path, overlay_config: dict[str, Any] | None = None) -> None:
     if Image is None:
         raise RuntimeError("Pillow is required")
     target.parent.mkdir(parents=True, exist_ok=True)
     with Image.open(source) as image:
-        converted = image.convert("RGBA")
+        converted = apply_web_overlay(image, overlay_config or effective_overlay_config({}))
         background = Image.new("RGB", converted.size, (255, 255, 255))
         background.paste(converted, mask=converted.getchannel("A"))
         # Saving a new image object with no info dict prevents source/provider
@@ -213,6 +344,10 @@ def import_plan(root: Path, plan_path: Path, approve: bool, prompt_file: Path | 
         return fail("import is gated; pass --approve after reviewing the plan")
     manifest = load_manifest(root)
     generation_config = load_generation_config(root)
+    overlay_config = effective_overlay_config(generation_config)
+    overlay_errors = validate_overlay_config(overlay_config)
+    if overlay_errors:
+        return fail("; ".join(overlay_errors))
     provider_config = generation_config.get("provider") or {}
     profile_config = generation_config.get("prompt_profile") or {}
     default_provider = str(provider_config.get("default", "chatgpt_image"))
@@ -248,11 +383,11 @@ def import_plan(root: Path, plan_path: Path, approve: bool, prompt_file: Path | 
         thumbnail = root / thumbnail_rel
         master.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, master)
-        convert_to_jpeg(master, web)
+        convert_to_jpeg(master, web, overlay_config)
         create_thumbnail(master, thumbnail)
         provider = str(item.get("provider", default_provider))
         prompt_profile = str(item.get("prompt_profile", default_profile))
-        write_provenance(root, image_id, source, route, provider, prompt_profile, prompt)
+        write_provenance(root, image_id, source, route, provider, prompt_profile, prompt, overlay_config)
         entries[image_id] = {
             "image_id": image_id,
             "master": str(master_rel).replace("\\", "/"),
@@ -268,6 +403,7 @@ def import_plan(root: Path, plan_path: Path, approve: bool, prompt_file: Path | 
             "master_sha256": f"sha256:{sha256(master)}",
             "web_sha256": f"sha256:{sha256(web)}",
             "thumbnail_sha256": f"sha256:{sha256(thumbnail)}",
+            "web_overlay_fingerprint": overlay_fingerprint(overlay_config),
         }
     manifest["images"] = list(entries.values())
     write_manifest(root, manifest)
@@ -277,15 +413,23 @@ def import_plan(root: Path, plan_path: Path, approve: bool, prompt_file: Path | 
 
 def sync_assets(root: Path, apply: bool) -> int:
     manifest = load_manifest(root)
+    overlay_config = effective_overlay_config(load_generation_config(root))
+    overlay_errors = validate_overlay_config(overlay_config)
+    if overlay_errors:
+        return fail("; ".join(overlay_errors))
+    current_overlay_fingerprint = overlay_fingerprint(overlay_config)
     findings: list[str] = []
     changed = 0
+    unresolved = 0
     for item in manifest["images"]:
         if not isinstance(item, dict):
             findings.append("REVIEW_REQUIRED invalid registry entry")
+            unresolved += 1
             continue
         image_id = str(item.get("image_id", ""))
         if not IMAGE_ID_RE.fullmatch(image_id):
             findings.append(f"REVIEW_REQUIRED invalid image_id: {image_id}")
+            unresolved += 1
             continue
         master_rel = safe_relative(root, str(item.get("master", "")))
         web_rel = safe_relative(root, str(item.get("web", "")))
@@ -295,36 +439,60 @@ def sync_assets(root: Path, apply: bool) -> int:
         thumbnail = root / thumbnail_rel
         if not master.is_file():
             findings.append(f"REVIEW_REQUIRED missing master: {image_id}")
+            unresolved += 1
             continue
         current_master = f"sha256:{sha256(master)}"
         if item.get("master_sha256") != current_master:
             findings.append(f"CHANGED master: {image_id}")
             if apply and item.get("status") == "approved":
-                convert_to_jpeg(master, web)
+                convert_to_jpeg(master, web, overlay_config)
                 create_thumbnail(master, thumbnail)
                 item["master_sha256"] = current_master
                 item["web_sha256"] = f"sha256:{sha256(web)}"
                 item["thumbnail_sha256"] = f"sha256:{sha256(thumbnail)}"
+                item["web_overlay_fingerprint"] = current_overlay_fingerprint
                 changed += 1
-        elif not web.is_file() or not thumbnail.is_file():
+            else:
+                unresolved += 1
+        elif (
+            not web.is_file()
+            or not thumbnail.is_file()
+            or (overlay_config.get("enabled") and item.get("web_overlay_fingerprint") != current_overlay_fingerprint)
+        ):
             findings.append(f"MISSING derivative: {image_id}")
             if apply and item.get("status") == "approved":
-                convert_to_jpeg(master, web)
+                convert_to_jpeg(master, web, overlay_config)
                 create_thumbnail(master, thumbnail)
                 item["web_sha256"] = f"sha256:{sha256(web)}"
                 item["thumbnail_sha256"] = f"sha256:{sha256(thumbnail)}"
+                item["web_overlay_fingerprint"] = current_overlay_fingerprint
                 changed += 1
+            else:
+                unresolved += 1
+        elif item.get("web_overlay_fingerprint") and item.get("web_overlay_fingerprint") != current_overlay_fingerprint:
+            findings.append(f"OVERLAY CONFIGURATION CHANGED: {image_id}")
+            if apply and item.get("status") == "approved":
+                convert_to_jpeg(master, web, overlay_config)
+                item["web_sha256"] = f"sha256:{sha256(web)}"
+                item["web_overlay_fingerprint"] = current_overlay_fingerprint
+                changed += 1
+            else:
+                unresolved += 1
     if apply and changed:
         write_manifest(root, manifest)
     for finding in findings:
         print(finding)
     print(f"SYNC changed={changed} findings={len(findings)}")
-    return 1 if findings else 0
+    return 1 if unresolved else 0
 
 
 def validate_assets(root: Path) -> int:
     manifest = load_manifest(root)
+    overlay_config = effective_overlay_config(load_generation_config(root))
+    overlay_errors = validate_overlay_config(overlay_config)
     errors: list[str] = []
+    errors.extend(overlay_errors)
+    current_overlay_fingerprint = overlay_fingerprint(overlay_config)
     ids: set[str] = set()
     for item in manifest["images"]:
         if not isinstance(item, dict):
@@ -368,6 +536,8 @@ def validate_assets(root: Path) -> int:
             errors.append(f"web hash mismatch: {image_id}")
         if item.get("thumbnail_sha256") != f"sha256:{sha256(thumbnail)}":
             errors.append(f"thumbnail hash mismatch: {image_id}")
+        if overlay_config.get("enabled") and item.get("web_overlay_fingerprint") != current_overlay_fingerprint:
+            errors.append(f"web overlay fingerprint mismatch: {image_id}")
         if Image is not None:
             with Image.open(web) as image:
                 forbidden_metadata = {

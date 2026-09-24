@@ -3,17 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="../assets/css/core.css">
-  <title>Page</title>
-  .background-fade{position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(135deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.72) 55%,rgba(255,255,255,1) 100%),url('../assets/images/restaurant-about-001.jpg');background-position:right top;background-repeat:no-repeat;background-size:cover;opacity:.72;}
+  <link rel="stylesheet" href="/assets/css/core.css">
+  <title>概要</title>
+<style>
+  .background-fade{position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(135deg,transparent 0%,var(--site-fade-overlay) 55%,var(--site-fade-solid) 100%),url('/assets/images/restaurant-about-001.jpg');background-position:right top;background-repeat:no-repeat;background-size:cover;opacity:.72;}
   @media (max-width: 700px){.background-fade{opacity:.32;background-size:72% auto;}}
+</style>
 </head>
-<body data-theme="light" data-text-size="standard" data-mode="standard" data-display-persistence="true" data-display-storage-key="hada.display.v1">
+<body data-ui-profile="shared-shell" data-theme="light" data-text-size="standard" data-mode="standard" data-display-persistence="true" data-display-storage-key="hada.display.v1">
 <div class="background-fade" aria-hidden="true"></div>
-<p><a href="../index.html">Language</a> | <a href="../jp/index.html" hreflang="ja">日本語</a></p>
-<div class="display-controls" data-display-controls hidden aria-label="Display settings"><span>Theme:</span><button type="button" data-set-theme="light" aria-pressed="true">Light</button><button type="button" data-set-theme="dark" aria-pressed="false">Dark</button><span>Text size:</span><button type="button" data-set-text-size="standard" aria-pressed="true">Standard</button><button type="button" data-set-text-size="large" aria-pressed="false">Large</button><button type="button" data-set-text-size="xlarge" aria-pressed="false">Extra large</button></div>
-<p>[en]# 概要[/en]</p>
-<p>[en]Sample Tea Co.についての概要ページです。担当はHanako Satoです。[/en]</p>
-<script src="../assets/js/display-preferences.js" defer></script>
+<header class="site-header" data-site-header><nav aria-label="Language navigation"><p><a href="/index.html">Language</a> | <a href="/jp/index.html" hreflang="ja">日本語</a></p>
+</nav></header>
+<main class="site-main" data-site-main><div class="display-controls" data-display-controls hidden aria-label="Display settings"><span>Theme:</span><button type="button" data-set-theme="light" aria-pressed="true">Light</button><button type="button" data-set-theme="dark" aria-pressed="false">Dark</button><span>Text size:</span><button type="button" data-set-text-size="standard" aria-pressed="true">Standard</button><button type="button" data-set-text-size="large" aria-pressed="false">Large</button><button type="button" data-set-text-size="xlarge" aria-pressed="false">Extra large</button></div>
+<h1>概要</h1>
+<p>Sample Tea Co.についての概要ページです。担当はHanako Satoです。</p>
+</main>
+<footer class="site-footer" data-site-footer><small>HADA Website Template</small></footer>
+<script src="/assets/js/display-preferences.js" defer></script>
 </body>
 </html>

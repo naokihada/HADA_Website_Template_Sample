@@ -1,0 +1,31 @@
+schema_version: "0.1"
+
+pages: []
+
+# Example:
+# pages:
+#   - page_id: about-naoki
+#     ui_profile: shared-shell
+#     source:
+#       type: html
+#       master_locale: jp
+#       master_path: content/pages/about-naoki.jp.html
+#       source_hash: sha256:replace-with-verified-master-hash
+#     locales:
+#       jp:
+#         path: site/jp/about/about_naoki.html
+#         status: SOURCE
+#       en:
+#         path: site/en/about/about_naoki.html
+#         status: REVIEW_REQUIRED
+#     translation:
+#       mode: manual_existing_locales_missing_only
+#       overwrite_existing: false
+#     layout:
+#       type: project_owned
+#       template: null
+#
+# Supported UI profiles:
+#   shared-shell: header, footer, display controls, and responsive contract
+#   standalone: minimal title, viewport, and navigation contract
+#   pwa: application-specific contract; the timer is the reference example

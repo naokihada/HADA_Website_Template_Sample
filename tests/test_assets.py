@@ -120,6 +120,54 @@ class AssetPipelineTests(unittest.TestCase):
         assets.write_manifest(root, manifest)
         self.assertEqual(assets.validate_assets(root), 1)
 
+    def test_domain_overlay_is_applied_to_web_only(self) -> None:
+        root, holder = self.make_root()
+        self.addCleanup(holder.cleanup)
+        (root / "config").mkdir(exist_ok=True)
+        (root / "config/image-generation.yaml").write_text(
+            "web_overlay:\n"
+            "  enabled: true\n"
+            "  type: text_logo\n"
+            "  text_source: domain\n"
+            "  domain: www.hada.tv\n"
+            "  position: bottom-left\n",
+            encoding="utf-8",
+        )
+        source = root / "AI/inbox/assets/generated/hero.png"
+        self.make_png(source)
+        plan = root / "AI/state/plan.json"
+        assets.scan_inbox(root, plan)
+        self.assertEqual(assets.import_plan(root, plan, approve=True), 0)
+        master = root / "assets/images/master/hero.png"
+        web = root / "assets/images/web/hero.jpg"
+        with Image.open(master) as master_image, Image.open(web) as web_image:
+            self.assertEqual(master_image.size, web_image.size)
+            self.assertNotEqual(master_image.convert("RGB").tobytes(), web_image.convert("RGB").tobytes())
+        manifest = assets.load_manifest(root)
+        self.assertTrue(manifest["images"][0].get("web_overlay_fingerprint"))
+
+    def test_overlay_configuration_change_requires_sync(self) -> None:
+        root, holder = self.make_root()
+        self.addCleanup(holder.cleanup)
+        (root / "config").mkdir(exist_ok=True)
+        source = root / "AI/inbox/assets/generated/hero.png"
+        self.make_png(source)
+        plan = root / "AI/state/plan.json"
+        assets.scan_inbox(root, plan)
+        assets.import_plan(root, plan, approve=True)
+        (root / "config/image-generation.yaml").write_text(
+            "web_overlay:\n"
+            "  enabled: true\n"
+            "  type: text_logo\n"
+            "  text_source: text\n"
+            "  text: HADA.TV\n",
+            encoding="utf-8",
+        )
+        self.assertEqual(assets.sync_assets(root, apply=False), 1)
+        self.assertEqual(assets.sync_assets(root, apply=True), 0)
+        manifest = assets.load_manifest(root)
+        self.assertTrue(manifest["images"][0].get("web_overlay_fingerprint"))
+
 
 if __name__ == "__main__":
     unittest.main()

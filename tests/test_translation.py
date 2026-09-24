@@ -23,7 +23,7 @@ if str(TOOLS_CORE) not in sys.path:
 from term_dictionary import load_term_dictionary  # noqa: E402
 from translation_provider import MockTranslationProvider, translate_with_dictionary  # noqa: E402
 from build_site import build_master_pages, markdown_to_html, parse_front_matter, should_preserve_en  # noqa: E402
-from i18n_pipeline import parse_blocks, source_hash  # noqa: E402
+from i18n_pipeline import parse_blocks, select_locale_content, source_hash  # noqa: E402
 
 
 def run_validator(args: list[str], cwd: Path) -> subprocess.CompletedProcess[str]:
@@ -129,6 +129,27 @@ class TranslationTests(unittest.TestCase):
         html = markdown_to_html("# Title\n\nBody text.", "en", title="Title")
         self.assertIn("<h1", html)
         self.assertIn("Body text.", html)
+
+    def test_page_visual_css_is_inside_a_style_element(self) -> None:
+        html = markdown_to_html("# Title", "en", background_image="demo.jpg")
+        self.assertIn("<style>\n  .background-fade{", html)
+        self.assertIn("url('/assets/images/demo.jpg')", html)
+        self.assertIn("</style>", html)
+
+    def test_locale_wrappers_preserve_translated_heading_anchors(self) -> None:
+        rendered = markdown_to_html(
+            "[en]## Sample Artwork[/en]\n\n[de]## Beispielkunst[/de]",
+            "en",
+            locale="en",
+            page_visuals={"background": None, "header": "", "illustrations": {"sample-artwork": '<figure><img src="/art.jpg" alt="art"></figure>'}},
+        )
+        self.assertIn('<h2 id="sample-artwork">Sample Artwork</h2>', rendered)
+        self.assertIn('<figure><img src="/art.jpg" alt="art"></figure>', rendered)
+        self.assertNotIn("Beispielkunst", rendered)
+
+    def test_select_locale_content_keeps_unwrapped_content_and_active_language(self) -> None:
+        selected = select_locale_content("[en]English[/en][de]Deutsch[/de]\nShared", "en")
+        self.assertEqual(selected, "English\nShared")
 
     def test_build_site_basename_mapping(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

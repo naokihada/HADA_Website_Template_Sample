@@ -10,6 +10,10 @@ The Template Core is designed for long-lived static Web publication.
 - External JavaScript, CDN runtime, external UI framework, and external theme
   service are not required or permitted for Core rendering.
 - If JavaScript fails or is disabled, the page remains readable and navigable.
+- External JavaScript is rejected by default. A consuming project may use
+  `external_javascript.policy: declared_client_only` only for an explicit,
+  optional client-side requirement listed by exact URL with
+  `required_for_content: false`.
 
 ## Current v0.3.3 foundation
 
@@ -61,5 +65,7 @@ Projects may add local JavaScript and custom modes, but must preserve ordinary
 HTML navigation and content. Play Mode, sound, experimental motion, and brand
 effects are Project or Sample responsibilities, not Core requirements.
 
-Use `python tools/core/external_dependency_scan.py site` before release to
-check the publication tree for external runtime references.
+Use `python tools/core/external_javascript_policy.py --root .` before release
+to reject undeclared external JavaScript. The broader
+`external_dependency_scan.py` remains an additional check for external runtime
+assets; ordinary external anchor links are governed by the site link policy.

@@ -1,0 +1,26 @@
+schema_version: "0.1"
+
+# User-editable prompt profile for page illustrations and media-library art.
+# Keep this separate from background-generation profiles. It is project
+# configuration, not disposable AI workspace state.
+provider:
+  default: chatgpt_image
+  note: "The provider is configurable; ChatGPT Image is the documented default."
+
+prompt_profile:
+  name: editorial-illustration
+  common_prompt: |
+    Create a square illustration for this website page.
+    Treat the supplied theme as a guide, but make the individual scene distinct.
+    Do not include readable text, logos, borders, or interface elements.
+  style_prompt: |
+    Refined editorial composition with a clear focal subject and thoughtful
+    negative space. Keep visual details consistent with the website theme.
+  negative_prompt: |
+    no readable text, no logos, no embedded watermark, no frame
+
+output:
+  composition: square
+  generated_master_format: png
+  web_format: jpeg
+  direct_generated_output_for_web: false

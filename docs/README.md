@@ -15,3 +15,5 @@ Public Upgrade guide (also shipped at Release): `docs/UPGRADE.md`
 Per-release record template: `AI/reports/RELEASE.md`
 
 Agent-neutral workspace: `AI/`
+
+Media catalog, intake, and static collection guide: `docs/MEDIA.md`

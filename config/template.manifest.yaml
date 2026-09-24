@@ -1,4 +1,4 @@
-# HADA Website Template — machine-readable upgrade contract (v0.3.3)
+# HADA Website Template — machine-readable upgrade contract (v0.4.0)
 # Template version is independent of config/project.yaml → project.version
 
 manifest_version: "1.0"
@@ -8,13 +8,13 @@ schema_version: "0.1"
 template:
   id: hada-website-template
   name: HADA Website Operations Framework
-  version: "0.3.3"
-  release: "v0.3.3"
+  version: "0.4.0"
+  release: "v0.4.0"
   release_repository: naokihada/HADA_Website_Template
 
 compatibility:
   schema_version: "0.1"
-  data_format_version: "0.1"
+  data_format_version: "0.2"
 
 files:
   template_base: TEMPLATE_BASE.md
@@ -34,6 +34,8 @@ ownership:
     - "docs/UPGRADE.md"
     - "docs/README.md"
     - "docs/DISPLAY.md"
+    - "docs/BROWSER_UI.md"
+    - "docs/MEDIA.md"
     - "CHANGELOG.md"
     - "AGENTS.md"
     - "README.md"
@@ -45,6 +47,7 @@ ownership:
     - "config/site.example.yaml"
     - "config/media.manifest.example.yaml"
     - "config/image-generation.example.yaml"
+    - "config/illustration-generation.example.yaml"
     - "config/gallery.example.yaml"
     - "config/page-registry.example.yaml"
     - "config/display.example.yaml"
@@ -72,10 +75,21 @@ ownership:
     - "tools/core/release_snapshot.py"
     - "tools/core/site_contract.py"
     - "tools/core/site_audit.py"
+    - "tools/core/site_link_policy.py"
     - "tools/core/display_config.py"
     - "tools/core/external_dependency_scan.py"
+    - "tools/core/external_javascript_policy.py"
     - "tests/test_v032_contracts.py"
+    - "tests/test_site_link_policy.py"
     - "tests/test_display.py"
+    - "tests/test_external_javascript_policy.py"
+    - "tests/test_ui_contract.py"
+    - "tests/test_promote_build.py"
+    - "tests/test_browser_ui.py"
+    - "tests/requirements-ui.txt"
+    - "tools/core/ui_contract.py"
+    - "tools/core/browser_contract.py"
+    - "tools/core/promote_build.py"
   user:
     - "TEMPLATE_BASE.md"
     - "TEMPLATE_UPDATES.md"
@@ -89,6 +103,7 @@ ownership:
     - "config/site.yaml"
     - "config/local.yaml"
     - "site/assets/**"
+    - "tests/project/**"
     - "site/en/**"
     - "site/jp/**"
     - "references/registry/**"
@@ -160,5 +175,9 @@ migrations:
       - "0.3.3"
     notes: "Adds page-to-page Display State persistence with localStorage fallback safety"
   "0.3.3":
+    to:
+      - "0.4.0"
+    notes: "Introduces the extensible media catalog, recursive collections, and static sequence/comic presentation; data structure may change and requires reviewed migration"
+  "0.4.0":
     to: []
-    notes: "Current baseline with local Display State persistence"
+    notes: "Current baseline with media catalog schema 0.2 and static media collections"

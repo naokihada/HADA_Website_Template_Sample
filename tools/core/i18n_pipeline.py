@@ -12,6 +12,17 @@ MASTER_SUFFIX = "_master.md"
 LOCALE_SUFFIX = re.compile(r"_(?P<locale>[A-Za-z][A-Za-z0-9-]*)\.md$")
 DIRECTIVE_RE = re.compile(r"^<!--\s*i18n:\s*(?P<name>no-translate|end)\s*-->\s*$")
 FENCE_RE = re.compile(r"^(?P<indent>\s*)(?P<fence>`{3,}|~{3,})(?P<info>.*)$")
+LOCALE_WRAPPER_RE = re.compile(r"\[(?P<locale>[A-Za-z][A-Za-z0-9-]*)\](?P<text>.*?)\[/\1\]", re.DOTALL)
+
+
+def select_locale_content(text: str, locale: str) -> str:
+    """Render only explicitly wrapped translation segments for the active locale."""
+    active = locale.casefold()
+
+    def replace(match: re.Match[str]) -> str:
+        return match.group("text") if match.group("locale").casefold() == active else ""
+
+    return LOCALE_WRAPPER_RE.sub(replace, text)
 
 
 @dataclass(frozen=True)

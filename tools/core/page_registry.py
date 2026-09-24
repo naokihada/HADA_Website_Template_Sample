@@ -11,8 +11,10 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from media_library import fill_html_master_slots
 
 MASTER_TYPES = {"html", "markdown", "generated", "project-template", "unknown", "review_required"}
+UI_PROFILES = {"shared-shell", "standalone", "pwa"}
 
 
 def sha256(path: Path) -> str:
@@ -45,6 +47,14 @@ def classify_page(page: dict[str, Any]) -> str:
     source = page.get("source") if isinstance(page.get("source"), dict) else {}
     value = master.get("type") or source.get("type") or page.get("master_type") or "unknown"
     return str(value) if str(value) in MASTER_TYPES else "review_required"
+
+
+def classify_ui_profile(page: dict[str, Any]) -> str:
+    """Resolve a page's browser contract profile without guessing unsupported values."""
+    value = page.get("ui_profile")
+    if not value:
+        return "review_required"
+    return str(value) if str(value) in UI_PROFILES else "review_required"
 
 
 def safe_rel(root: Path, value: str) -> Path:
@@ -99,11 +109,13 @@ def build_html_masters(root: Path, candidate_root: Path) -> list[dict[str, Any]]
             existing = publication / target_rel
             if existing.is_file():
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(existing.read_text(encoding="utf-8"), encoding="utf-8", newline="\r\n")
+                preserved_html = existing.read_text(encoding="utf-8")
+                target.write_text(fill_html_master_slots(root, page_id, str(locale), preserved_html), encoding="utf-8", newline="\r\n")
                 status = "OUTDATED" if old_hash and old_hash != source_hash else "PRESERVED"
             else:
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(_copy_with_language(master_text, str(locale)), encoding="utf-8", newline="\r\n")
+                source_html = _copy_with_language(master_text, str(locale))
+                target.write_text(fill_html_master_slots(root, page_id, str(locale), source_html), encoding="utf-8", newline="\r\n")
                 status = "SOURCE" if str(locale) == str(source.get("master_locale", "jp")) else "REVIEW_REQUIRED"
             statuses.append({"page_id": page_id, "locale": str(locale), "status": status, "source_hash": source_hash, "path": str(target_rel).replace("\\", "/")})
     report = candidate_root / ".build" / "page-status.json"

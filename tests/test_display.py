@@ -21,8 +21,8 @@ class DisplayTests(unittest.TestCase):
         self.assertIn('data-mode="standard"', html)
         self.assertIn('data-display-persistence="true"', html)
         self.assertIn('data-display-storage-key="hada.display.v1"', html)
-        self.assertIn("../assets/css/core.css", html)
-        self.assertIn("../assets/js/display-preferences.js", html)
+        self.assertIn("/assets/css/core.css", html)
+        self.assertIn("/assets/js/display-preferences.js", html)
         self.assertIn("Readable body.", html)
 
     def test_core_display_assets_have_no_external_dependency(self) -> None:
@@ -52,6 +52,20 @@ class DisplayTests(unittest.TestCase):
         errors = validate_display({"display": {"persistence": {"enabled": True, "storage": "remote"}}})
         self.assertIn("display.persistence.storage must be none or local_storage", errors)
         self.assertIn("display.persistence.enabled requires local_storage", errors)
+
+    def test_accessibility_policy_preserves_background_and_requires_foreground_first(self) -> None:
+        errors = validate_display(
+            {
+                "display": {
+                    "accessibility": {
+                        "preserve_background_treatment": True,
+                        "minimum_font_size": "1rem",
+                        "foreground_adjustment_order": ["color", "font_weight", "font_size", "font_family"],
+                    }
+                }
+            }
+        )
+        self.assertEqual(errors, [])
 
     def test_external_dependency_scan_passes_publication_root(self) -> None:
         self.assertEqual(scan(ROOT / "site"), [])

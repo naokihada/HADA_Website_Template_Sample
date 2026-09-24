@@ -49,6 +49,7 @@ def validate_display(data: dict[str, Any]) -> list[str]:
     mode = display.get("mode") or {}
     persistence = display.get("persistence") or {}
     javascript = data.get("javascript") or {}
+    accessibility = display.get("accessibility") or {}
     if display.get("enabled") not in (None, True, False):
         errors.append("display.enabled must be boolean")
     if theme.get("default", "light") not in THEMES:
@@ -71,4 +72,10 @@ def validate_display(data: dict[str, Any]) -> list[str]:
         errors.append("javascript.external must remain false for Template Core")
     if javascript.get("required_for_content", False) is True:
         errors.append("javascript.required_for_content must remain false")
+    try:
+        from contrast_audit import validate_accessibility_policy
+
+        errors.extend(validate_accessibility_policy(accessibility))
+    except ImportError:  # pragma: no cover - direct use without the core path
+        pass
     return errors

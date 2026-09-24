@@ -30,6 +30,21 @@ try:
 except ImportError:  # pragma: no cover
     validate_display = None  # type: ignore[assignment]
 
+try:
+    from site_link_policy import scan as scan_site_links
+except ImportError:  # pragma: no cover
+    scan_site_links = None  # type: ignore[assignment]
+
+try:
+    from external_javascript_policy import scan as scan_external_javascript
+except ImportError:  # pragma: no cover
+    scan_external_javascript = None  # type: ignore[assignment]
+
+try:
+    from media_library import validate_catalog
+except ImportError:  # pragma: no cover
+    validate_catalog = None  # type: ignore[assignment]
+
 VALIDATOR_NAME = "core-validator"
 VALIDATOR_VERSION = "0.1"
 SCHEMA_VERSION = "0.1"
@@ -296,6 +311,28 @@ def validate_project_config(ctx: ValidationContext) -> None:
     ):
         ctx.add("CFG-006", "ERROR", "Each locales.supported entry must be a valid locale code", file="config/project.yaml", field="locales.supported")
 
+    local_test_root = paths.get("local_test_root")
+    ctx.mark_checked("CFG-017")
+    if local_test_root is not None:
+        if not isinstance(local_test_root, str) or not local_test_root.strip() or forbidden_segment(local_test_root):
+            ctx.add("CFG-017", "ERROR", "paths.local_test_root must be a safe repository-relative path", file="config/project.yaml", field="paths.local_test_root")
+
+    browser = (ctx.project_data.get("verification") or {}).get("browser") if isinstance(ctx.project_data.get("verification"), dict) else {}
+    browser = browser if isinstance(browser, dict) else {}
+    ctx.mark_checked("UI-001")
+    if browser and not isinstance(browser.get("enabled", False), bool):
+        ctx.add("UI-001", "ERROR", "verification.browser.enabled must be boolean", file="config/project.yaml", field="verification.browser.enabled")
+    ctx.mark_checked("UI-002")
+    if browser.get("route_source") not in {None, "auto", "registry", "publication"}:
+        ctx.add("UI-002", "ERROR", "verification.browser.route_source must be auto, registry, or publication", file="config/project.yaml", field="verification.browser.route_source")
+    ctx.mark_checked("UI-003")
+    viewports = browser.get("viewports")
+    if viewports is not None and (not isinstance(viewports, list) or any(
+        not isinstance(item, dict) or not isinstance(item.get("width"), int) or not isinstance(item.get("height"), int)
+        or item.get("width", 0) <= 0 or item.get("height", 0) <= 0 for item in viewports
+    )):
+        ctx.add("UI-003", "ERROR", "verification.browser.viewports must contain positive integer width and height", file="config/project.yaml", field="verification.browser.viewports")
+
     pub_root = paths.get("publication_root")
     content_root = paths.get("content_master")
     ctx.publication_root_value = pub_root if isinstance(pub_root, str) else None
@@ -356,6 +393,38 @@ def validate_project_config(ctx: ValidationContext) -> None:
         else:
             for message in validate_display(display_data or {}):
                 ctx.add("CFG-016", "ERROR", message, file="config/display.yaml")
+
+    validate_page_registry_profiles(ctx)
+
+
+def validate_page_registry_profiles(ctx: ValidationContext) -> None:
+    """Validate explicit browser profiles when a Page Registry is present."""
+    root = ctx.root
+    paths = (ctx.project_data or {}).get("paths") or {}
+    registry_value = str(paths.get("page_registry") or "config/page-registry.yaml")
+    path = root / registry_value
+    ctx.mark_checked("UI-004")
+    if not path.is_file():
+        return
+    data, error = load_yaml_file(path)
+    if error:
+        ctx.add("UI-004", "ERROR", f"Invalid Page Registry YAML: {error}", file=registry_value)
+        return
+    pages = data.get("pages", []) if isinstance(data, dict) else []
+    if not isinstance(pages, list):
+        ctx.add("UI-004", "ERROR", "Page Registry pages must be a list", file=registry_value, field="pages")
+        return
+    ctx.mark_checked("UI-005")
+    for index, page in enumerate(pages):
+        if not isinstance(page, dict):
+            ctx.add("UI-005", "ERROR", "Page Registry entries must be mappings", file=registry_value, field=f"pages[{index}]")
+            continue
+        profile = page.get("ui_profile")
+        if profile is not None and profile not in {"shared-shell", "standalone", "pwa"}:
+            ctx.add("UI-005", "ERROR", "Unsupported ui_profile", file=registry_value, field=f"pages[{index}].ui_profile")
+        for locale, locale_cfg in (page.get("locales") or {}).items():
+            if isinstance(locale_cfg, dict) and locale_cfg.get("ui_profile") is not None and locale_cfg.get("ui_profile") not in {"shared-shell", "standalone", "pwa"}:
+                ctx.add("UI-005", "ERROR", "Unsupported locale ui_profile", file=registry_value, field=f"pages[{index}].locales.{locale}.ui_profile")
 
 
 def validate_site_config(ctx: ValidationContext, site_path: Path) -> None:
@@ -689,6 +758,67 @@ def discover_plugin_manifests(root: Path) -> list[tuple[str, Path]]:
     return manifests
 
 
+def validate_site_link_policy(ctx: ValidationContext) -> None:
+    """Validate durable site links and same-site host aliases."""
+
+    ctx.mark_checked("LINK-001")
+    ctx.mark_checked("LINK-002")
+    ctx.mark_checked("LINK-003")
+    if scan_site_links is None:
+        ctx.add(
+            "LINK-001",
+            "ERROR",
+            "Site link policy checker is unavailable",
+            file="tools/core/site_link_policy.py",
+        )
+        return
+    try:
+        violations = scan_site_links(ctx.root)
+    except (OSError, ValueError, TypeError, KeyError) as exc:
+        ctx.add("LINK-001", "ERROR", f"Site link policy could not run: {exc}", file="config/site.yaml")
+        return
+    for item in violations:
+        rule_id = str(item.get("rule_id", "LINK-002"))
+        ctx.add(
+            rule_id,
+            "ERROR",
+            f"{item.get('reason', 'site link policy violation')}; template_feedback_required=true",
+            file=str(item.get("file", "")) or None,
+            field=f"{item.get('attribute', '')} line {item.get('line', '')}".strip(),
+            dedup=f"{rule_id}:{item.get('file')}:{item.get('line')}:{item.get('attribute')}:{item.get('value')}",
+        )
+
+
+def validate_external_javascript_policy(ctx: ValidationContext) -> None:
+    """Reject external JavaScript unless an optional client-only declaration exists."""
+
+    ctx.mark_checked("JS-001")
+    ctx.mark_checked("JS-002")
+    if scan_external_javascript is None:
+        ctx.add(
+            "JS-001",
+            "ERROR",
+            "External JavaScript policy checker is unavailable",
+            file="tools/core/external_javascript_policy.py",
+        )
+        return
+    try:
+        findings = scan_external_javascript(ctx.root)
+    except (OSError, ValueError, TypeError, KeyError) as exc:
+        ctx.add("JS-001", "ERROR", f"External JavaScript policy could not run: {exc}", file="config/site.yaml")
+        return
+    for item in findings:
+        rule_id = str(item.get("rule_id", "JS-001"))
+        ctx.add(
+            rule_id,
+            "ERROR",
+            f"{item.get('reason', 'external JavaScript policy violation')}; template_feedback_required=true",
+            file=str(item.get("file", "")) or None,
+            field=f"url line {item.get('line', '')}".strip(),
+            dedup=f"{rule_id}:{item.get('file')}:{item.get('line')}:{item.get('url')}",
+        )
+
+
 def run_validation(root: Path, include_local: bool = False) -> ValidationContext:
     ctx = ValidationContext(root=root.resolve(), include_local=include_local)
     validate_structure(ctx)
@@ -699,6 +829,16 @@ def run_validation(root: Path, include_local: bool = False) -> ValidationContext
     except (ValueError, KeyError, TypeError, OSError) as exc:
         ctx.add('BASE-001', 'ERROR', str(exc), file='TEMPLATE_BASE.md')
     validate_project_config(ctx)
+    if validate_catalog is not None and (root / "config" / "media.manifest.yaml").is_file():
+        try:
+            media_errors = validate_catalog(root)
+            for index, message in enumerate(media_errors, start=1):
+                ctx.add("MEDIA-001", "ERROR", message, file="config/media.manifest.yaml", field=f"catalog entry {index}")
+            ctx.mark_checked("MEDIA-001")
+        except (OSError, ValueError, KeyError, TypeError) as exc:
+            ctx.add("MEDIA-001", "ERROR", str(exc), file="config/media.manifest.yaml")
+    validate_site_link_policy(ctx)
+    validate_external_javascript_policy(ctx)
     validate_environment_file(ctx, "environments/environments.example.yaml", root / "environments" / "environments.example.yaml")
     env_active = root / "environments" / "environments.yaml"
     if env_active.is_file():

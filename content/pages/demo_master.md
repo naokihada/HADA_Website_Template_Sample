@@ -13,6 +13,10 @@ visual:
 
 This page demonstrates a shared structure for Japanese, English, and German output.
 
+## Sample Artwork
+
+The same logical-page artwork is reused across all three locales.
+
 <!-- i18n: no-translate -->
 HADA Website Template
 Human-AI Development Architecture

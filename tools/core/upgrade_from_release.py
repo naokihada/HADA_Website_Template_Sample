@@ -754,9 +754,16 @@ def run_upgrade(
             commands = [[sys.executable, str(candidate / 'tools/core/validate_framework.py'), '--root', str(candidate)]]
             commands += [[sys.executable, str(p)] for p in sorted((candidate / 'tests').glob('test_*.py'))]
             commands += [[sys.executable, str(candidate / 'tools/core/build_site.py'), '--root', str(candidate)]]
+            browser_contract = candidate / 'tools/core/browser_contract.py'
+            if browser_contract.is_file():
+                commands.append([sys.executable, str(browser_contract), '--root', str(candidate)])
             for command in commands:
                 checked = subprocess.run(command, cwd=candidate, capture_output=True)
                 if checked.returncode:
+                    if command[1] == str(browser_contract) and checked.returncode == 4:
+                        return UpgradeResult('REVIEW_REQUIRED', EXIT_REVIEW, str(root.resolve()), current_ver,
+                            detection, target_ver, target_tag, str(candidate), plan=plan,
+                            findings=[Finding('UPG-061', 'WARNING', 'Browser UI contract requires review')])
                     return UpgradeResult('FAILED', EXIT_FAILED, str(root.resolve()), current_ver,
                         detection, target_ver, target_tag, str(candidate), plan=plan,
                         findings=[Finding('UPG-051', 'ERROR', 'Candidate verification failed: ' + Path(command[1]).name)])
@@ -773,7 +780,9 @@ def run_upgrade(
                 'diff': semantic_diff,
             }, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\r\n')
             if semantic_diff['status'] != 'PASS':
-                findings.append(Finding('UPG-060', 'WARNING', 'Candidate semantic site diff requires review', file='build/upgrade-semantic-diff.json'))
+                return UpgradeResult('REVIEW_REQUIRED', EXIT_REVIEW, str(root.resolve()), current_ver,
+                    detection, target_ver, target_tag, str(candidate), plan=plan,
+                    findings=[Finding('UPG-060', 'WARNING', 'Candidate semantic site diff requires review', file='build/upgrade-semantic-diff.json')])
             # Candidate build output is verification only, never copied over styled output.
             operations = []
             for item in plan:

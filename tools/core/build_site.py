@@ -24,10 +24,14 @@ if str(SCRIPT_DIR) not in sys.path:
 
 from term_dictionary import load_term_dictionary  # noqa: E402
 from translation_provider import MockTranslationProvider, translate_with_dictionary  # noqa: E402
-from i18n_pipeline import master_files, parse_blocks, snapshot_path, source_hash, translate_blocks  # noqa: E402
+from i18n_pipeline import master_files, parse_blocks, select_locale_content, snapshot_path, source_hash, translate_blocks  # noqa: E402
 from assets import load_manifest, safe_relative, validate_assets  # noqa: E402
 from display_config import display_runtime_settings  # noqa: E402
+from external_javascript_policy import load_policy as load_external_javascript_policy, scan as scan_external_javascript  # noqa: E402
+from gallery_contract import gallery_card_href, load_gallery_settings  # noqa: E402
 from page_registry import build_html_masters  # noqa: E402
+from media_library import build_media_library, inject_inline_media, page_media  # noqa: E402
+from site_link_policy import load_policy as load_link_policy, scan as scan_site_links, site_url  # noqa: E402
 
 MASTER_LOCALE = "jp"
 TARGET_LOCALE = "en"
@@ -87,30 +91,55 @@ def markdown_to_html(
     title: Optional[str] = None,
     background_image: Optional[str] = None,
     display_settings: Optional[dict[str, Any]] = None,
+    ui_profile: str = "shared-shell",
+    locale: Optional[str] = None,
+    link_policy: Optional[dict[str, Any]] = None,
+    page_visuals: Optional[dict[str, Any]] = None,
 ) -> str:
     if markdown is None:
         raise RuntimeError(dependency_error_message())
-    rendered = markdown.markdown(body, extensions=["extra"])
+    page_visuals = page_visuals or {"background": None, "header": "", "illustrations": {}}
+    body = select_locale_content(body, str(locale or lang))
+    rendered = markdown.markdown(body, extensions=["extra", "toc"] if page_visuals.get("illustrations") else ["extra"])
+    rendered = inject_inline_media(rendered, page_visuals.get("illustrations", {}))
     if not title:
         heading = re.search(r"<h1[^>]*>(.*?)</h1>", rendered, re.DOTALL)
         title = re.sub(r"<[^>]+>", "", heading.group(1)).strip() if heading else "Page"
+    active_locale = str(locale or ("jp" if lang.lower() in {"jp", "ja"} else lang))
     switch = ""
-    if lang == "jp":
-        switch = '<p><a href="../index.html">Language</a> | <a href="../en/index.html" hreflang="en">English</a></p>\n'
+    if active_locale.lower() in {"jp", "ja"}:
+        switch = (
+            f'<p><a href="{html.escape(site_url("/index.html", link_policy), quote=True)}">Language</a> | '
+            f'<a href="{html.escape(site_url("/en/index.html", link_policy), quote=True)}" hreflang="en">English</a></p>\n'
+        )
     else:
-        switch = '<p><a href="../index.html">Language</a> | <a href="../jp/index.html" hreflang="ja">日本語</a></p>\n'
+        switch = (
+            f'<p><a href="{html.escape(site_url("/index.html", link_policy), quote=True)}">Language</a> | '
+            f'<a href="{html.escape(site_url("/jp/index.html", link_policy), quote=True)}" hreflang="ja">日本語</a></p>\n'
+        )
     visual = ""
     visual_css = ""
+    background_image = page_visuals.get("background") or background_image
     if background_image:
+        background_url = background_image if str(background_image).startswith("/") else f"/assets/images/{background_image}"
         visual_css = (
             "  .background-fade{position:fixed;inset:0;z-index:-1;pointer-events:none;"
-            "background-image:linear-gradient(135deg,rgba(255,255,255,0) 0%,"
-            "rgba(255,255,255,.72) 55%,rgba(255,255,255,1) 100%),"
-            f"url('../assets/images/{background_image}');background-position:right top;"
+            "background-image:linear-gradient(135deg,transparent 0%,"
+            "var(--site-fade-overlay) 55%,var(--site-fade-solid) 100%),"
+            f"url('{html.escape(site_url(background_url, link_policy), quote=True)}');background-position:right top;"
             "background-repeat:no-repeat;background-size:cover;opacity:.72;}\n"
             "  @media (max-width: 700px){.background-fade{opacity:.32;background-size:72% auto;}}\n"
         )
         visual = '<div class="background-fade" aria-hidden="true"></div>\n'
+    media_css = (
+        "  .page-header-visual img{display:block;width:100%;height:auto;}"
+        "  .page-illustration{max-width:min(40%,28rem);margin:1rem 0;}"
+        "  .page-illustration.align-right{float:right;margin-left:1.5rem;}"
+        "  .page-illustration.align-left{float:left;margin-right:1.5rem;}"
+        "  .page-illustration img{display:block;width:100%;height:auto;}"
+        "  .page-illustration figcaption{font-size:.9em;}\n"
+    ) if page_visuals.get("header") or page_visuals.get("illustrations") else ""
+    inline_styles = f"<style>\n{visual_css}{media_css}</style>\n" if visual_css or media_css else ""
     controls = (
         '<div class="display-controls" data-display-controls hidden aria-label="Display settings">'
         '<span>Theme:</span>'
@@ -129,14 +158,22 @@ def markdown_to_html(
     }
     persistence = "true" if display_settings.get("persistence_enabled") else "false"
     storage_key = html.escape(str(display_settings.get("storage_key", "hada.display.v1")), quote=True)
+    profile = ui_profile if ui_profile in {"shared-shell", "standalone", "pwa"} else "review_required"
+    title = html.escape(str(title), quote=True)
+    if profile == "shared-shell":
+        shell_start = f'<header class="site-header" data-site-header><nav aria-label="Language navigation">{switch}</nav></header>\n<main class="site-main" data-site-main>'
+        shell_end = '</main>\n<footer class="site-footer" data-site-footer><small>HADA Website Template</small></footer>\n'
+    else:
+        shell_start = f'<main class="site-main" data-site-main>\n{switch}'
+        shell_end = '</main>\n'
     return (
         f"<!DOCTYPE html>\n<html lang=\"{lang}\">\n<head>\n"
         f"  <meta charset=\"UTF-8\">\n"
         f"  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"
-        f"  <link rel=\"stylesheet\" href=\"../assets/css/core.css\">\n"
-        f"  <title>{title}</title>\n{visual_css}</head>\n<body data-theme=\"light\" data-text-size=\"standard\" data-mode=\"standard\" data-display-persistence=\"{persistence}\" data-display-storage-key=\"{storage_key}\">\n"
-        f"{visual}{switch}{controls}{rendered}\n"
-        '<script src="../assets/js/display-preferences.js" defer></script>\n'
+        f"  <link rel=\"stylesheet\" href=\"{html.escape(site_url('/assets/css/core.css', link_policy), quote=True)}\">\n"
+        f"  <title>{title}</title>\n{inline_styles}</head>\n<body data-ui-profile=\"{profile}\" data-theme=\"light\" data-text-size=\"standard\" data-mode=\"standard\" data-display-persistence=\"{persistence}\" data-display-storage-key=\"{storage_key}\">\n"
+        f"{visual}{shell_start}{controls if profile == 'shared-shell' else ''}{page_visuals.get('header', '')}{rendered}\n{shell_end}"
+        f'<script src="{html.escape(site_url("/assets/js/display-preferences.js", link_policy), quote=True)}" defer></script>\n'
         "</body>\n</html>\n"
     )
 
@@ -167,7 +204,12 @@ def translate_jp_file(
     return "\n".join(translated_lines) + trailing_newline
 
 
-def build_master_pages(root: Path, provider: MockTranslationProvider, publication_override: Optional[Path] = None) -> None:
+def build_master_pages(
+    root: Path,
+    provider: MockTranslationProvider,
+    publication_override: Optional[Path] = None,
+    link_policy: Optional[dict[str, Any]] = None,
+) -> None:
     """Build locale snapshots and minimal HTML from *_master.md sources."""
     if yaml is None or markdown is None:
         raise RuntimeError(dependency_error_message())
@@ -232,7 +274,7 @@ def build_master_pages(root: Path, provider: MockTranslationProvider, publicatio
                 }
             )
             target_path.parent.mkdir(parents=True, exist_ok=True)
-            target_path.write_text(format_front_matter(metadata, body), encoding="utf-8")
+            target_path.write_text(format_front_matter(metadata, body), encoding="utf-8", newline="\r\n")
             site_dir = output_root / locale
             site_dir.mkdir(parents=True, exist_ok=True)
             html_name = master_path.name[: -len("_master.md")] + ".html"
@@ -242,8 +284,13 @@ def build_master_pages(root: Path, provider: MockTranslationProvider, publicatio
                     locale,
                     background_image=background_visual(root, master_meta),
                     display_settings=display_settings,
+                    ui_profile=str(master_meta.get("ui_profile", "shared-shell")),
+                    locale=locale,
+                    link_policy=link_policy,
+                    page_visuals=page_media(root, str(master_meta.get("page_id", master_path.name.removesuffix("_master.md"))), locale),
                 ),
                 encoding="utf-8",
+                newline="\r\n",
             )
 
 
@@ -302,17 +349,14 @@ def build_gallery(root: Path, output: Path, locales: list[str]) -> None:
     manifest_path = root / "config" / "media.manifest.yaml"
     if not manifest_path.is_file():
         return
-    config_path = root / "config" / "gallery.yaml"
-    gallery_config: dict[str, Any] = {}
-    if config_path.is_file() and yaml is not None:
-        loaded = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
-        gallery_config = loaded if isinstance(loaded, dict) else {}
-    gallery_settings = gallery_config.get("gallery") or {}
+    gallery_settings = load_gallery_settings(root)
+    link_policy = load_link_policy(root)
     if gallery_settings.get("enabled", True) is False:
         return
     entries = gallery_entries(root)
     for locale in locales:
-        gallery_root = output / locale / str(gallery_settings.get("route", "gallery"))
+        route = str(gallery_settings.get("route", "gallery")).strip("/") or "gallery"
+        gallery_root = output / locale / route
         cards: list[str] = []
         for item in entries:
             image_id = str(item["image_id"])
@@ -320,24 +364,36 @@ def build_gallery(root: Path, output: Path, locales: list[str]) -> None:
             alt = html.escape(localized(item.get("alt"), locale, title))
             caption = html.escape(localized(item.get("caption"), locale, ""))
             thumbnail = Path(str(item["thumbnail"])).name
+            card_href = html.escape(
+                gallery_card_href(
+                    gallery_settings,
+                    image_id,
+                    Path(str(item["web"])).name,
+                    locale=locale,
+                    link_policy=link_policy,
+                ),
+                quote=True,
+            )
             cards.append(
-                f'<figure><a href="./{html.escape(image_id)}.html">'
-                f'<img src="../../assets/images/thumbnails/{html.escape(thumbnail)}" alt="{alt}" loading="lazy">'
+                f'<figure><a href="{card_href}">'
+                f'<img src="{html.escape(site_url(f"/assets/images/thumbnails/{thumbnail}", link_policy), quote=True)}" alt="{alt}" loading="lazy">'
                 f'</a><figcaption><strong>{title}</strong><br>{caption}</figcaption></figure>'
             )
             detail = (
                 "<!DOCTYPE html>\n<html lang=\"{lang}\"><head><meta charset=\"UTF-8\">"
                 "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
-                "<title>{title}</title><style>body{{max-width:960px;margin:2rem auto;padding:0 1rem;"
+                "<title>{title}</title><link rel=\"stylesheet\" href=\"{stylesheet}\"><style>body{{max-width:960px;margin:2rem auto;padding:0 1rem;"
                 "font-family:system-ui,sans-serif}}img{{max-width:100%;height:auto}}"
-                "a{{color:inherit}}</style></head><body><p><a href=\"./index.html\">"
-                "{back}</a></p><main><h1>{title}</h1><img src=\"../../assets/images/{web}\" alt=\"{alt}\">"
+                "a{{color:inherit}}</style></head><body data-ui-profile=\"standalone\"><p><a href=\"{back_href}\">"
+                "{back}</a></p><main><h1>{title}</h1><img src=\"{web_href}\" alt=\"{alt}\">"
                 "<p>{caption}</p>{credit}</main></body></html>\n"
             ).format(
                 lang=html.escape(locale),
                 title=title,
                 back="Back to gallery" if locale != "jp" else "ギャラリーへ戻る",
-                web=html.escape(Path(str(item["web"])).name),
+                stylesheet=html.escape(site_url("/assets/css/core.css", link_policy), quote=True),
+                back_href=html.escape(site_url(f"/{locale}/{route}/", link_policy), quote=True),
+                web_href=html.escape(site_url(f"/assets/images/{Path(str(item['web'])).name}", link_policy), quote=True),
                 alt=alt,
                 caption=caption,
                 credit=(f"<p>{html.escape(localized(item.get('credit'), locale, ''))}</p>" if item.get("credit") else ""),
@@ -347,14 +403,16 @@ def build_gallery(root: Path, output: Path, locales: list[str]) -> None:
         index = (
             "<!DOCTYPE html>\n<html lang=\"{lang}\"><head><meta charset=\"UTF-8\">"
             "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
-            "<title>{title}</title><style>body{{max-width:1100px;margin:2rem auto;padding:0 1rem;"
+            "<title>{title}</title><link rel=\"stylesheet\" href=\"{stylesheet}\"><style>body{{max-width:1100px;margin:2rem auto;padding:0 1rem;"
             "font-family:system-ui,sans-serif}}.gallery{{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}}"
             "figure{{margin:0}}img{{width:100%;aspect-ratio:1;object-fit:cover}}a{{color:inherit}}</style></head>"
-            "<body><p><a href=\"../index.html\">{home}</a></p><main><h1>{title}</h1><div class=\"gallery\">{cards}</div>"
+            "<body data-ui-profile=\"standalone\"><p><a href=\"{home_href}\">{home}</a></p><main><h1>{title}</h1><div class=\"gallery\">{cards}</div>"
             "</main></body></html>\n"
         ).format(
             lang=html.escape(locale),
             title=html.escape(title_value),
+            stylesheet=html.escape(site_url("/assets/css/core.css", link_policy), quote=True),
+            home_href=html.escape(site_url(f"/{locale}/index.html", link_policy), quote=True),
             home="Home" if locale != "jp" else "ホーム",
             cards="\n".join(cards),
         )
@@ -371,7 +429,6 @@ def build_site(root: Path, provider: Optional[MockTranslationProvider] = None, c
 
     provider = provider or MockTranslationProvider()
     display_settings = display_runtime_settings(root)
-    build_master_pages(root, provider, publication_override=candidate_root)
     dictionary_path = root / "config" / "term_dictionary.yaml"
     entries = load_term_dictionary(dictionary_path)
 
@@ -386,6 +443,17 @@ def build_site(root: Path, provider: Optional[MockTranslationProvider] = None, c
     output = candidate_root.resolve() if candidate_root else (root / publication).resolve()
     if output == root.resolve() or not output.is_relative_to(root.resolve()):
         raise ValueError('Publication root must be inside the project')
+    if candidate_root:
+        publication_source = (root / publication).resolve()
+        if output == publication_source or output.is_relative_to(publication_source) or publication_source.is_relative_to(output):
+            raise ValueError('candidate root must be separate from publication root')
+        if output.exists() and any(output.iterdir()):
+            raise ValueError('candidate root must be empty before a safe build')
+        output.mkdir(parents=True, exist_ok=True)
+        if publication_source.is_dir():
+            shutil.copytree(publication_source, output, dirs_exist_ok=True)
+    link_policy = load_link_policy(root)
+    build_master_pages(root, provider, publication_override=candidate_root, link_policy=link_policy)
     publish_web_assets(root, output)
     site_jp = output / MASTER_LOCALE
     site_en = output / TARGET_LOCALE
@@ -418,7 +486,7 @@ def build_site(root: Path, provider: Optional[MockTranslationProvider] = None, c
                 "source_file": f"content/{MASTER_LOCALE}/{basename}",
             }
             en_text = format_front_matter(en_meta, translated_body)
-            en_path.write_text(en_text, encoding="utf-8")
+            en_path.write_text(en_text, encoding="utf-8", newline="\r\n")
 
         _, current_en_body = parse_front_matter(en_text)
         site_jp.joinpath(html_basename(basename)).write_text(
@@ -427,6 +495,9 @@ def build_site(root: Path, provider: Optional[MockTranslationProvider] = None, c
                 "ja",
                 background_image=background_visual(root, jp_meta),
                 display_settings=display_settings,
+                locale=MASTER_LOCALE,
+                link_policy=link_policy,
+                page_visuals=page_media(root, str(jp_meta.get("page_id", Path(basename).stem)), MASTER_LOCALE),
             ),
             encoding="utf-8",
         )
@@ -436,10 +507,34 @@ def build_site(root: Path, provider: Optional[MockTranslationProvider] = None, c
                 "en",
                 background_image=background_visual(root, jp_meta),
                 display_settings=display_settings,
+                ui_profile=str(jp_meta.get("ui_profile", "shared-shell")),
+                locale=TARGET_LOCALE,
+                link_policy=link_policy,
+                page_visuals=page_media(root, str(jp_meta.get("page_id", Path(basename).stem)), TARGET_LOCALE),
             ),
             encoding="utf-8",
+            newline="\r\n",
         )
     build_gallery(root, output, supported_locales)
+    build_media_library(root, output, supported_locales)
+    candidate_link_policy = dict(link_policy)
+    candidate_link_policy["roots"] = ["."]
+    violations = scan_site_links(output, candidate_link_policy)
+    if violations:
+        details = "; ".join(
+            f"{item.get('file')}:{item.get('line')} {item.get('value')!r}: {item.get('reason')}"
+            for item in violations
+        )
+        raise ValueError(f"Site link policy violation; template feedback required: {details}")
+    javascript_policy = dict(load_external_javascript_policy(root))
+    javascript_policy["roots"] = ["."]
+    javascript_findings = scan_external_javascript(output, javascript_policy)
+    if javascript_findings:
+        details = "; ".join(
+            f"{item.get('file')}:{item.get('line')} {item.get('url')!r}: {item.get('reason')}"
+            for item in javascript_findings
+        )
+        raise ValueError(f"External JavaScript policy violation; template feedback required: {details}")
 
 
 def main(argv: Optional[list[str]] = None) -> int:

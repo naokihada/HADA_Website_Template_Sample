@@ -4,6 +4,13 @@ site:
   id: example-site
   name: Example Site
   publication_root: site
+  template_scaffold: present
+
+paths:
+  generated_root: build
+  local_test_root: site
+  page_registry: config/page-registry.yaml
+  template_references: references/template-releases
 
 locales:
   default: en
@@ -38,3 +45,42 @@ external_sources:
   # WordPress.com is external source — use wordpress-com adapter when implemented
   wordpress_com: null
   self_hosted_wordpress: null
+
+# Site-internal href/src/action values must be root-relative. If an internal
+# host is configured, its apex and www hosts are treated as one site; other
+# subdomains remain external unless explicitly listed.
+link_policy:
+  enabled: true
+  roots:
+    - content/pages
+    - site
+  attributes:
+    - href
+    - src
+    - action
+  internal_hosts:
+    - example.com
+  base_path: /
+  external_links:
+    require_new_tab: true
+    required_rel:
+      - noopener
+      - noreferrer
+
+# Template Core forbids external JavaScript. A consuming project may change
+# policy to declared_client_only only for an explicit, optional client-side
+# requirement and must list each exact URL with required_for_content: false.
+external_javascript:
+  policy: forbidden  # forbidden | declared_client_only
+  declarations: []
+
+verification:
+  browser:
+    enabled: false
+    route_source: auto
+    block_external_requests: true
+    viewports:
+      - width: 1920
+        height: 1080
+      - width: 390
+        height: 844

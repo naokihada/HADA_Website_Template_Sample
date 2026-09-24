@@ -8,7 +8,7 @@ visual:
   background_fade:
     image_id: restaurant-background-001
 source_file: content/pages/demo_master.md
-source_hash: sha256:a0e9272d05d8b68c1348c3b8ec7638c7194b03d083e11fd5e4a78c92d8af9872
+source_hash: sha256:555b4c0de6d897c1326fdd4245ee3b314a57edaa6358a24f3c935d568f48840b
 target_locale: JP
 translation_status: SOURCE
 ---
@@ -16,6 +16,10 @@ translation_status: SOURCE
 # Sample i18n Demo
 
 This page demonstrates a shared structure for Japanese, English, and German output.
+
+## Sample Artwork
+
+The same logical-page artwork is reused across all three locales.
 
 <!-- i18n: no-translate -->
 HADA Website Template

@@ -1,5 +1,158 @@
-schema_version: "0.1"
+schema_version: "0.2"
 
-# Public-safe asset registry. Provider identifiers and generation prompts belong
-# in AI/history/assets/<image_id>/PROVENANCE.yaml, never in this file.
-images: []
+# Source masters and provider prompts stay outside the publication root.
+# `public_file` is a reviewed derivative or native media file, never inferred
+# from a private source path. No runtime JavaScript or remote service is needed.
+media:
+  - media_id: sample-page-00001
+    type: image
+    source:
+      file: assets/media/master/sample-page-00001.png
+      visibility: private
+      origin: generated
+    public_file: assets/media/web/sample-page-00001.jpg
+    thumbnail: assets/media/thumbnails/sample-page-00001.jpg
+    title:
+      en: Sample page 1
+      jp: サンプル 1 ページ
+    alt:
+      en: Sample illustrated page
+      jp: 挿絵付きのサンプルページ
+    processing:
+      metadata_strip: true
+      embedded_signal_transform: false
+      domain_mark: true
+    status: approved
+
+  - media_id: sample-video-00001
+    type: video
+    source:
+      file: assets/media/master/sample-video.mp4
+      visibility: private
+      origin: user
+    public_file: assets/media/web/sample-video.mp4
+    thumbnail: assets/media/thumbnails/sample-video.jpg
+    title:
+      en: Sample video
+      jp: サンプル動画
+    status: approved
+
+  - media_id: sample-document-00001
+    type: document
+    format: pdf
+    source:
+      file: assets/media/master/sample-document.pdf
+      visibility: private
+      origin: user
+    public_file: assets/media/web/sample-document.pdf
+    thumbnail: assets/media/thumbnails/sample-document.jpg
+    title:
+      en: Sample document
+      jp: サンプル資料
+    status: approved
+
+# Collections are recursive. Four levels are demonstrated; consumers may add
+# arbitrary depth. A collection can reference assets directly, or derive its
+# ordered sequence from a reviewed directory. listing.enabled=false hides the
+# item index but keeps its first ordered item as the representative.
+collections:
+  - collection_id: sample-library
+    route: library
+    title:
+      en: Media Library
+      jp: メディアライブラリ
+    presentation: gallery
+    listing:
+      enabled: true
+    media_ids:
+      - sample-video-00001
+      - sample-document-00001
+    children:
+      - collection_id: comic-series
+        route: comics/series-a
+        title:
+          en: Series A
+          jp: シリーズ A
+        presentation: sequence
+        listing:
+          enabled: true
+        children:
+          - collection_id: comic-volume
+            route: comics/series-a/volume-01
+            title:
+              en: Volume 1
+              jp: 第 1 巻
+            presentation: sequence
+            children:
+              - collection_id: comic-chapter
+                route: comics/series-a/volume-01/chapter-01
+                title:
+                  en: Chapter 1
+                  jp: 第 1 話
+                presentation: sequence
+                listing:
+                  enabled: false
+                source_directory: assets/media/web/comics/series-a/volume-01/chapter-01
+                sequence:
+                  order: filename
+                  reading_direction: rtl
+                  first_page_side: right
+                  view: single
+                  spread_enabled: true
+                  labels:
+                    next: Next
+                    previous: Prev
+                    locales:
+                      jp:
+                        next: Next
+                        previous: Prev
+                      en:
+                        next: Next
+                        previous: Prev
+
+# Page media is keyed by logical page ID, so translations reuse the same asset
+# unless an explicit locale-specific binding is supplied. HTML Masters must
+# opt in via exact slot comments; unmarked body content is preserved.
+page_bindings:
+  - page_id: about
+    role: page_header
+    media_ids: [sample-page-00001]
+  - page_id: article-example
+    role: illustration
+    heading_id: preparation
+    align: right
+    media_ids:
+      - sample-page-00001
+      - sample-page-00001
+  - page_id: about
+    role: background
+    media_id: sample-page-00001
+
+# Policy precedence: global defaults -> media type -> usage/collection ->
+# individual media override. Metadata stripping is best-effort. Embedded-signal
+# modification is a separate experimental stage and remains disabled by default.
+processing:
+  domain: example.com
+  defaults:
+    metadata_strip: true
+    embedded_signal_transform: false
+    domain_mark: true
+  by_type:
+    image:
+      metadata_strip: true
+      domain_mark: true
+    video:
+      metadata_strip: true
+      domain_mark: false
+    document:
+      metadata_strip: true
+      domain_mark: false
+  domain_mark_style:
+    position: bottom-left
+    uppercase: true
+    color: "#ffffff"
+    opacity: 0.88
+    shadow_color: "#000000"
+    shadow_opacity: 0.38
+    font_size_ratio: 0.035
+    margin_ratio: 0.025
