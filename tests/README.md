@@ -15,7 +15,6 @@ Record results in `AI/reports/TEST.md`.
 | `test_template_base.py` | 8 | Adoption metadata and mismatch safety |
 | `test_file_transaction.py` | 3 | Hash-bound backup and conflict safety |
 | `test_legacy_workspace.py` | 2 | Retired workspace migration safety |
-| `test_release_prepare.py` | 4 | Allowlisted sibling, internal evidence, and release fixture boundaries |
 | `test_navigation.py` | 5 | Static hierarchy, breadcrumb, localization markup, and responsive CSS contract |
 
 The suite includes the framework, translation, upgrade, PWA Timer, asset,
