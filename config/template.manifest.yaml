@@ -1,4 +1,4 @@
-# HADA Website Template — machine-readable upgrade contract (v0.4.0)
+# HADA Website Template — machine-readable upgrade contract (v0.4.1)
 # Template version is independent of config/project.yaml → project.version
 
 manifest_version: "1.0"
@@ -8,8 +8,8 @@ schema_version: "0.1"
 template:
   id: hada-website-template
   name: HADA Website Operations Framework
-  version: "0.4.0"
-  release: "v0.4.0"
+  version: "0.4.1"
+  release: "v0.4.1"
   release_repository: naokihada/HADA_Website_Template
 
 compatibility:
@@ -36,6 +36,7 @@ ownership:
     - "docs/DISPLAY.md"
     - "docs/BROWSER_UI.md"
     - "docs/MEDIA.md"
+    - "docs/NAVIGATION.md"
     - "CHANGELOG.md"
     - "AGENTS.md"
     - "README.md"

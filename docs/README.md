@@ -17,3 +17,5 @@ Per-release record template: `AI/reports/RELEASE.md`
 Agent-neutral workspace: `AI/`
 
 Media catalog, intake, and static collection guide: `docs/MEDIA.md`
+
+Static navigation and breadcrumb authoring guide: `docs/NAVIGATION.md`
