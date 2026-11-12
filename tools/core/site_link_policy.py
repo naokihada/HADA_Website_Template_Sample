@@ -15,10 +15,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
-try:
-    import yaml
-except ImportError:  # pragma: no cover - dependency check handles this
-    yaml = None  # type: ignore[assignment]
+from structured_data import load_document
 
 
 DEFAULT_ATTRIBUTES = ("href", "src", "action")
@@ -28,6 +25,7 @@ DEFAULT_POLICY: dict[str, Any] = {
     "roots": [],
     "attributes": list(DEFAULT_ATTRIBUTES),
     "internal_hosts": [],
+    "canonical_host": "",
     "base_path": "/",
     "external_links": {
         "require_new_tab": True,
@@ -38,14 +36,12 @@ IGNORED_SCHEMES = {"data", "javascript", "mailto", "tel", "blob"}
 
 
 def _read_config(root: Path) -> dict[str, Any]:
-    if yaml is None:
-        return {}
-    for path in (root / "config" / "site.yaml", root / "config" / "site.example.yaml"):
+    for path in (root / "config" / "site.json", root / "config" / "site.example.json"):
         if not path.is_file():
             continue
         try:
-            data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-        except (OSError, yaml.YAMLError):
+            data = load_document(path) or {}
+        except (OSError, ValueError):
             return {}
         return data if isinstance(data, dict) else {}
     return {}
@@ -106,6 +102,10 @@ def _join_hosts(data: dict[str, Any], configured: Any) -> set[str]:
     if isinstance(configured, (list, tuple, set)):
         values.extend(str(value) for value in configured if isinstance(value, str))
     values.extend(_configured_url_hosts(data))
+    link_policy = data.get("link_policy") if isinstance(data.get("link_policy"), dict) else {}
+    canonical_host = _as_host(link_policy.get("canonical_host"))
+    if canonical_host:
+        values.append(canonical_host)
     return same_site_hosts(values)
 
 
@@ -143,6 +143,7 @@ def load_policy(root: Path) -> dict[str, Any]:
     base_path = policy.get("base_path") or site.get("base_path") or urls.get("base_path") or "/"
     policy["base_path"] = _normalize_base_path(base_path)
     policy["internal_hosts"] = sorted(_join_hosts(data, policy.get("internal_hosts")))
+    policy["canonical_host"] = _as_host(policy.get("canonical_host")) or ""
 
     external = policy.get("external_links")
     if not isinstance(external, dict):
@@ -213,18 +214,52 @@ def _is_external_url(value: str, internal_hosts: set[str]) -> bool:
 
 
 class _HTMLLinkParser(HTMLParser):
-    def __init__(self, attributes: set[str], internal_hosts: set[str], external_policy: dict[str, Any]) -> None:
+    def __init__(self, attributes: set[str], internal_hosts: set[str], external_policy: dict[str, Any], canonical_host: str = "") -> None:
         super().__init__(convert_charrefs=True)
         self.attributes = attributes
         self.internal_hosts = internal_hosts
         self.external_policy = external_policy
+        self.canonical_host = canonical_host
         self.violations: list[dict[str, Any]] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         line, _ = self.getpos()
         values = {name.lower(): value for name, value in attrs if value is not None}
+        tag_name = tag.lower()
+        rel_tokens = {item.lower() for item in str(values.get("rel", "")).split()}
+        hreflang = values.get("hreflang")
         for name, value in values.items():
             if name not in self.attributes:
+                continue
+            metadata_rule = (
+                "LINK-004" if tag_name == "link" and name == "href" and "canonical" in rel_tokens
+                else "LINK-005" if tag_name == "link" and name == "href" and "alternate" in rel_tokens and hreflang
+                else ""
+            )
+            if metadata_rule:
+                parsed = urlsplit(value.strip())
+                expected_rule = metadata_rule
+                valid = (
+                    parsed.scheme.lower() == "https"
+                    and bool(parsed.hostname)
+                    and not parsed.username
+                    and not parsed.password
+                    and bool(self.canonical_host)
+                    and parsed.hostname.lower().rstrip(".") == self.canonical_host
+                )
+                if not valid:
+                    requirement = "absolute HTTPS URL on the configured canonical host"
+                    if metadata_rule == "LINK-005":
+                        requirement = "fully qualified HTTPS URL on the configured canonical host"
+                    self.violations.append({
+                        "rule_id": expected_rule,
+                        "line": line,
+                        "tag": tag_name,
+                        "attribute": name,
+                        "value": value,
+                        "reason": f"{requirement} is required",
+                        "template_feedback": True,
+                    })
                 continue
             issue = classify_url(value, self.internal_hosts)
             if issue:
@@ -240,7 +275,7 @@ class _HTMLLinkParser(HTMLParser):
                     }
                 )
         href = values.get("href")
-        if tag.lower() != "a" or not href or not _is_external_url(href, self.internal_hosts):
+        if tag_name != "a" or not href or not _is_external_url(href, self.internal_hosts):
             return
         required_target = self.external_policy.get("require_new_tab", True)
         required_rel = set(self.external_policy.get("required_rel", DEFAULT_EXTERNAL_REL))
@@ -285,7 +320,9 @@ def scan(root: Path, policy: dict[str, Any] | None = None) -> list[dict[str, Any
         for value in (active.get("attributes") or DEFAULT_ATTRIBUTES)
         if isinstance(value, str)
     }
-    internal_hosts = set(str(value).lower().rstrip(".") for value in active.get("internal_hosts", []))
+    internal_hosts = same_site_hosts(active.get("internal_hosts", []))
+    if active.get("canonical_host"):
+        internal_hosts.update(same_site_hosts([str(active["canonical_host"])]))
     external_policy = active.get("external_links") if isinstance(active.get("external_links"), dict) else {}
     violations: list[dict[str, Any]] = []
     seen: set[Path] = set()
@@ -296,7 +333,7 @@ def scan(root: Path, policy: dict[str, Any] | None = None) -> list[dict[str, Any
             if path in seen:
                 continue
             seen.add(path)
-            parser = _HTMLLinkParser(attributes, internal_hosts, external_policy)
+            parser = _HTMLLinkParser(attributes, internal_hosts, external_policy, str(active.get("canonical_host", "")))
             try:
                 parser.feed(path.read_text(encoding="utf-8"))
             except (OSError, UnicodeError) as exc:

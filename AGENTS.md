@@ -99,6 +99,14 @@ or `config/` unless explicitly instructed for a non-production purpose.
 
 ---
 
+## Human intent records
+
+Read the root `WHY.md` before significant work. Record only durable reasons,
+values, and priorities explicitly stated or adopted by the project owner. Preserve
+earlier entries and append approved reasons with
+`python tools/core/record_why.py --root .`. Conversation archives are provenance,
+not decision records.
+
 ## Core Principles
 
 1. Agent independent — no Cursor-only assumptions in core design.
@@ -236,7 +244,7 @@ Preflight → Backup → Apply → Verify → Commit
 - `references/registry/` lists external repositories and sources (readonly by default).
 - `references/cache/` holds readonly cached copies from external sources.
 - `references/reports/` holds reference-related analysis output.
-- Register references in `references/registry/references.example.yaml` pattern; use
+- Register references in `references/registry/references.example.json` pattern; use
   project-specific registry files as needed without committing private paths or secrets.
 
 ---

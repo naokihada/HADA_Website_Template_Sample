@@ -10,7 +10,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-import yaml
+from structured_data import dump_json, load_document
 from media_library import fill_html_master_slots
 
 MASTER_TYPES = {"html", "markdown", "generated", "project-template", "unknown", "review_required"}
@@ -26,17 +26,17 @@ def sha256(path: Path) -> str:
 
 
 def project_paths(root: Path) -> dict[str, str]:
-    config_path = root / "config" / "project.yaml"
-    config = yaml.safe_load(config_path.read_text(encoding="utf-8")) if config_path.is_file() else {}
+    config_path = root / "config" / "project.toml"
+    config = load_document(config_path) if config_path.is_file() else {}
     return ((config or {}).get("paths") or {})
 
 
 def load_registry(root: Path) -> dict[str, Any]:
     paths = project_paths(root)
-    path = root / str(paths.get("page_registry", "config/page-registry.yaml"))
+    path = root / str(paths.get("page_registry", "config/page-registry.json"))
     if not path.is_file():
         return {"schema_version": "0.1", "pages": []}
-    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    data = load_document(path) or {}
     if not isinstance(data, dict) or not isinstance(data.get("pages", []), list):
         raise ValueError("page registry must contain a pages list")
     return data

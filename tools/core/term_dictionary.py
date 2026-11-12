@@ -1,4 +1,4 @@
-"""Site-wide term dictionary — single authoritative file (config/term_dictionary.yaml)."""
+"""Site-wide term dictionary — single authoritative file (config/term_dictionary.json)."""
 
 from __future__ import annotations
 
@@ -6,10 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, List
 
-try:
-    import yaml
-except ImportError:
-    yaml = None  # type: ignore[assignment]
+from structured_data import load_document
 
 VALID_TERM_TYPES = {
     "person",
@@ -34,12 +31,10 @@ class TermEntry:
 
 
 def load_term_dictionary(path: Path) -> List[TermEntry]:
-    if yaml is None:
-        raise RuntimeError("PyYAML is required to load the term dictionary")
     if not path.is_file():
         raise FileNotFoundError(f"Term dictionary not found: {path}")
 
-    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    data = load_document(path)
     if not isinstance(data, dict):
         raise ValueError("Term dictionary root must be a mapping")
 

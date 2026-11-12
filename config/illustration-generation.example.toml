@@ -1,0 +1,17 @@
+schema_version = "0.1"
+
+[provider]
+default = "chatgpt_image"
+note = "The provider is configurable; ChatGPT Image is the documented default."
+
+[prompt_profile]
+name = "editorial-illustration"
+common_prompt = "Create a square illustration for this website page.\nTreat the supplied theme as a guide, but make the individual scene distinct.\nDo not include readable text, logos, borders, or interface elements.\n"
+style_prompt = "Refined editorial composition with a clear focal subject and thoughtful\nnegative space. Keep visual details consistent with the website theme.\n"
+negative_prompt = "no readable text, no logos, no embedded watermark, no frame\n"
+
+[output]
+composition = "square"
+generated_master_format = "png"
+web_format = "jpeg"
+direct_generated_output_for_web = false

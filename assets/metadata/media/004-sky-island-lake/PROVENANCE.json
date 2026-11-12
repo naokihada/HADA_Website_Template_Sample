@@ -1,0 +1,16 @@
+{
+  "media_id": "004-sky-island-lake",
+  "type": "image",
+  "origin": "generated",
+  "source_sha256": "sha256:133090dcd638148119948a1d7a04e4b069efda77aed04c3a7bc95c9ca47d1472",
+  "public_sha256": "sha256:454def03676db9b98860bc6d9d47e704147d4e581c4d77febd594005a7719459",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-08T10:37:33.507869+00:00",
+  "provider": "chatgpt_image",
+  "prompt_profile": "editorial-illustration",
+  "prompt": "Use case: stylized-concept. Asset type: landscape fantasy gallery image. Primary request: a quiet alpine lake beneath enormous floating islands, waterfalls suspended in the air, wildflower meadow and a small ancient stone observatory on shore, no people. Style/medium: detailed painterly fantasy environment, natural materials. Composition/framing: wide 3:2 landscape, lake foreground and islands receding in depth, no border. Lighting/mood: clear cool morning, gentle clouds. Constraints: no text, no lettering, no logo, no watermark, no collage.",
+  "thumbnail_sha256": "sha256:72d536bb9b3ce109d58102bee96154a7a6f74aa2319bc92226fea86238736955"
+}

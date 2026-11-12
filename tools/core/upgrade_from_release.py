@@ -19,9 +19,11 @@ import urllib.error
 import urllib.request
 import zipfile
 import template_base
+from structured_data import load_document
+from template_attribution import update_linked_template_attribution  # noqa: E402
 import file_transaction as tx
 from site_audit import audit as audit_site, compare as compare_site  # noqa: E402
-from site_contract import publication_path  # noqa: E402
+from site_contract import publication_path, resolve_site  # noqa: E402
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
@@ -30,9 +32,13 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple
 
 try:
-    import yaml
+    import tomli_w
 except ImportError:
-    yaml = None  # type: ignore[assignment]
+    tomli_w = None
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import tomli as tomllib
 
 ENGINE_NAME = "upgrade-from-release"
 ENGINE_VERSION = "0.1.2"
@@ -46,7 +52,7 @@ EXIT_BLOCKED = 2
 EXIT_FAILED = 3
 
 SKIP_DIR_NAMES = {".git", "__pycache__", ".venv", "venv", "node_modules"}
-CLONE_META = ".hada-upgrade-clone.yaml"
+CLONE_META = ".hada-upgrade-clone.json"
 
 # v0.1.1 Public Release fingerprint (SHA-256 of file contents at tag v0.1.1)
 FINGERPRINT_CATALOG: Dict[str, Dict[str, str]] = {
@@ -68,6 +74,7 @@ class Action(str, Enum):
     REVIEW = "REVIEW_REQUIRED"
     ADD = "ADD"
     REMOVE = "REMOVE"
+    UPDATE_ATTRIBUTION = "UPDATE_ATTRIBUTION"
 
 
 @dataclass
@@ -202,18 +209,67 @@ def matches_any(rel_path: str, patterns: List[str]) -> bool:
     return any(match_glob(rel_path, p) for p in patterns)
 
 
-def load_yaml(path: Path) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
-    if yaml is None:
-        return None, "PyYAML not installed"
+def load_structured(path: Path) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
     if not path.is_file():
         return None, f"Missing file: {path}"
     try:
-        data = yaml.safe_load(path.read_text(encoding="utf-8"))
-    except yaml.YAMLError as exc:
+        data = load_document(path)
+    except (ValueError, OSError) as exc:
         return None, str(exc)
     if not isinstance(data, dict):
-        return None, "YAML root must be a mapping"
+        return None, "Document root must be an object/table"
     return data, None
+
+
+def update_template_attribution_text(text: str, target_version: str, release_repository: str) -> Tuple[str, bool]:
+    """Update only a version label inside a link to this Template's release repository."""
+    return update_linked_template_attribution(text, target_version, release_repository)
+
+
+def plan_template_attribution_updates(root: Path, target_version: str, release_repository: str) -> Dict[str, bytes]:
+    """Plan footer-version edits for linked HTML in configured master/publication roots."""
+    project, _ = load_structured(root / "config" / "project.toml")
+    project = project or {}
+    paths = project.get("paths") if isinstance(project.get("paths"), dict) else {}
+    content_root_value = str(paths.get("content_master") or paths.get("content_root") or "content")
+    content_root = safe_resolve(root, content_root_value)
+    roots = [publication_path(root)]
+    if content_root:
+        roots.append(content_root)
+
+    updates: Dict[str, bytes] = {}
+    content_master_digests: Dict[str, Tuple[str, str]] = {}
+    for scan_root in roots:
+        if not scan_root.is_dir():
+            continue
+        for path in scan_root.rglob("*"):
+            if path.is_symlink() or not path.is_file() or path.suffix.lower() not in (".html", ".htm"):
+                continue
+            try:
+                original = path.read_bytes()
+                text = original.decode("utf-8")
+            except (OSError, UnicodeDecodeError):
+                continue
+            updated, changed = update_template_attribution_text(text, target_version, release_repository)
+            if not changed:
+                continue
+            new_bytes = updated.encode("utf-8")
+            rel = path.relative_to(root).as_posix()
+            updates[rel] = new_bytes
+            if content_root and path.is_relative_to(content_root):
+                content_master_digests[hashlib.sha256(original).hexdigest()] = hashlib.sha256(new_bytes).hexdigest()
+
+    registry_rel = str(resolve_site(root).get("page_registry") or "config/page-registry.json")
+    registry_path = safe_resolve(root, registry_rel)
+    if registry_path and registry_path.is_file() and content_master_digests:
+        registry_bytes = registry_path.read_bytes()
+        registry_text = registry_bytes.decode("utf-8")
+        for previous_digest, updated_digest in content_master_digests.items():
+            registry_text = registry_text.replace(previous_digest, updated_digest)
+        registry_updated = registry_text.encode("utf-8")
+        if registry_updated != registry_bytes:
+            updates[registry_path.relative_to(root).as_posix()] = registry_updated
+    return updates
 
 
 def ownership_lists(manifest: Dict[str, Any]) -> Tuple[List[str], List[str], List[str]]:
@@ -249,8 +305,8 @@ def detect_version(site_root: Path, assume_version: Optional[str] = None) -> Tup
     if assume_version:
         return "assumed", normalize_version(assume_version)
 
-    manifest_path = site_root / "config" / "template.manifest.yaml"
-    data, err = load_yaml(manifest_path)
+    manifest_path = site_root / "config" / "website-template.json"
+    data, err = load_structured(manifest_path)
     if data and not err:
         template = data.get("template") or {}
         version = template.get("version")
@@ -308,19 +364,19 @@ def three_way_action(p: Optional[bytes], c: Optional[bytes], n: Optional[bytes])
     return Action.REVIEW
 
 
-def yaml_merge_project(
+def merge_project(
     p_text: Optional[str], c_text: Optional[str], n_text: Optional[str], preserve_keys: List[str]
 ) -> Tuple[Optional[str], Optional[str]]:
-    if yaml is None:
-        return None, "PyYAML not installed"
+    if tomli_w is None:
+        return None, "tomli-w is required for conflict-safe TOML merge"
     try:
-        p_data = yaml.safe_load(p_text or "") or {}
-        c_data = yaml.safe_load(c_text or "") or {}
-        n_data = yaml.safe_load(n_text or "") or {}
-    except yaml.YAMLError as exc:
+        p_data = tomllib.loads(p_text or "")
+        c_data = tomllib.loads(c_text or "")
+        n_data = tomllib.loads(n_text or "")
+    except (ValueError, TypeError) as exc:
         return None, str(exc)
     if not isinstance(n_data, dict) or not isinstance(c_data, dict):
-        return None, "project.yaml must be mapping"
+        return None, "project.toml must be a table"
 
     def get_nested(d: Dict[str, Any], dotted: str) -> Any:
         parts = dotted.split(".")
@@ -340,7 +396,7 @@ def yaml_merge_project(
             cur = cur[part]
         cur[parts[-1]] = value
 
-    merged = yaml.safe_load(yaml.dump(n_data)) or {}
+    merged = json.loads(json.dumps(n_data))
     for key in preserve_keys:
         val = get_nested(c_data, key)
         if val is not None:
@@ -357,7 +413,7 @@ def yaml_merge_project(
                 if sub_key not in merged[key]:
                     merged[key][sub_key] = sub_val
 
-    return yaml.dump(merged, sort_keys=False, allow_unicode=True), None
+    return tomli_w.dumps(merged), None
 
 
 def build_plan(
@@ -402,24 +458,24 @@ def build_plan(
                 policy = cfg
                 break
 
-        if policy and (policy.get("strategy") == "yaml_merge_preserve_user_keys"):
+        if policy and (policy.get("strategy") == "toml_merge_preserve_user_keys"):
             if p_bytes == c_bytes and p_bytes != n_bytes and c_bytes is not None:
-                merged, err = yaml_merge_project(
+                merged, err = merge_project(
                     p_bytes.decode("utf-8") if p_bytes else None,
                     c_bytes.decode("utf-8") if c_bytes else None,
                     n_bytes.decode("utf-8") if n_bytes else None,
                     list(policy.get("preserve_keys") or []),
                 )
                 if err:
-                    plan.append(PlanItem(rel, Action.REVIEW, f"yaml merge: {err}"))
+                    plan.append(PlanItem(rel, Action.REVIEW, f"TOML merge: {err}"))
                 else:
-                    plan.append(PlanItem(rel, Action.AUTO, "safe yaml merge"))
+                    plan.append(PlanItem(rel, Action.AUTO, "safe TOML merge"))
             elif p_bytes != c_bytes and p_bytes == n_bytes:
-                plan.append(PlanItem(rel, Action.PRESERVE, "user yaml changes"))
+                plan.append(PlanItem(rel, Action.PRESERVE, "user TOML changes"))
             elif p_bytes == c_bytes == n_bytes:
                 plan.append(PlanItem(rel, Action.SKIP, "unchanged"))
             else:
-                plan.append(PlanItem(rel, Action.REVIEW, "yaml three-way conflict"))
+                plan.append(PlanItem(rel, Action.REVIEW, "TOML three-way conflict"))
             continue
 
         if policy and policy.get("strategy") == "preserve_if_modified":
@@ -457,8 +513,8 @@ def apply_plan(site_root: Path, new_root: Path, plan: List[PlanItem], dry_run: b
         if n_path is None or not n_path.is_file():
             continue
         content = n_path.read_bytes()
-        if item.rel_path == "config/project.yaml" and "yaml merge" in item.reason:
-            merged, err = yaml_merge_project(
+        if item.rel_path == "config/project.toml" and "TOML merge" in item.reason:
+            merged, err = merge_project(
                 None,
                 read_file_text(c_path) if c_path else "",
                 n_path.read_text(encoding="utf-8"),
@@ -476,6 +532,17 @@ def apply_plan(site_root: Path, new_root: Path, plan: List[PlanItem], dry_run: b
             dest.write_bytes(content)
         applied.append(item.rel_path)
     return applied
+
+
+def safe_partial_plan(plan: List[PlanItem]) -> List[PlanItem]:
+    """Select only non-destructive template-owned operations for explicit partial apply."""
+    deferred_paths = {"config/project.toml", "config/website-template.json", "TEMPLATE_BASE.md"}
+    return [
+        item for item in plan
+        if item.action in (Action.ADD, Action.AUTO)
+        and item.reason.endswith("template three-way")
+        and item.rel_path not in deferred_paths
+    ]
 
 
 def http_get_json(url: str, timeout: int = 30) -> Dict[str, Any]:
@@ -561,8 +628,7 @@ def write_clone_metadata(dest: Path, repo: str, tag: str) -> None:
         "purpose": "template-upgrade-source",
         "retain": True,
     }
-    if yaml is not None:
-        dest.joinpath(CLONE_META).write_text(yaml.dump(meta, sort_keys=False), encoding="utf-8")
+    dest.joinpath(CLONE_META).write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8", newline="\r\n")
 
 
 def fetch_template_to_temp(
@@ -603,6 +669,7 @@ def run_upgrade(
     local_previous_template: Optional[Path] = None,
     network_check: Optional[Callable[[str], Tuple[bool, Optional[str]]]] = None,
     release_resolver: Optional[Callable[[str, Optional[str]], Tuple[Optional[str], Optional[str], Optional[Dict[str, Any]]]]] = None,
+    apply_safe: bool = False,
 ) -> UpgradeResult:
     start = time.time()
     findings: List[Finding] = []
@@ -644,7 +711,7 @@ def run_upgrade(
             target_ver = normalize_version(version)
             target_tag = normalize_tag(version)
         else:
-            local_manifest, _ = load_yaml(local_new_template / "config" / "template.manifest.yaml")
+            local_manifest, _ = load_structured(local_new_template / "config" / "website-template.json")
             if local_manifest:
                 tv = (local_manifest.get("template") or {}).get("version")
                 if isinstance(tv, str) and tv.strip():
@@ -686,8 +753,8 @@ def run_upgrade(
 
     temp_path = str(new_root.resolve()) if local_new_template is None else None
 
-    manifest_path = new_root / "config" / "template.manifest.yaml"
-    manifest, err = load_yaml(manifest_path)
+    manifest_path = new_root / "config" / "website-template.json"
+    manifest, err = load_structured(manifest_path)
     if not manifest:
         return UpgradeResult(
             "BLOCKED", EXIT_BLOCKED, str(root.resolve()), current_ver, detection, target_ver, target_tag, temp_path,
@@ -720,10 +787,20 @@ def run_upgrade(
 
     plan, plan_findings = build_plan(root, prev_root, new_root, manifest)
     findings.extend(plan_findings)
+    template_info = manifest.get("template") if isinstance(manifest.get("template"), dict) else {}
+    release_repository = str(template_info.get("release_repository") or DEFAULT_REPO)
+    attribution_updates = plan_template_attribution_updates(root, target_ver, release_repository)
+    planned_paths = {item.rel_path for item in plan}
+    for rel in sorted(attribution_updates):
+        if rel not in planned_paths:
+            plan.append(PlanItem(rel, Action.UPDATE_ATTRIBUTION, "update linked Template attribution to target Release version"))
 
     has_review = any(item.action == Action.REVIEW for item in plan)
     applied: List[str] = []
-    if not has_review:
+    partial_plan = safe_partial_plan(plan) if has_review and apply_safe else []
+    partial_apply = bool(has_review and apply_safe and not dry_run and partial_plan)
+    execution_plan = partial_plan if partial_apply else plan
+    if not has_review or partial_apply:
         if dry_run:
             applied = []
         else:
@@ -743,13 +820,21 @@ def run_upgrade(
                     findings=[Finding('UPG-052', 'WARNING', 'Legacy workspace requires classified, backed-up migration before apply')])
             # Verify candidate in isolation; never rebuild styled output in the consumer.
             candidate = Path(tempfile.mkdtemp(prefix='hada-upgrade-verify-'))
-            snapshots = {i.rel_path: tx.digest(tx.safe(root, i.rel_path)) for i in plan
-                if i.action in (Action.AUTO, Action.ADD, Action.REMOVE)}
-            snapshots['TEMPLATE_BASE.md'] = tx.digest(tx.safe(root, 'TEMPLATE_BASE.md'))
+            snapshots = {i.rel_path: tx.digest(tx.safe(root, i.rel_path)) for i in execution_plan
+                if i.action in (Action.AUTO, Action.ADD, Action.REMOVE, Action.UPDATE_ATTRIBUTION)}
+            if not partial_apply:
+                snapshots['TEMPLATE_BASE.md'] = tx.digest(tx.safe(root, 'TEMPLATE_BASE.md'))
             shutil.copytree(root, candidate, dirs_exist_ok=True,
                 ignore=shutil.ignore_patterns('.git', 'AI', '__pycache__', '.venv', 'node_modules'))
             (candidate / 'AI').mkdir(exist_ok=True)
-            apply_plan(candidate, new_root, plan, dry_run=False)
+            apply_plan(candidate, new_root, execution_plan, dry_run=False)
+            if partial_apply:
+                candidate_manifest = tx.safe(candidate, 'config/website-template.json')
+                candidate_manifest.write_bytes(tx.safe(new_root, 'config/website-template.json').read_bytes())
+            else:
+                for rel, data in attribution_updates.items():
+                    candidate_path = tx.safe(candidate, rel)
+                    candidate_path.write_bytes(data)
             (candidate / 'TEMPLATE_BASE.md').write_text(template_base.render(template_base.from_manifest(manifest)), encoding='utf-8')
             commands = [[sys.executable, str(candidate / 'tools/core/validate_framework.py'), '--root', str(candidate)]]
             commands += [[sys.executable, str(p)] for p in sorted((candidate / 'tests').glob('test_*.py'))]
@@ -785,28 +870,56 @@ def run_upgrade(
                     findings=[Finding('UPG-060', 'WARNING', 'Candidate semantic site diff requires review', file='build/upgrade-semantic-diff.json')])
             # Candidate build output is verification only, never copied over styled output.
             operations = []
-            for item in plan:
-                if item.action not in (Action.AUTO, Action.ADD, Action.REMOVE): continue
-                data = None if item.action == Action.REMOVE else tx.safe(new_root, item.rel_path).read_bytes()
-                if item.rel_path == 'config/project.yaml' and 'yaml merge' in item.reason:
-                    merged, error = yaml_merge_project(None, read_file_text(root / item.rel_path), data.decode(), ['project', 'paths'])
+            for item in execution_plan:
+                if item.action not in (Action.AUTO, Action.ADD, Action.REMOVE, Action.UPDATE_ATTRIBUTION): continue
+                if item.action == Action.REMOVE:
+                    data = None
+                elif item.action == Action.UPDATE_ATTRIBUTION:
+                    data = tx.safe(candidate, item.rel_path).read_bytes()
+                else:
+                    data = tx.safe(new_root, item.rel_path).read_bytes()
+                if item.rel_path == 'config/project.toml' and 'TOML merge' in item.reason:
+                    merged, error = merge_project(None, read_file_text(root / item.rel_path), data.decode(), ['project', 'paths'])
                     if error: raise ValueError(error)
                     data = merged.encode()
                 operation = tx.entry(root, item.rel_path, data)
                 operation['before'] = snapshots[item.rel_path]
                 operations.append(operation)
-            base_operation = tx.entry(root, 'TEMPLATE_BASE.md', template_base.render(template_base.from_manifest(manifest)).encode())
-            base_operation['before'] = snapshots['TEMPLATE_BASE.md']
-            operations.append(base_operation)
-            operations.sort(key=lambda e: e['path'] in ('config/template.manifest.yaml', 'TEMPLATE_BASE.md'))
+            if not partial_apply:
+                base_operation = tx.entry(root, 'TEMPLATE_BASE.md', template_base.render(template_base.from_manifest(manifest)).encode())
+                base_operation['before'] = snapshots['TEMPLATE_BASE.md']
+                operations.append(base_operation)
+            operations.sort(key=lambda e: e['path'] in ('config/website-template.json', 'TEMPLATE_BASE.md'))
+            history_dir = root / 'AI/history' / (('upgrade-partial-' if partial_apply else 'upgrade-') + uuid.uuid4().hex)
             try:
-                applied = tx.apply(root, operations, root / 'AI/history' / ('upgrade-' + uuid.uuid4().hex))
+                applied = tx.apply(root, operations, history_dir)
+                if partial_apply and applied:
+                    receipt = {
+                        'status': 'PARTIAL_REVIEW_REQUIRED',
+                        'current_version': current_ver,
+                        'target_version': target_ver,
+                        'applied_paths': applied,
+                        'conflict_paths': [item.rel_path for item in plan if item.action == Action.REVIEW],
+                        'manifest_and_template_base_advanced': False,
+                        'footer_attribution_advanced': False,
+                    }
+                    (history_dir / 'PARTIAL.json').write_text(
+                        json.dumps(receipt, indent=2, ensure_ascii=False) + '\n',
+                        encoding='utf-8', newline='\r\n',
+                    )
             except (ValueError, OSError) as exc:
                 return UpgradeResult('REVIEW_REQUIRED', EXIT_REVIEW, str(root.resolve()), current_ver,
                     detection, target_ver, target_tag, str(candidate), plan=plan,
                     findings=[Finding('UPG-054', 'ERROR', str(exc))])
     else:
         findings.append(Finding("UPG-020", "WARNING", "Migration plan contains REVIEW_REQUIRED items"))
+    if has_review and partial_apply:
+        findings.append(Finding(
+            "UPG-021", "WARNING",
+            "Conflict-free template-owned changes were applied; resolve conflicts and rerun to finalize version and attribution",
+        ))
+    elif has_review and apply_safe and not dry_run and not partial_plan:
+        findings.append(Finding("UPG-022", "INFO", "No eligible conflict-free template-owned changes for partial apply"))
 
     if has_review:
         status, code = "REVIEW_REQUIRED", EXIT_REVIEW
@@ -845,8 +958,8 @@ def format_text(result: UpgradeResult) -> str:
 
 
 def main(argv: Optional[List[str]] = None) -> int:
-    if yaml is None:
-        print("ERROR: PyYAML required (pip install -r tools/core/requirements.txt)", file=sys.stderr)
+    if tomli_w is None:
+        print("ERROR: tomli-w required for conflict-safe TOML merge", file=sys.stderr)
         return EXIT_FAILED
 
     parser = argparse.ArgumentParser(description="Upgrade site from HADA Website Template GitHub Release")
@@ -854,6 +967,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser.add_argument("--version", help="Target version e.g. v0.1.2 (default: latest stable Release)")
     parser.add_argument("--assume-version", help="Explicit current template version when detection is unknown")
     parser.add_argument("--dry-run", action="store_true", help="Plan only; do not write files")
+    parser.add_argument("--apply-safe", action="store_true", help="Apply verified conflict-free template-owned additions/updates even if other paths need review")
     parser.add_argument("--skip-network", action="store_true", help="Dev/test: skip network preflight")
     parser.add_argument("--local-new-template", help="Dev/test: local path as new template (skip fetch)")
     parser.add_argument("--local-previous-template", help="Dev/test: local path as previous template")
@@ -869,6 +983,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         version=args.version,
         assume_version=args.assume_version,
         dry_run=args.dry_run,
+        apply_safe=args.apply_safe,
         skip_network=args.skip_network,
         local_new_template=local_new,
         local_previous_template=local_prev,

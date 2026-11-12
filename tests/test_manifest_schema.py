@@ -29,5 +29,20 @@ class ManifestSchemaTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             manifest_schema.validate(manifest)
 
+    def test_accepts_optional_base_compatibility(self):
+        manifest = self.valid()
+        manifest['base_compatibility'] = {
+            'template_id': 'hada-base-template',
+            'minimum_version': '0.1.1',
+            'tested_version': '0.1.1',
+        }
+        self.assertIs(manifest_schema.validate(manifest), manifest)
+
+    def test_rejects_incomplete_base_compatibility(self):
+        manifest = self.valid()
+        manifest['base_compatibility'] = {'template_id': 'hada-base-template'}
+        with self.assertRaises(ValueError):
+            manifest_schema.validate(manifest)
+
 if __name__ == '__main__':
     unittest.main()

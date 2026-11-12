@@ -1,0 +1,1334 @@
+{
+  "schema_version": "0.3",
+  "media": [
+    {
+      "media_id": "001-whispering-river-valley",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/otherworld-landscapes-20261108/001-whispering-river-valley.png",
+        "visibility": "private",
+        "origin": "generated",
+        "sha256": "sha256:b48420b96538c2807b39ec33db5d6167728959ca86b075fb0848989fb45e6c7a"
+      },
+      "public_file": "assets/media/web/otherworld-landscapes-20261108/001-whispering-river-valley.jpg",
+      "status": "approved",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "provider": "chatgpt_image",
+      "prompt_profile": "editorial-illustration",
+      "thumbnail": "assets/media/thumbnails/otherworld-landscapes-20261108/001-whispering-river-valley.jpg",
+      "title": {
+        "en": "Whispering River Valley",
+        "jp": "ささやきの河谷",
+        "de": "Flüstertal"
+      },
+      "alt": {
+        "en": "A winding river through misty green cliffs at dawn",
+        "jp": "朝霧の緑の断崖を縫う川",
+        "de": "Ein gewundener Fluss zwischen nebligen grünen Klippen im Morgengrauen"
+      },
+      "public_sha256": "sha256:a7c99ff84deac5ea46ea8caac66b1bbcbab932396cd0df30d20f67fd680b87da",
+      "thumbnail_sha256": "sha256:f39cea7982fe474180175387a812b1b9cbbe8a7b79fb5f6883dd3f8bee6ab0fa"
+    },
+    {
+      "media_id": "002-rootbound-city",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/otherworld-landscapes-20261108/002-rootbound-city.png",
+        "visibility": "private",
+        "origin": "generated",
+        "sha256": "sha256:d9437dda5b4fbf7cc1f1566d9621c528ee0fdc55788db8f637b15d6c0e8ff734"
+      },
+      "public_file": "assets/media/web/otherworld-landscapes-20261108/002-rootbound-city.jpg",
+      "status": "approved",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "provider": "chatgpt_image",
+      "prompt_profile": "editorial-illustration",
+      "thumbnail": "assets/media/thumbnails/otherworld-landscapes-20261108/002-rootbound-city.jpg",
+      "title": {
+        "en": "City Held by Roots",
+        "jp": "大樹の根に抱かれた街",
+        "de": "Stadt in den Wurzelhallen"
+      },
+      "alt": {
+        "en": "An ancient pale-stone city among giant tree roots and forest bridges",
+        "jp": "巨木の根と森の橋に築かれた古い石の街",
+        "de": "Eine alte helle Steinstadt zwischen riesigen Baumwurzeln und Waldbrücken"
+      },
+      "public_sha256": "sha256:f8ef1e8e8fb444782f2e4f43dfcea2174b0c9b7bc121e80eac00307cb76af23c",
+      "thumbnail_sha256": "sha256:73c5da1b6778ad10984373efb65e756de24112d20ba02cdd782461bbcda190f4"
+    },
+    {
+      "media_id": "003-glassfire-coast",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/otherworld-landscapes-20261108/003-glassfire-coast.png",
+        "visibility": "private",
+        "origin": "generated",
+        "sha256": "sha256:727b926d68127d73a307ed3de410bd3acf764e59d2e9aae3f210e5d0856870f0"
+      },
+      "public_file": "assets/media/web/otherworld-landscapes-20261108/003-glassfire-coast.jpg",
+      "status": "approved",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "provider": "chatgpt_image",
+      "prompt_profile": "editorial-illustration",
+      "thumbnail": "assets/media/thumbnails/otherworld-landscapes-20261108/003-glassfire-coast.jpg",
+      "title": {
+        "en": "Glassfire Coast",
+        "jp": "硝子火山の海岸",
+        "de": "Küste aus Feuerglas"
+      },
+      "alt": {
+        "en": "A dark volcanic coast with turquoise pools and glowing distant mountains",
+        "jp": "青緑の潮だまりと遠くに光る山を望む火山海岸",
+        "de": "Eine dunkle Vulkanküste mit türkisfarbenen Becken und leuchtenden Bergen"
+      },
+      "public_sha256": "sha256:bc9670940f8251654f0597e04707302f1ee88517ea3a07c36ed1fcf7f8fb4ed5",
+      "thumbnail_sha256": "sha256:8be8f2ffae3dd6936815c4aea1951ff130020b86ae68331a915eeea83e298917"
+    },
+    {
+      "media_id": "004-sky-island-lake",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/otherworld-landscapes-20261108/004-sky-island-lake.png",
+        "visibility": "private",
+        "origin": "generated",
+        "sha256": "sha256:133090dcd638148119948a1d7a04e4b069efda77aed04c3a7bc95c9ca47d1472"
+      },
+      "public_file": "assets/media/web/otherworld-landscapes-20261108/004-sky-island-lake.jpg",
+      "status": "approved",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "provider": "chatgpt_image",
+      "prompt_profile": "editorial-illustration",
+      "thumbnail": "assets/media/thumbnails/otherworld-landscapes-20261108/004-sky-island-lake.jpg",
+      "title": {
+        "en": "Lake of Sky Islands",
+        "jp": "浮島の湖",
+        "de": "See der Himmelsinseln"
+      },
+      "alt": {
+        "en": "A mountain lake beneath floating islands and suspended waterfalls",
+        "jp": "浮島と空中の滝を映す山の湖",
+        "de": "Ein Bergsee unter schwebenden Inseln und Wasserfällen"
+      },
+      "public_sha256": "sha256:8e840f1881fef773789249f862485d3ae67de3f8cd676a1333f4c73e78a7a607",
+      "thumbnail_sha256": "sha256:6d5b18bde81222f2ab1162528f90d885b5fddd7aa8f8a9a7f5d8b5b172ea7e99"
+    },
+    {
+      "media_id": "005-copper-dune-ruin",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/otherworld-landscapes-20261108/005-copper-dune-ruin.png",
+        "visibility": "private",
+        "origin": "generated",
+        "sha256": "sha256:b4446a0e2b43650c89c985e0e70582816de69150422963e5e931d00c1e71d416"
+      },
+      "public_file": "assets/media/web/otherworld-landscapes-20261108/005-copper-dune-ruin.jpg",
+      "status": "approved",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "provider": "chatgpt_image",
+      "prompt_profile": "editorial-illustration",
+      "thumbnail": "assets/media/thumbnails/otherworld-landscapes-20261108/005-copper-dune-ruin.jpg",
+      "title": {
+        "en": "Copper Dune Ruin",
+        "jp": "銅砂の遺跡",
+        "de": "Ruine in den Kupferdünen"
+      },
+      "alt": {
+        "en": "A colossal ring ruin half-buried in copper-colored desert dunes",
+        "jp": "銅色の砂丘に半ば埋もれた巨大な環状遺跡",
+        "de": "Eine gewaltige Ringruine, halb im kupferfarbenen Wüstensand versunken"
+      },
+      "public_sha256": "sha256:7615a858398cf472c4ef3babffbfca5ca33ef1e3d7c40f33351c64d0d0f1b698",
+      "thumbnail_sha256": "sha256:e671a1cd4b932499ec03c4eeb4c8e146bd65976d41a088528547aa57d6086193"
+    },
+    {
+      "media_id": "006-moonlit-mushroom-wood",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/otherworld-landscapes-20261108/006-moonlit-mushroom-wood.png",
+        "visibility": "private",
+        "origin": "generated",
+        "sha256": "sha256:4a7803d0ca856fa66e4318226fa833f31cf9fab893973cc23c8edcaa65577f0d"
+      },
+      "public_file": "assets/media/web/otherworld-landscapes-20261108/006-moonlit-mushroom-wood.jpg",
+      "status": "approved",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "provider": "chatgpt_image",
+      "prompt_profile": "editorial-illustration",
+      "thumbnail": "assets/media/thumbnails/otherworld-landscapes-20261108/006-moonlit-mushroom-wood.jpg",
+      "title": {
+        "en": "Moonlit Mushroom Wood",
+        "jp": "月灯りの茸森",
+        "de": "Mondlicht-Pilzwald"
+      },
+      "alt": {
+        "en": "A moonlit forest of giant glowing mushrooms beside a silver stream",
+        "jp": "銀色の小川のそばに光る巨大な茸が立つ月夜の森",
+        "de": "Ein mondheller Wald mit leuchtenden Riesenpilzen an einem silbernen Bach"
+      },
+      "public_sha256": "sha256:16fc85f0669524f34709195f52d5dac21a2d74fda5b06998177a2f88ced480e8",
+      "thumbnail_sha256": "sha256:9a3d187ecd46f193d406678e4d2498b37678f87ba257f64629caf5031187a978"
+    },
+    {
+      "media_id": "007-cloudspan-bridge",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/otherworld-landscapes-20261108/007-cloudspan-bridge.png",
+        "visibility": "private",
+        "origin": "generated",
+        "sha256": "sha256:fd2841dad514a48430ecb21a7fca0352e3634766266174bce2ce8d483d3a8448"
+      },
+      "public_file": "assets/media/web/otherworld-landscapes-20261108/007-cloudspan-bridge.jpg",
+      "status": "approved",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "provider": "chatgpt_image",
+      "prompt_profile": "editorial-illustration",
+      "thumbnail": "assets/media/thumbnails/otherworld-landscapes-20261108/007-cloudspan-bridge.jpg",
+      "title": {
+        "en": "Cloudspan Bridge",
+        "jp": "雲海に架かる古橋",
+        "de": "Brücke über dem Wolkenmeer"
+      },
+      "alt": {
+        "en": "A ruined stone bridge crossing a cloud-filled mountain chasm",
+        "jp": "雲海の裂け目を渡る崩れた石橋",
+        "de": "Eine verfallene Steinbrücke über einer wolkengefüllten Bergschlucht"
+      },
+      "public_sha256": "sha256:9fc6ec9f902dd9455503a2cefc5e9e33b36d49f6e3f3961952dec9c1f96d6ea8",
+      "thumbnail_sha256": "sha256:9d7787f27347fd8c9e084fc6bb117e3388321ca87ce2f682f35c56be2cd96f12"
+    },
+    {
+      "media_id": "008-moon-garden-isle",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/otherworld-landscapes-20261108/008-moon-garden-isle.png",
+        "visibility": "private",
+        "origin": "generated",
+        "sha256": "sha256:6a5ba1d95864e193851bd003414cda0b1bad916f967cf9c2cf76e307a851e320"
+      },
+      "public_file": "assets/media/web/otherworld-landscapes-20261108/008-moon-garden-isle.jpg",
+      "status": "approved",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "provider": "chatgpt_image",
+      "prompt_profile": "editorial-illustration",
+      "thumbnail": "assets/media/thumbnails/otherworld-landscapes-20261108/008-moon-garden-isle.jpg",
+      "title": {
+        "en": "Moon Garden Isle",
+        "jp": "月夜の庭園島",
+        "de": "Mondgarteneiland"
+      },
+      "alt": {
+        "en": "A moonlit island garden with terraces, waterfalls, red trees, and distant cliffs",
+        "jp": "段々の滝と赤い木々、遠い断崖を望む月夜の島庭園",
+        "de": "Ein mondheller Inselgarten mit Terrassen, Wasserfällen, roten Bäumen und fernen Klippen"
+      },
+      "public_sha256": "sha256:16f3caadb340de8f05280d0ac73bc80e09d6c37121266934c8ed2c27a653d89f",
+      "thumbnail_sha256": "sha256:62e73a2cd937658519c32ba328aeb9b694d748a74718e41c3f78249c32df09d1"
+    },
+    {
+      "media_id": "future-vehicle-01-aether-skimmer",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/future-otherworld-vehicles-20261108/future-vehicle-01-aether-skimmer.png",
+        "visibility": "private",
+        "origin": "generated",
+        "sha256": "sha256:4f0b88c0ba432281a287169ba86f93e233134315c2bc0afcacc457d261e29641"
+      },
+      "public_file": "assets/media/web/future-otherworld-vehicles-20261108/future-vehicle-01-aether-skimmer.jpg",
+      "status": "approved",
+      "public_sha256": "sha256:1d3d6bc99e716d46adbc1addab35daf5edb40783090997217bace793c4cbc7dc",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "provider": "chatgpt_image",
+      "prompt_profile": "editorial-illustration",
+      "thumbnail": "assets/media/thumbnails/future-otherworld-vehicles-20261108/future-vehicle-01-aether-skimmer.jpg",
+      "thumbnail_sha256": "sha256:59f4d86c6387b9ad6bf8e3527f6a7e82c6679e4ca3366f3b523e3bb189047b28",
+      "title": {
+        "en": "Aether Skimmer",
+        "jp": "エーテル・スキマー",
+        "de": "Ätherskimmer"
+      },
+      "alt": {
+        "en": "A photoreal hovering expedition craft crossing a salt flat beneath floating cliffs",
+        "jp": "浮遊する断崖の下、塩原を進むフォトリアルな浮遊探査艇",
+        "de": "Ein fotorealistisches schwebendes Expeditionsfahrzeug unter treibenden Klippen"
+      }
+    },
+    {
+      "media_id": "future-vehicle-02-river-crawler",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/future-otherworld-vehicles-20261108/future-vehicle-02-river-crawler.png",
+        "visibility": "private",
+        "origin": "generated",
+        "sha256": "sha256:0d9b7ea9b00b376271a9dacfc0f77c2e829c7c0492313ea11150809bdf0a5c58"
+      },
+      "public_file": "assets/media/web/future-otherworld-vehicles-20261108/future-vehicle-02-river-crawler.jpg",
+      "status": "approved",
+      "public_sha256": "sha256:dff8ba068275a5fc5c9c3e89f110a6b96a34c877457c6af4a1396e8ae554ee5d",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "provider": "chatgpt_image",
+      "prompt_profile": "editorial-illustration",
+      "thumbnail": "assets/media/thumbnails/future-otherworld-vehicles-20261108/future-vehicle-02-river-crawler.jpg",
+      "thumbnail_sha256": "sha256:7195a4375a197fcaa231d6ce61c16d784088519006e67eeeb32141adf9b53375",
+      "title": {
+        "en": "River Crawler",
+        "jp": "リバー・クローラー",
+        "de": "Flusscrawler"
+      },
+      "alt": {
+        "en": "A photoreal six-wheel amphibious vehicle beside a river in a basalt canyon",
+        "jp": "玄武岩の峡谷の川辺に停車するフォトリアルな六輪水陸両用車",
+        "de": "Ein fotorealistisches sechsrädriges Amphibienfahrzeug an einem Fluss in einer Basaltschlucht"
+      }
+    },
+    {
+      "media_id": "future-vehicle-03-cloud-ferry",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/future-otherworld-vehicles-20261108/future-vehicle-03-cloud-ferry.png",
+        "visibility": "private",
+        "origin": "generated",
+        "sha256": "sha256:f9d8579d99e8785eec7c5202c204a6b190a426b7eeb92a8b941c133f7cbcec8e"
+      },
+      "public_file": "assets/media/web/future-otherworld-vehicles-20261108/future-vehicle-03-cloud-ferry.jpg",
+      "status": "approved",
+      "public_sha256": "sha256:479ff77536abd1a795bdd6c49db01c1d650003cb6e2fff271b9806128180ea5d",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "provider": "chatgpt_image",
+      "prompt_profile": "editorial-illustration",
+      "thumbnail": "assets/media/thumbnails/future-otherworld-vehicles-20261108/future-vehicle-03-cloud-ferry.jpg",
+      "thumbnail_sha256": "sha256:c0b575aa67ec69bc72649aa6e2cc1a621303ec376443aa3e1944ef196f2a69df",
+      "title": {
+        "en": "Cloud Ferry",
+        "jp": "クラウド・フェリー",
+        "de": "Wolkenfähre"
+      },
+      "alt": {
+        "en": "A photoreal ring-lift passenger craft above a cloud forest",
+        "jp": "雲霧林の上空に浮かぶフォトリアルなリング式旅客艇",
+        "de": "Ein fotorealistisches ringgetragenes Passagierfahrzeug über einem Wolkenwald"
+      }
+    },
+    {
+      "media_id": "magic-bike-01-violet-crystal",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/magic-engine-motorcycles-20261108/magic-bike-01-violet-crystal.png",
+        "visibility": "private",
+        "origin": "generated",
+        "sha256": "sha256:c85cecc2d727d53b1ccc3d66831caeeed5832c77492433e2b8dc297fc834f271"
+      },
+      "public_file": "assets/media/web/magic-engine-motorcycles-20261108/magic-bike-01-violet-crystal.jpg",
+      "status": "approved",
+      "public_sha256": "sha256:bd602eaac7428bdb47721826191006b154d4dd6cf2bcd5402c7ef6b3d9427a81",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "provider": "chatgpt_image",
+      "prompt_profile": "editorial-illustration",
+      "thumbnail": "assets/media/thumbnails/magic-engine-motorcycles-20261108/magic-bike-01-violet-crystal.jpg",
+      "thumbnail_sha256": "sha256:9461dd57bc006db229b081025985464e8268caa86f15d49eb56072f25a4185fb",
+      "title": {
+        "en": "Violet Crystal Engine",
+        "jp": "紫晶の魔力エンジン",
+        "de": "Motor mit violettem Kristall"
+      },
+      "alt": {
+        "en": "A photoreal fantasy motorcycle with a glowing violet crystal engine on a volcanic plain",
+        "jp": "火山平原に立つ、紫の結晶エンジンが輝くフォトリアルな異世界バイク",
+        "de": "Ein fotorealistisches Fantasy-Motorrad mit leuchtendem violettem Kristallmotor auf einer Vulkanebene"
+      }
+    },
+    {
+      "media_id": "magic-bike-02-amber-rune",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/magic-engine-motorcycles-20261108/magic-bike-02-amber-rune.png",
+        "visibility": "private",
+        "origin": "generated",
+        "sha256": "sha256:cf3b1227ff5117cd3671b34d0d19d9473dc4987b5e20f6fcce473e5f85a354cb"
+      },
+      "public_file": "assets/media/web/magic-engine-motorcycles-20261108/magic-bike-02-amber-rune.jpg",
+      "status": "approved",
+      "public_sha256": "sha256:8ea08d13057dc9c015f7b3a70f7358cf79e2e9e0e6d548b5ff7da718c662269c",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "provider": "chatgpt_image",
+      "prompt_profile": "editorial-illustration",
+      "thumbnail": "assets/media/thumbnails/magic-engine-motorcycles-20261108/magic-bike-02-amber-rune.jpg",
+      "thumbnail_sha256": "sha256:a46cce4e5343bf968288d8c318c9ed4e4b1846a58cdb03bdac90b05c75cba964",
+      "title": {
+        "en": "Amber Rune Engine",
+        "jp": "琥珀ルーンの魔力エンジン",
+        "de": "Motor mit Bernsteinrunen"
+      },
+      "alt": {
+        "en": "A photoreal fantasy motorcycle with an amber rune engine on an alpine pass",
+        "jp": "山岳峠に立つ、琥珀色のルーンエンジンを積んだフォトリアルな異世界バイク",
+        "de": "Ein fotorealistisches Fantasy-Motorrad mit bernsteinfarbenem Runenmotor auf einem Alpenpass"
+      }
+    },
+    {
+      "media_id": "magic-bike-03-ember-engine",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/magic-engine-motorcycles-20261108/magic-bike-03-ember-engine.png",
+        "visibility": "private",
+        "origin": "generated",
+        "sha256": "sha256:4fe069e0cdca9138c82f7b33581c8b84c3ea2a0f21d490e3370a8fa1efba6bb2"
+      },
+      "public_file": "assets/media/web/magic-engine-motorcycles-20261108/magic-bike-03-ember-engine.jpg",
+      "status": "approved",
+      "public_sha256": "sha256:a16ec1b9139ccbcb290848e2db74d7c48b55af75a771f13b211da70b54c254da",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "provider": "chatgpt_image",
+      "prompt_profile": "editorial-illustration",
+      "thumbnail": "assets/media/thumbnails/magic-engine-motorcycles-20261108/magic-bike-03-ember-engine.jpg",
+      "thumbnail_sha256": "sha256:c11345dc653464e38bf837c6bf2c9179441faa7a82079ddbd522dd26c9bd7518",
+      "title": {
+        "en": "Ember Engine Scrambler",
+        "jp": "熾火エンジンのスクランブラー",
+        "de": "Scrambler mit Glutmotor"
+      },
+      "alt": {
+        "en": "A photoreal desert scrambler motorcycle powered by an orange ember engine",
+        "jp": "橙色の熾火エンジンで駆動するフォトリアルな砂漠の異世界バイク",
+        "de": "Ein fotorealistisches Wüstenmotorrad mit orange leuchtendem Glutmotor"
+      }
+    },
+    {
+      "media_id": "magic-bike-04-moonstone-engine",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/magic-engine-motorcycles-20261108/magic-bike-04-moonstone-engine.png",
+        "visibility": "private",
+        "origin": "generated",
+        "sha256": "sha256:dccc7f2370b733340fd589262b161813bf9411c412273084f19aa29abd8fa208"
+      },
+      "public_file": "assets/media/web/magic-engine-motorcycles-20261108/magic-bike-04-moonstone-engine.jpg",
+      "status": "approved",
+      "public_sha256": "sha256:144a8e7d17ce289e44285709ffe2e1b5190ee946bb5be2c0dd057af865741779",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "provider": "chatgpt_image",
+      "prompt_profile": "editorial-illustration",
+      "thumbnail": "assets/media/thumbnails/magic-engine-motorcycles-20261108/magic-bike-04-moonstone-engine.jpg",
+      "thumbnail_sha256": "sha256:684bb1f695450dd3c687f1ecebf8de48fc2f0884b61ce3812df20cef857ce278",
+      "title": {
+        "en": "Moonstone Engine",
+        "jp": "月長石の魔力エンジン",
+        "de": "Motor mit Mondstein"
+      },
+      "alt": {
+        "en": "A photoreal fantasy motorcycle with a blue moonstone engine in a nocturnal forest",
+        "jp": "夜の森に佇む、青い月長石エンジンを積んだフォトリアルな異世界バイク",
+        "de": "Ein fotorealistisches Fantasy-Motorrad mit blauem Mondsteinmotor in einem Nachtwald"
+      }
+    },
+    {
+      "media_id": "future-vehicle-04-canyon-glider-revised",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/future-otherworld-vehicles-20261108/future-vehicle-04-canyon-glider-revised.png",
+        "visibility": "private",
+        "origin": "generated",
+        "sha256": "sha256:30f65d844143420a2b7fb09e73786a7c5bba8c62432c65744040bf749af8f390"
+      },
+      "public_file": "assets/media/web/future-otherworld-vehicles-20261108/future-vehicle-04-canyon-glider-revised.jpg",
+      "status": "approved",
+      "public_sha256": "sha256:1c251c2a8a4e22d238e79771e7cd90577268b0730a80bc873f37071f206b0f72",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "provider": "chatgpt_image",
+      "prompt_profile": "editorial-illustration",
+      "thumbnail": "assets/media/thumbnails/future-otherworld-vehicles-20261108/future-vehicle-04-canyon-glider-revised.jpg",
+      "thumbnail_sha256": "sha256:d54a4914fb2c1a559cf77516eeb47e22765267c85de481001b0a0f7088dc719f",
+      "title": {
+        "en": "Canyon Glider",
+        "jp": "キャニオン・グライダー",
+        "de": "Canyon-Gleiter"
+      },
+      "alt": {
+        "en": "A photoreal, structurally coherent winged aircraft with a central fuselage, symmetrical wings, tail stabilizer and lift nacelles flying through a vast canyon",
+        "jp": "中央胴体と左右対称の翼、尾翼、推進器を備えた形状の明確なフォトリアル機が大峡谷を飛ぶ",
+        "de": "Ein fotorealistisches, klar geformtes Flugfahrzeug mit Rumpf, symmetrischen Flügeln, Leitwerk und Hubtriebwerken über einem weiten Canyon"
+      }
+    },
+    {
+      "media_id": "manga-mode-demo-00001",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/manga-viewer-demo/volume-01/chapter-01/00001.png",
+        "visibility": "private",
+        "origin": "manual",
+        "sha256": "sha256:1d4110ea4e830bc800a358365b1148befa3c414e267b902f27daae5ea84abbbc"
+      },
+      "public_file": "assets/media/web/manga-viewer-demo/volume-01/chapter-01/00001.jpg",
+      "status": "approved",
+      "public_sha256": "sha256:a70c57e13ff937ace8d94a3160a77bc3a778c6c52cfe7bf7d1f92d49d2c75657",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "thumbnail": "assets/media/thumbnails/manga-viewer-demo/volume-01/chapter-01/00001.jpg",
+      "thumbnail_sha256": "sha256:5f6dc17e2ee1a59089b4af97dfa4c3f40479593042e68ca818e3abb2ad43999c",
+      "title": {
+        "en": "Cover",
+        "jp": "表紙",
+        "de": "Umschlag"
+      },
+      "alt": {
+        "en": "Cover: Yui and Elna arrive in Akihabara at dusk.",
+        "jp": "表紙：ユイとエルナが夕暮れの秋葉原に着地する。",
+        "de": "Umschlag: Yui und Elna kommen in der Abenddämmerung in Akihabara an."
+      }
+    },
+    {
+      "media_id": "manga-mode-demo-00002",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/manga-viewer-demo/volume-01/chapter-01/00002.png",
+        "visibility": "private",
+        "origin": "manual",
+        "sha256": "sha256:9bece08a06feea57409d5990047eeb4b00497cefa49fd0bc20280d6d0c9701bc"
+      },
+      "public_file": "assets/media/web/manga-viewer-demo/volume-01/chapter-01/00002.jpg",
+      "status": "approved",
+      "public_sha256": "sha256:6ecdea5e220e7ffb2b577af7f784dc24f8a14b9fceefdfaacd6ea1896ba2d72b",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "thumbnail": "assets/media/thumbnails/manga-viewer-demo/volume-01/chapter-01/00002.jpg",
+      "thumbnail_sha256": "sha256:4d6ea4cc37cc94a868537666c6bd53e68a0a0a283c0fc5643c8ccb8919bb1e7b",
+      "title": {
+        "en": "Frontispiece",
+        "jp": "扉絵",
+        "de": "Frontispiz"
+      },
+      "alt": {
+        "en": "Frontispiece: the two adventurers explore the glowing Akihabara streets.",
+        "jp": "扉絵：二人の冒険者が光る秋葉原の街を歩く。",
+        "de": "Frontispiz: Die beiden Abenteurer erkunden die leuchtenden Straßen Akihabaras."
+      }
+    },
+    {
+      "media_id": "manga-mode-demo-00003",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/manga-viewer-demo/volume-01/chapter-01/00003.png",
+        "visibility": "private",
+        "origin": "manual",
+        "sha256": "sha256:ce27cbd64ec5d9a9a5927dd8e3ba125d935af57b3b6faac8f5fd72bc2ad3fe40"
+      },
+      "public_file": "assets/media/web/manga-viewer-demo/volume-01/chapter-01/00003.jpg",
+      "status": "approved",
+      "public_sha256": "sha256:bbea4b52392f1cab28e88945bc1971d41144b0ea5a2c6fb170fbcb4deedda5ad",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "thumbnail": "assets/media/thumbnails/manga-viewer-demo/volume-01/chapter-01/00003.jpg",
+      "thumbnail_sha256": "sha256:729a8551fd4c259e7e86908a0dc8d3ab9c6a8614d230614ed4dc06b97336d986",
+      "title": {
+        "en": "Story page 1",
+        "jp": "本文1ページ",
+        "de": "Geschichte, Seite 1"
+      },
+      "alt": {
+        "en": "Story page 1: Yui and Elna mistake an illuminated vending machine for a magical box.",
+        "jp": "本文1ページ：ユイとエルナが光る自動販売機を魔法の箱と勘違いする。",
+        "de": "Geschichte, Seite 1: Yui und Elna halten einen leuchtenden Automaten für eine magische Truhe."
+      }
+    },
+    {
+      "media_id": "manga-mode-demo-00004",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/manga-viewer-demo/volume-01/chapter-01/00004.png",
+        "visibility": "private",
+        "origin": "manual",
+        "sha256": "sha256:22638ae70c9fd67152bd42b6e09b89d06a9391cb801057cd588d8c3ccf05c335"
+      },
+      "public_file": "assets/media/web/manga-viewer-demo/volume-01/chapter-01/00004.jpg",
+      "status": "approved",
+      "public_sha256": "sha256:4fca2192d4f0f3bfa13b1524aa613e6b76d728bee121a2cf6a1d0f1aeea8843d",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "thumbnail": "assets/media/thumbnails/manga-viewer-demo/volume-01/chapter-01/00004.jpg",
+      "thumbnail_sha256": "sha256:aaa07d3f3d48b3f6b58b9af733f4afa6bf352e48768270408ee78eb213751b61",
+      "title": {
+        "en": "Story page 2",
+        "jp": "本文2ページ",
+        "de": "Geschichte, Seite 2"
+      },
+      "alt": {
+        "en": "Story page 2: the pair discover takoyaki and cooling magic.",
+        "jp": "本文2ページ：二人がたこ焼きと冷却魔法に出会う。",
+        "de": "Geschichte, Seite 2: Die beiden entdecken Takoyaki und Kühlmagie."
+      }
+    },
+    {
+      "media_id": "manga-mode-demo-00005",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/manga-viewer-demo/volume-01/chapter-01/00005.png",
+        "visibility": "private",
+        "origin": "manual",
+        "sha256": "sha256:0a1ae10d0fbccef1813ecbdf4072a5209c6e8dc3c42e369fd743c8cef434b199"
+      },
+      "public_file": "assets/media/web/manga-viewer-demo/volume-01/chapter-01/00005.jpg",
+      "status": "approved",
+      "public_sha256": "sha256:438c18d35a1ea5f90b488202d3ecb113a890ee99921af8ff6035361a06f24122",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "thumbnail": "assets/media/thumbnails/manga-viewer-demo/volume-01/chapter-01/00005.jpg",
+      "thumbnail_sha256": "sha256:ad63954efb6f81dc473333d2d8a103ad47b42b268bc4abd4d0408db9f1a882d6",
+      "title": {
+        "en": "Story page 3",
+        "jp": "本文3ページ",
+        "de": "Geschichte, Seite 3"
+      },
+      "alt": {
+        "en": "Story page 3: Yui and Elna browse a fantasy-goods shop.",
+        "jp": "本文3ページ：ユイとエルナが異世界グッズの店を見て回る。",
+        "de": "Geschichte, Seite 3: Yui und Elna stöbern in einem Laden für Fantasy-Artikel."
+      }
+    },
+    {
+      "media_id": "manga-mode-demo-00006",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/manga-viewer-demo/volume-01/chapter-01/00006.png",
+        "visibility": "private",
+        "origin": "manual",
+        "sha256": "sha256:59d4d1ad6bca361b00ded53bb519589c8aa167f5963e1ba2574f6455fbaca4b8"
+      },
+      "public_file": "assets/media/web/manga-viewer-demo/volume-01/chapter-01/00006.jpg",
+      "status": "approved",
+      "public_sha256": "sha256:f824f3ab94eb53f9aff9f045af4008e5065e61a28f2cbead7023ff3a1703492a",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "thumbnail": "assets/media/thumbnails/manga-viewer-demo/volume-01/chapter-01/00006.jpg",
+      "thumbnail_sha256": "sha256:76d8d69e56ce9c7cb7241dc457327f811ac03431a1b1ee4ac35859942e8021d2",
+      "title": {
+        "en": "Story page 4",
+        "jp": "本文4ページ",
+        "de": "Geschichte, Seite 4"
+      },
+      "alt": {
+        "en": "Story page 4: the adventurers discover capsule toys and continue their night out.",
+        "jp": "本文4ページ：二人がカプセルトイを見つけ、夜の街歩きを続ける。",
+        "de": "Geschichte, Seite 4: Die Abenteurer entdecken Kapselspielzeug und setzen ihren Abend fort."
+      }
+    },
+    {
+      "media_id": "manga-mode-demo-00007",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/manga-viewer-demo/volume-01/chapter-01/00007.png",
+        "visibility": "private",
+        "origin": "manual",
+        "sha256": "sha256:2069b11af4119b8c27485d7d684f1717959a83ef5d0b637f738a1eb398705087"
+      },
+      "public_file": "assets/media/web/manga-viewer-demo/volume-01/chapter-01/00007.jpg",
+      "status": "approved",
+      "public_sha256": "sha256:116831e577ca3b58d717a1b4c02c5563ce3c2cf425bb6665429f81fcff89bfb2",
+      "processing": {
+        "metadata_strip": true,
+        "embedded_signal_transform": false,
+        "domain_mark": false,
+        "watermark": {
+          "enabled": true,
+          "type": "image",
+          "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+          "position": "bottom-left",
+          "scale_ratio": 0.12,
+          "margin_ratio": 0.025,
+          "logo_opacity": 0.55,
+          "text_source": "text",
+          "text": "HADA_Website_Template",
+          "text_position": "bottom-right",
+          "opacity": 0.88,
+          "shadow_opacity": 0.42,
+          "font_size_ratio": 0.035,
+          "color": "#ffffff",
+          "shadow_color": "#000000",
+          "uppercase": false
+        },
+        "metadata_result": "stripped:new image derivative"
+      },
+      "thumbnail": "assets/media/thumbnails/manga-viewer-demo/volume-01/chapter-01/00007.jpg",
+      "thumbnail_sha256": "sha256:00cde93aaa2b4784a58e2628694ddcc2213eef61c3a788f495eca402c63821a4",
+      "title": {
+        "en": "Back cover",
+        "jp": "裏表紙",
+        "de": "Rückseite"
+      },
+      "alt": {
+        "en": "Back cover: Yui and Elna relax together after their Akihabara adventure.",
+        "jp": "裏表紙：秋葉原の冒険のあと、ユイとエルナが一緒にくつろぐ。",
+        "de": "Rückseite: Yui und Elna entspannen sich nach ihrem Abenteuer in Akihabara."
+      }
+    }
+  ],
+  "collections": [
+    {
+      "collection_id": "otherworld-landscapes-20261108",
+      "route": "otherworld-landscapes",
+      "title": {
+        "en": "Otherworld Landscapes",
+        "jp": "異世界の風景",
+        "de": "Landschaften aus einer anderen Welt"
+      },
+      "description": {
+        "en": "Eight original fantasy landscapes.",
+        "jp": "生成した異世界ファンタジーの風景8点。",
+        "de": "Acht eigens erstellte Fantasy-Landschaften."
+      },
+      "presentation": "gallery",
+      "listing": {
+        "enabled": true
+      },
+      "media_ids": [
+        "001-whispering-river-valley",
+        "002-rootbound-city",
+        "003-glassfire-coast",
+        "004-sky-island-lake",
+        "005-copper-dune-ruin",
+        "006-moonlit-mushroom-wood",
+        "007-cloudspan-bridge",
+        "008-moon-garden-isle"
+      ],
+      "viewer": {
+        "enabled": true
+      },
+      "publication_date": "2026-11-08",
+      "updated_date": "2026-11-08",
+      "source_directory": "assets/media/web/otherworld-landscapes-20261108"
+    },
+    {
+      "collection_id": "future-otherworld-vehicles-20261108",
+      "route": "otherworld-vehicles",
+      "title": {
+        "en": "Futuristic Vehicles of Another World",
+        "jp": "異世界の未来系乗り物",
+        "de": "Futuristische Fahrzeuge einer anderen Welt"
+      },
+      "description": {
+        "en": "Four photoreal futuristic vehicles from an imagined world.",
+        "jp": "架空世界のフォトリアルな未来系乗り物4点。",
+        "de": "Vier fotorealistische futuristische Fahrzeuge aus einer erdachten Welt."
+      },
+      "presentation": "gallery",
+      "listing": {
+        "enabled": true
+      },
+      "media_ids": [
+        "future-vehicle-01-aether-skimmer",
+        "future-vehicle-02-river-crawler",
+        "future-vehicle-03-cloud-ferry",
+        "future-vehicle-04-canyon-glider-revised"
+      ],
+      "viewer": {
+        "enabled": true
+      },
+      "publication_date": "2026-11-08",
+      "updated_date": "2026-11-08",
+      "source_directory": "assets/media/web/future-otherworld-vehicles-20261108"
+    },
+    {
+      "collection_id": "magic-engine-motorcycles-20261108",
+      "route": "magic-engine-motorcycles",
+      "title": {
+        "en": "Magic-Engine Motorcycles of Another World",
+        "jp": "異世界の魔力エンジンバイク",
+        "de": "Magiegetriebene Motorräder aus einer anderen Welt"
+      },
+      "description": {
+        "en": "Four photoreal motorcycles powered by magical engines.",
+        "jp": "魔力エンジンを搭載したフォトリアルな異世界バイク4点。",
+        "de": "Vier fotorealistische Motorräder mit magischen Antrieben."
+      },
+      "presentation": "gallery",
+      "listing": {
+        "enabled": true
+      },
+      "media_ids": [
+        "magic-bike-01-violet-crystal",
+        "magic-bike-02-amber-rune",
+        "magic-bike-03-ember-engine",
+        "magic-bike-04-moonstone-engine"
+      ],
+      "viewer": {
+        "enabled": true
+      },
+      "publication_date": "2026-11-08",
+      "updated_date": "2026-11-08",
+      "source_directory": "assets/media/web/magic-engine-motorcycles-20261108"
+    },
+    {
+      "collection_id": "manga-viewer-demo-20261109",
+      "route": "manga-viewer-demo/volume-01/chapter-01",
+      "title": {
+        "en": "Manga Viewer Demo",
+        "jp": "漫画ビューアーのテスト"
+      },
+      "presentation": "gallery",
+      "listing": {
+        "enabled": false
+      },
+      "sequence": {
+        "order": "manual",
+        "reading_direction": "rtl",
+        "first_page_side": "right",
+        "first_page_side_options": [
+          "right",
+          "left"
+        ],
+        "view": "spread"
+      },
+      "viewer": {
+        "enabled": true,
+        "modes": [
+          "single",
+          "manga"
+        ],
+        "default_mode": "manga",
+        "mobile_default_mode": "single",
+        "open_on_load": true
+      },
+      "description": {
+        "en": "A spoiler-free Japanese manga reader with desktop spreads, mobile single-page reading, and the configured cover sequence.",
+        "jp": "携帯では単ページ、PCでは見開きで読める、日本漫画向けのネタバレ防止リーダー。",
+        "de": "Ein spoilerfreier japanischer Manga-Reader mit Einzelseiten auf Mobilgeräten und Doppelseiten am Desktop."
+      },
+      "media_ids": [
+        "manga-mode-demo-00001",
+        "manga-mode-demo-00002",
+        "manga-mode-demo-00003",
+        "manga-mode-demo-00004",
+        "manga-mode-demo-00005",
+        "manga-mode-demo-00006",
+        "manga-mode-demo-00007"
+      ],
+      "publication_date": "2026-11-09",
+      "updated_date": "2026-11-09"
+    }
+  ],
+  "page_bindings": [],
+  "processing": {
+    "defaults": {
+      "metadata_strip": true,
+      "embedded_signal_transform": false,
+      "domain_mark": false,
+      "watermark": {
+        "enabled": true,
+        "type": "image",
+        "logo_file": "assets/media/master/watermarks/hada-template-icon.png",
+        "position": "bottom-left",
+        "scale_ratio": 0.12,
+        "margin_ratio": 0.025,
+        "logo_opacity": 0.55,
+        "text_source": "text",
+        "text": "HADA_Website_Template",
+        "text_position": "bottom-right",
+        "opacity": 0.88,
+        "shadow_opacity": 0.42,
+        "font_size_ratio": 0.035,
+        "color": "#ffffff",
+        "shadow_color": "#000000",
+        "uppercase": false
+      }
+    }
+  }
+}

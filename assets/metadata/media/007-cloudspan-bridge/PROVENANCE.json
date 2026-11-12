@@ -1,0 +1,16 @@
+{
+  "media_id": "007-cloudspan-bridge",
+  "type": "image",
+  "origin": "generated",
+  "source_sha256": "sha256:fd2841dad514a48430ecb21a7fca0352e3634766266174bce2ce8d483d3a8448",
+  "public_sha256": "sha256:8f2f7d45fb06da85e8dac178820717f7561634ab5c79ee27c1761eb11b11ea42",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-08T10:37:33.769237+00:00",
+  "provider": "chatgpt_image",
+  "prompt_profile": "editorial-illustration",
+  "prompt": "Use case: stylized-concept. Asset type: landscape fantasy gallery image. Primary request: a monumental mountain pass with a ruined bridge spanning a cloud-filled chasm, jagged snowy peaks and a distant red aurora, no people. Style/medium: high-detail painterly fantasy matte art, atmospheric scale. Composition/framing: wide 3:2 landscape, bridge leads the eye across the frame, no border. Lighting/mood: cold pre-dawn with restrained crimson aurora. Constraints: no text, no lettering, no logo, no watermark, no collage.",
+  "thumbnail_sha256": "sha256:f4334eb5bc5d96adbc514d0255317294b0770814d6dddacbf1c4095f5da195db"
+}

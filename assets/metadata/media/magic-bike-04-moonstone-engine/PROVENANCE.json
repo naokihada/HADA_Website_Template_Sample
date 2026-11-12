@@ -1,0 +1,15 @@
+{
+  "media_id": "magic-bike-04-moonstone-engine",
+  "type": "image",
+  "origin": "generated",
+  "source_sha256": "sha256:dccc7f2370b733340fd589262b161813bf9411c412273084f19aa29abd8fa208",
+  "public_sha256": "sha256:45ab5f47e501c1f46525cb1862aa1323e9e5fbf55102037badc4209277406db3",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-08T15:11:47.240619+00:00",
+  "provider": "chatgpt_image",
+  "prompt_profile": "editorial-illustration",
+  "prompt": "Create a square illustration for this website page.\nTreat the supplied theme as a guide, but make the individual scene distinct.\nDo not include readable text, logos, borders, or interface elements.\nRefined editorial composition with a clear focal subject and thoughtful\nnegative space. Keep visual details consistent with the website theme.\nno readable text, no logos, no embedded watermark, no frame"
+}

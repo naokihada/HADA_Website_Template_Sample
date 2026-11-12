@@ -1,0 +1,17 @@
+{
+  "version": "0.1",
+  "references": [
+    {
+      "id": "web-local-xampp-settings",
+      "type": "configuration",
+      "description": "Local XAMPP and hosts configuration repository",
+      "readonly": true
+    },
+    {
+      "id": "hada-business-research-template-dev",
+      "type": "framework",
+      "description": "Completed agent-operable research framework (structural reference)",
+      "readonly": true
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "media_id": "001-whispering-river-valley",
+  "type": "image",
+  "origin": "generated",
+  "source_sha256": "sha256:b48420b96538c2807b39ec33db5d6167728959ca86b075fb0848989fb45e6c7a",
+  "public_sha256": "sha256:6fb48cce7ac49537549b7abfbcc699833b485d45d1ca7f55e980dac6caf07893",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-08T10:37:33.224777+00:00",
+  "provider": "chatgpt_image",
+  "prompt_profile": "editorial-illustration",
+  "prompt": "Use case: stylized-concept. Asset type: landscape fantasy gallery image. Primary request: an expansive otherworld fantasy valley at dawn, a winding river reflecting pale rose light between immense moss-covered cliffs, distant floating stone arches, tiny waterfalls, no people. Style/medium: richly detailed high-end digital matte painting, painterly realism with natural textures. Composition/framing: wide 3:2 landscape, deep atmospheric perspective, strong readable silhouette, no border. Lighting/mood: calm luminous dawn, soft mist. Constraints: no text, no lettering, no logo, no watermark, no collage.",
+  "thumbnail_sha256": "sha256:cec136ce37cafc50df6e43eaf2bf63dc929228e791afecedaf6a45fa635b5506"
+}

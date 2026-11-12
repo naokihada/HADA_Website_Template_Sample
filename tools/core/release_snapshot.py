@@ -11,7 +11,7 @@ import hashlib
 import shutil
 from pathlib import Path
 
-import yaml
+from structured_data import load_document
 
 
 def digest(path: Path) -> str:
@@ -23,7 +23,7 @@ def digest(path: Path) -> str:
 
 
 def snapshot(root: Path, version: str, source: Path | None = None) -> Path:
-    project = yaml.safe_load((root / "config" / "project.yaml").read_text(encoding="utf-8")) or {}
+    project = load_document(root / "config" / "project.toml") or {}
     paths = project.get("paths") or {}
     publication = source or (root / str(paths.get("publication_root", "site")))
     if not publication.is_dir():
@@ -34,9 +34,9 @@ def snapshot(root: Path, version: str, source: Path | None = None) -> Path:
         raise FileExistsError(f"snapshot already exists: {target}")
     site = target / "site"
     shutil.copytree(publication, site)
-    manifest = root / "config" / "template.manifest.yaml"
+    manifest = root / "config" / "website-template.json"
     target.mkdir(parents=True, exist_ok=True)
-    (target / "manifest.yaml").write_text(manifest.read_text(encoding="utf-8"), encoding="utf-8", newline="\r\n")
+    (target / "manifest.json").write_text(manifest.read_text(encoding="utf-8"), encoding="utf-8", newline="\r\n")
     (target / "README.md").write_text(
         f"# Template reference snapshot v{version}\r\n\r\n"
         "Reference-only snapshot of the configured publication root. It is not build input.\r\n",

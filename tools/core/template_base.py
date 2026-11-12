@@ -1,7 +1,7 @@
 """Current Template adoption metadata; no execution history or commit identifiers."""
 from pathlib import Path
 import re
-import yaml
+import json
 import manifest_schema
 
 FIELDS = ('Template ID', 'Template Name', 'Version', 'Release', 'Repository')
@@ -31,7 +31,7 @@ def from_manifest(manifest):
     return values
 
 def render(values):
-    return '# Template Base\n\n' + '\n'.join(f'{key}: {values[key]}' for key in FIELDS) + '\n'
+    return '# Template Base\r\n\r\n' + '\r\n'.join(f'{key}: {values[key]}' for key in FIELDS) + '\r\n'
 
 def check(root):
     """Absence supports legacy projects; an existing contradictory base is an error."""
@@ -40,10 +40,10 @@ def check(root):
     if not base.exists():
         return None
     values = parse(base.read_text(encoding='utf-8-sig'))
-    manifest = root / 'config/template.manifest.yaml'
+    manifest = root / 'config/website-template.json'
     if not manifest.is_file():
         raise ValueError('Template Base exists without release manifest')
-    expected = from_manifest(yaml.safe_load(manifest.read_text(encoding='utf-8-sig')))
+    expected = from_manifest(json.loads(manifest.read_text(encoding='utf-8-sig')))
     if values != expected:
         raise ValueError('Template Base does not match release manifest')
     return values

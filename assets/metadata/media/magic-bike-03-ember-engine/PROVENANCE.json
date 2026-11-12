@@ -1,0 +1,15 @@
+{
+  "media_id": "magic-bike-03-ember-engine",
+  "type": "image",
+  "origin": "generated",
+  "source_sha256": "sha256:4fe069e0cdca9138c82f7b33581c8b84c3ea2a0f21d490e3370a8fa1efba6bb2",
+  "public_sha256": "sha256:80ffdc4a4600b6a8c14959700981ff8c9f37da70a69eacab640bcabe6554ec29",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-08T15:11:47.149643+00:00",
+  "provider": "chatgpt_image",
+  "prompt_profile": "editorial-illustration",
+  "prompt": "Create a square illustration for this website page.\nTreat the supplied theme as a guide, but make the individual scene distinct.\nDo not include readable text, logos, borders, or interface elements.\nRefined editorial composition with a clear focal subject and thoughtful\nnegative space. Keep visual details consistent with the website theme.\nno readable text, no logos, no embedded watermark, no frame"
+}

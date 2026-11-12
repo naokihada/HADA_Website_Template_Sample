@@ -53,6 +53,59 @@ class SiteLinkPolicyTests(unittest.TestCase):
             self.assertEqual({item["rule_id"] for item in violations}, {"LINK-002", "LINK-003"})
             self.assertTrue(all(item["template_feedback"] for item in violations))
 
+    def test_canonical_and_hreflang_use_configured_apex_host(self) -> None:
+        with tempfile.TemporaryDirectory() as name:
+            root = Path(name)
+            pages = root / "pages"
+            pages.mkdir()
+            (pages / "index.html").write_text(
+                '<a href="/jp/about/">About</a>'
+                '<link rel="canonical" href="https://hada.co.jp/jp/">'
+                '<link rel="alternate" hreflang="ja" href="https://hada.co.jp/jp/">'
+                '<link rel="alternate" hreflang="en" href="https://hada.co.jp/en/">'
+                '<a href="https://www.hada.co.jp/jp/about/">absolute internal</a>'
+                '<link rel="canonical" href="https://www.hada.co.jp/jp/">'
+                '<link rel="alternate" hreflang="en" href="https://www.hada.co.jp/en/">',
+                encoding="utf-8",
+            )
+            violations = scan(
+                root,
+                {
+                    "enabled": True,
+                    "roots": ["pages"],
+                    "attributes": ["href", "src", "action"],
+                    "internal_hosts": ["hada.co.jp"],
+                    "canonical_host": "hada.co.jp",
+                    "external_links": {"require_new_tab": True, "required_rel": ["noopener", "noreferrer"]},
+                },
+            )
+            self.assertEqual(
+                [item["rule_id"] for item in violations],
+                ["LINK-002", "LINK-004", "LINK-005"],
+            )
+
+    def test_canonical_and_hreflang_require_configured_host_and_https(self) -> None:
+        with tempfile.TemporaryDirectory() as name:
+            root = Path(name)
+            pages = root / "pages"
+            pages.mkdir()
+            (pages / "index.html").write_text(
+                '<link rel="canonical" href="/jp/">'
+                '<link rel="alternate" hreflang="en" href="http://hada.co.jp/en/">',
+                encoding="utf-8",
+            )
+            violations = scan(
+                root,
+                {
+                    "enabled": True,
+                    "roots": ["pages"],
+                    "attributes": ["href", "src", "action"],
+                    "internal_hosts": ["hada.co.jp"],
+                    "canonical_host": "hada.co.jp",
+                },
+            )
+            self.assertEqual([item["rule_id"] for item in violations], ["LINK-004", "LINK-005"])
+
     def test_current_template_publication_has_no_violations(self) -> None:
         self.assertEqual(scan(ROOT), [])
 

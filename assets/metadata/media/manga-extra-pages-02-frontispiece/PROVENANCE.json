@@ -1,0 +1,12 @@
+{
+  "media_id": "manga-extra-pages-02-frontispiece",
+  "type": "image",
+  "origin": "manual",
+  "source_sha256": "sha256:df06af8e6e12822a1bef00cfe121f302098a2229c257e3990ced59f57a9665ca",
+  "public_sha256": "sha256:6d6c6b05e74cc73740dbe48e6e2418474fafe67f07b766cb93a1fb49eaa5ac56",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-09T18:24:43.017509+00:00"
+}

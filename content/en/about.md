@@ -1,10 +1,1 @@
----
-translation_status: TRANSLATED
-source_locale: jp
-target_locale: en
-source_file: content/jp/about.md
----
-
-[en]# 概要[/en]
-
-[en]Sample Tea Co.についての概要ページです。担当はHanako Satoです。[/en]
+---\r\ntranslation_status: TRANSLATED\r\nsource_locale: jp\r\ntarget_locale: en\r\nsource_file: content/jp/about.md\r\n---\r\n\r\n# HADA Website Template\r\n\r\nView media presentation defined by the JSON catalog.\r\n

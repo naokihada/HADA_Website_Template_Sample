@@ -9,6 +9,7 @@ import json
 import sys
 from html.parser import HTMLParser
 from pathlib import Path
+from template_attribution import normalize_linked_template_attribution
 
 
 class Signature(HTMLParser):
@@ -44,9 +45,11 @@ def audit(root: Path) -> dict[str, object]:
     for path in sorted(root.rglob("*.html")) if root.is_dir() else []:
         parser = Signature()
         raw = path.read_bytes()
-        parser.feed(raw.decode("utf-8", errors="replace"))
+        source = raw.decode("utf-8", errors="replace")
+        parser.feed(source)
+        comparison_source = normalize_linked_template_attribution(source)
         pages[str(path.relative_to(root)).replace("\\", "/")] = {
-            "sha256": hashlib.sha256(raw).hexdigest(),
+            "sha256": hashlib.sha256(comparison_source.encode("utf-8")).hexdigest(),
             "title": parser.title,
             "tags": parser.tags,
             "links": parser.links,

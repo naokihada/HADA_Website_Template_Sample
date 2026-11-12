@@ -14,10 +14,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
-try:
-    import yaml
-except ImportError:
-    yaml = None  # type: ignore[assignment]
+from structured_data import dump_json, load_document
 
 try:
     from PIL import Image, ImageDraw, ImageFont
@@ -30,12 +27,12 @@ except ImportError:
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".avif"}
 GENERATED_EXTENSIONS = {".png"}
 IMAGE_ID_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{1,95}$")
-MANIFEST_REL = Path("config/media.manifest.yaml")
-GENERATION_CONFIG_REL = Path("config/image-generation.yaml")
-MASTER_ROOT = Path("assets/images/master")
-WEB_ROOT = Path("assets/images/web")
-THUMB_ROOT = Path("assets/images/thumbnails")
-METADATA_ROOT = Path("assets/metadata/images")
+MANIFEST_REL = Path("config/media.catalog.json")
+GENERATION_CONFIG_REL = Path("config/image-generation.toml")
+MASTER_ROOT = Path("assets/media/master")
+WEB_ROOT = Path("assets/media/web")
+THUMB_ROOT = Path("assets/media/thumbnails")
+METADATA_ROOT = Path("assets/metadata/media")
 INBOX_ROOT = Path("AI/inbox/assets")
 LEGACY_PROVENANCE_ROOT = Path("AI/history/assets")
 OVERLAY_TYPES = {"none", "text_logo"}
@@ -76,13 +73,21 @@ def image_id_from(path: Path) -> str:
 def load_manifest(root: Path) -> dict[str, Any]:
     path = root / MANIFEST_REL
     if not path.is_file():
-        return {"schema_version": "0.1", "images": []}
-    if yaml is None:
-        raise RuntimeError("PyYAML is required")
-    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        return {"schema_version": "0.3", "images": []}
+    data = json.loads(path.read_text(encoding="utf-8")) or {}
     if not isinstance(data, dict):
-        raise ValueError("media manifest must be a mapping")
-    images = data.get("images", [])
+        raise ValueError("media catalog must be a JSON object")
+    images = []
+    for item in data.get("media", []):
+        if isinstance(item, dict) and item.get("type") == "image":
+            source = item.get("source") or {}
+            images.append({**item, "image_id": item.get("media_id"), "master": source.get("file", ""),
+                           "web": item.get("public_file", ""), "source": source.get("origin", "manual"),
+                           "master_sha256": source.get("sha256", item.get("master_sha256")),
+                           "web_sha256": item.get("public_sha256", item.get("web_sha256")),
+                           "thumbnail_sha256": item.get("thumbnail_sha256"),
+                           "usage": [],
+                           "license": item.get("license", "documented"), "composition": item.get("composition", "square")})
     if not isinstance(images, list):
         raise ValueError("media manifest images must be a list")
     data["images"] = images
@@ -93,9 +98,7 @@ def load_generation_config(root: Path) -> dict[str, Any]:
     path = root / GENERATION_CONFIG_REL
     if not path.is_file():
         return {"provider": {"default": "chatgpt_image"}, "prompt_profile": {"name": "default-editorial"}}
-    if yaml is None:
-        raise RuntimeError("PyYAML is required")
-    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    data = load_document(path) or {}
     if not isinstance(data, dict):
         raise ValueError("image generation config must be a mapping")
     return data
@@ -118,7 +121,7 @@ def effective_overlay_config(generation_config: dict[str, Any]) -> dict[str, Any
         "opacity": 0.88,
         "shadow_color": "#000000",
         "shadow_opacity": 0.38,
-        "font_size_ratio": 0.035,
+        "font_size_ratio": 0.07,
         "margin_ratio": 0.025,
     }
     defaults.update(values)
@@ -208,7 +211,7 @@ def apply_web_overlay(image: Any, config: dict[str, Any]) -> Any:
         return base
     width, height = base.size
     minimum = min(width, height)
-    size = max(12, round(minimum * float(config.get("font_size_ratio", 0.035))))
+    size = max(12, round(minimum * float(config.get("font_size_ratio", 0.07))))
     margin = max(4, round(minimum * float(config.get("margin_ratio", 0.025))))
     font = _font(config, size)
     draw = ImageDraw.Draw(base)
@@ -225,12 +228,32 @@ def apply_web_overlay(image: Any, config: dict[str, Any]) -> Any:
 
 
 def write_manifest(root: Path, data: dict[str, Any]) -> None:
-    if yaml is None:
-        raise RuntimeError("PyYAML is required")
     path = root / MANIFEST_REL
     path.parent.mkdir(parents=True, exist_ok=True)
-    text = yaml.safe_dump(data, allow_unicode=True, sort_keys=False)
-    path.write_text(text, encoding="utf-8", newline="\r\n")
+    catalog = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {"schema_version": "0.3", "media": [], "collections": [], "page_bindings": [], "processing": {}}
+    records = {str(item.get("media_id")): item for item in catalog.get("media", []) if isinstance(item, dict)}
+    for image in data.get("images", []):
+        image_id = str(image.get("image_id", ""))
+        record = records.setdefault(image_id, {"media_id": image_id, "type": "image", "source": {}, "status": "approved"})
+        record["source"].update({"file": image.get("master", ""), "visibility": "private", "origin": image.get("source", "manual")})
+        record["public_file"] = image.get("web", "")
+        record["thumbnail"] = image.get("thumbnail", "")
+        for key in ("title", "alt", "caption", "credit", "status", "provider", "prompt_profile", "web_overlay_fingerprint", "license", "composition"):
+            if key in image:
+                record[key] = image[key]
+        master_hash = image.get("master_sha256")
+        if master_hash:
+            record["source"]["sha256"] = master_hash
+        public_hash = image.get("web_sha256")
+        if public_hash:
+            record["public_sha256"] = public_hash
+        thumbnail_hash = image.get("thumbnail_sha256")
+        if thumbnail_hash:
+            record["thumbnail_sha256"] = thumbnail_hash
+        for legacy_key in ("master_sha256", "web_sha256"):
+            record.pop(legacy_key, None)
+    catalog["media"] = list(records.values())
+    path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\r\n")
 
 
 def write_provenance(
@@ -243,8 +266,6 @@ def write_provenance(
     prompt: str,
     overlay_config: dict[str, Any],
 ) -> None:
-    if yaml is None:
-        raise RuntimeError("PyYAML is required")
     directory = root / METADATA_ROOT / image_id
     directory.mkdir(parents=True, exist_ok=True)
     record = {
@@ -261,11 +282,7 @@ def write_provenance(
         "web_overlay": overlay_config,
         "review": "human approval recorded by assets.py --approve",
     }
-    (directory / "PROVENANCE.yaml").write_text(
-        yaml.safe_dump(record, allow_unicode=True, sort_keys=False),
-        encoding="utf-8",
-        newline="\r\n",
-    )
+    dump_json(record, directory / "PROVENANCE.json")
 
 
 def convert_to_jpeg(source: Path, target: Path, overlay_config: dict[str, Any] | None = None) -> None:
@@ -396,7 +413,6 @@ def import_plan(root: Path, plan_path: Path, approve: bool, prompt_file: Path | 
             "source": provider if route == "generated" else "manual",
             "provider": provider,
             "prompt_profile": prompt_profile,
-            "usage": "background_fade",
             "composition": "square",
             "status": "approved",
             "license": "generated" if route == "generated" else "documented",
@@ -522,7 +538,7 @@ def validate_assets(root: Path) -> int:
         thumbnail = root / thumbnail_rel
         if item.get("status") != "approved":
             continue
-        provenance = root / METADATA_ROOT / image_id / "PROVENANCE.yaml"
+        provenance = root / METADATA_ROOT / image_id / "PROVENANCE.json"
         if not provenance.is_file():
             errors.append(f"approved asset missing provenance: {image_id}")
         if not master.is_file() or not web.is_file() or not thumbnail.is_file():
@@ -575,9 +591,9 @@ def migrate_legacy_provenance(root: Path, apply: bool) -> int:
     findings: list[str] = []
     migrated = 0
     if legacy_root.is_dir():
-        for source in sorted(legacy_root.glob("*/PROVENANCE.yaml")):
+        for source in sorted(legacy_root.glob("*/PROVENANCE.json")):
             image_id = source.parent.name
-            target = root / METADATA_ROOT / image_id / "PROVENANCE.yaml"
+            target = root / METADATA_ROOT / image_id / "PROVENANCE.json"
             if target.exists():
                 continue
             findings.append(f"MIGRATE {source.relative_to(root)} -> {target.relative_to(root)}")

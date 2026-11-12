@@ -1,0 +1,15 @@
+{
+  "media_id": "future-vehicle-04-canyon-glider-revised",
+  "type": "image",
+  "origin": "generated",
+  "source_sha256": "sha256:30f65d844143420a2b7fb09e73786a7c5bba8c62432c65744040bf749af8f390",
+  "public_sha256": "sha256:d90bdb8d75cecda643899e856f69f42f70b00784c186371bcfda66da120a6c2d",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-08T15:31:39.935294+00:00",
+  "provider": "chatgpt_image",
+  "prompt_profile": "editorial-illustration",
+  "prompt": "Create a square illustration for this website page.\nTreat the supplied theme as a guide, but make the individual scene distinct.\nDo not include readable text, logos, borders, or interface elements.\nRefined editorial composition with a clear focal subject and thoughtful\nnegative space. Keep visual details consistent with the website theme.\nno readable text, no logos, no embedded watermark, no frame"
+}

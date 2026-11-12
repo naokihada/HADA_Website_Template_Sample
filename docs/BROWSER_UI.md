@@ -5,7 +5,7 @@ release-candidate verification. Playwright is never a published-site runtime.
 
 ## Configuration
 
-`config/project.yaml` defines the test root and browser policy:
+`config/project.toml` defines the test root and browser policy:
 
 ```yaml
 paths:

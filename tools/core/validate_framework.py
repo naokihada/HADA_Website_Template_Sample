@@ -14,10 +14,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
-try:
-    import yaml
-except ImportError:
-    yaml = None  # type: ignore[assignment]
+from structured_data import load_document
 
 try:
     from site_contract import allows_absent_scaffold, resolve_site
@@ -79,7 +76,7 @@ AWS_KEY_PATTERN = re.compile(r"AKIA[0-9A-Z]{16}")
 REF_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 SEMVER_PATTERN = re.compile(r"^\d+\.\d+(\.\d+)?$")
 SECRET_LINE_PATTERN = re.compile(
-    r"^\s*(password|passwd|api_key)\s*:\s*(.+?)\s*(?:#.*)?$",
+    r"^\s*[\"']?(password|passwd|api_key)[\"']?\s*:\s*[\"']?(.+?)[\"']?\s*,?\s*(?:#.*)?$",
     re.IGNORECASE,
 )
 CREDENTIALS_URL_PATTERN = re.compile(r"url\s*:\s*['\"]?[^'\"]*://[^:@/]+:[^@/]+@", re.IGNORECASE)
@@ -140,19 +137,17 @@ class ValidationContext:
         self.checked_rules.add(rule_id)
 
 
-def load_yaml_file(path: Path) -> tuple[Optional[Any], Optional[str]]:
-    if yaml is None:
-        return None, "PyYAML is not available"
+def load_structured_file(path: Path) -> tuple[Optional[Any], Optional[str]]:
     try:
         content = path.read_text(encoding="utf-8")
     except OSError as exc:
         return None, str(exc)
     try:
-        data = yaml.safe_load(content)
+        data = load_document(path)
         if data is None:
             return {}, None
         return data, None
-    except yaml.YAMLError as exc:
+    except (ValueError, UnicodeError) as exc:
         return None, str(exc)
 
 
@@ -239,6 +234,20 @@ def scan_secrets_in_text(rel_file: str, text: str, ctx: ValidationContext) -> No
                 break
 
 
+def scan_structured_secrets(rel_file: str, value: Any, ctx: ValidationContext, prefix: str = "") -> None:
+    if isinstance(value, dict):
+        for key, child in value.items():
+            field_path = f"{prefix}.{key}" if prefix else str(key)
+            if str(key).lower() in {"password", "passwd", "api_key"} and not isinstance(child, (dict, list)):
+                if not is_safe_secret_value(str(child)):
+                    ctx.add("SEC-001", "ERROR", "Secret-like assignment detected in committed configuration",
+                            file=rel_file, field=field_path, dedup=f"SEC-001:{rel_file}:{field_path}")
+            scan_structured_secrets(rel_file, child, ctx, field_path)
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            scan_structured_secrets(rel_file, child, ctx, f"{prefix}[{index}]")
+
+
 def validate_structure(ctx: ValidationContext) -> None:
     root = ctx.root
     checks = [
@@ -271,19 +280,19 @@ def validate_structure(ctx: ValidationContext) -> None:
 
 def validate_project_config(ctx: ValidationContext) -> None:
     root = ctx.root
-    project_path = root / "config" / "project.yaml"
-    site_example_path = root / "config" / "site.example.yaml"
-    site_path = root / "config" / "site.yaml"
+    project_path = root / "config" / "project.toml"
+    site_example_path = root / "config" / "site.example.json"
+    site_path = root / "config" / "site.json"
 
     ctx.mark_checked("CFG-001")
     if not project_path.is_file():
-        ctx.add("CFG-001", "ERROR", "config/project.yaml missing", file="config/project.yaml")
+        ctx.add("CFG-001", "ERROR", "config/project.toml missing", file="config/project.toml")
         ctx.mark_checked("STRUCT-023")
         return
 
-    project_data, error = load_yaml_file(project_path)
+    project_data, error = load_structured_file(project_path)
     if error:
-        ctx.add("CFG-001", "ERROR", f"Invalid YAML: {error}", file="config/project.yaml")
+        ctx.add("CFG-001", "ERROR", f"Invalid TOML: {error}", file="config/project.toml")
         ctx.mark_checked("STRUCT-023")
         return
 
@@ -301,7 +310,7 @@ def validate_project_config(ctx: ValidationContext) -> None:
     for rule_id, ok, message, fld in checks:
         ctx.mark_checked(rule_id)
         if not ok:
-            ctx.add(rule_id, "ERROR", message, file="config/project.yaml", field=fld)
+            ctx.add(rule_id, "ERROR", message, file="config/project.toml", field=fld)
 
     ctx.mark_checked("CFG-006")
     supported = locales.get("supported", [])
@@ -309,29 +318,29 @@ def validate_project_config(ctx: ValidationContext) -> None:
         not isinstance(item, str) or not LOCALE_CODE_PATTERN.fullmatch(item)
         for item in supported
     ):
-        ctx.add("CFG-006", "ERROR", "Each locales.supported entry must be a valid locale code", file="config/project.yaml", field="locales.supported")
+        ctx.add("CFG-006", "ERROR", "Each locales.supported entry must be a valid locale code", file="config/project.toml", field="locales.supported")
 
     local_test_root = paths.get("local_test_root")
     ctx.mark_checked("CFG-017")
     if local_test_root is not None:
         if not isinstance(local_test_root, str) or not local_test_root.strip() or forbidden_segment(local_test_root):
-            ctx.add("CFG-017", "ERROR", "paths.local_test_root must be a safe repository-relative path", file="config/project.yaml", field="paths.local_test_root")
+            ctx.add("CFG-017", "ERROR", "paths.local_test_root must be a safe repository-relative path", file="config/project.toml", field="paths.local_test_root")
 
     browser = (ctx.project_data.get("verification") or {}).get("browser") if isinstance(ctx.project_data.get("verification"), dict) else {}
     browser = browser if isinstance(browser, dict) else {}
     ctx.mark_checked("UI-001")
     if browser and not isinstance(browser.get("enabled", False), bool):
-        ctx.add("UI-001", "ERROR", "verification.browser.enabled must be boolean", file="config/project.yaml", field="verification.browser.enabled")
+        ctx.add("UI-001", "ERROR", "verification.browser.enabled must be boolean", file="config/project.toml", field="verification.browser.enabled")
     ctx.mark_checked("UI-002")
     if browser.get("route_source") not in {None, "auto", "registry", "publication"}:
-        ctx.add("UI-002", "ERROR", "verification.browser.route_source must be auto, registry, or publication", file="config/project.yaml", field="verification.browser.route_source")
+        ctx.add("UI-002", "ERROR", "verification.browser.route_source must be auto, registry, or publication", file="config/project.toml", field="verification.browser.route_source")
     ctx.mark_checked("UI-003")
     viewports = browser.get("viewports")
     if viewports is not None and (not isinstance(viewports, list) or any(
         not isinstance(item, dict) or not isinstance(item.get("width"), int) or not isinstance(item.get("height"), int)
         or item.get("width", 0) <= 0 or item.get("height", 0) <= 0 for item in viewports
     )):
-        ctx.add("UI-003", "ERROR", "verification.browser.viewports must contain positive integer width and height", file="config/project.yaml", field="verification.browser.viewports")
+        ctx.add("UI-003", "ERROR", "verification.browser.viewports must contain positive integer width and height", file="config/project.toml", field="verification.browser.viewports")
 
     pub_root = paths.get("publication_root")
     content_root = paths.get("content_master")
@@ -341,7 +350,7 @@ def validate_project_config(ctx: ValidationContext) -> None:
     scaffold = contract.get("template_scaffold")
     ctx.mark_checked("CFG-014")
     if scaffold not in {"present", "absent", "managed"}:
-        ctx.add("CFG-014", "ERROR", "site.template_scaffold must be present, absent, or managed", file="config/project.yaml", field="site.template_scaffold")
+        ctx.add("CFG-014", "ERROR", "site.template_scaffold must be present, absent, or managed", file="config/project.toml", field="site.template_scaffold")
 
     publication_missing = False
     ctx.mark_checked("CFG-007")
@@ -349,14 +358,14 @@ def validate_project_config(ctx: ValidationContext) -> None:
     if not pub_root or pub_resolved is None or not pub_resolved.is_dir():
         publication_missing = True
         if scaffold == "absent":
-            ctx.add("CFG-007", "INFO", "publication root is intentionally absent by site.template_scaffold", file="config/project.yaml", field="site.template_scaffold")
+            ctx.add("CFG-007", "INFO", "publication root is intentionally absent by site.template_scaffold", file="config/project.toml", field="site.template_scaffold")
         else:
-            ctx.add("CFG-007", "ERROR", "paths.publication_root does not resolve to an existing directory", file="config/project.yaml", field="paths.publication_root")
+            ctx.add("CFG-007", "ERROR", "paths.publication_root does not resolve to an existing directory", file="config/project.toml", field="paths.publication_root")
 
     ctx.mark_checked("CFG-008")
     content_resolved = resolve_repo_path(root, content_root if isinstance(content_root, str) else None)
     if not content_root or content_resolved is None or not content_resolved.is_dir():
-        ctx.add("CFG-008", "ERROR", "paths.content_master does not resolve to an existing directory", file="config/project.yaml", field="paths.content_master")
+        ctx.add("CFG-008", "ERROR", "paths.content_master does not resolve to an existing directory", file="config/project.toml", field="paths.content_master")
 
     ctx.mark_checked("STRUCT-023")
     if publication_missing and scaffold != "absent" and not any(
@@ -365,34 +374,34 @@ def validate_project_config(ctx: ValidationContext) -> None:
         ctx.add(
             "STRUCT-023",
             "ERROR",
-            "Publication root directory from config/project.yaml missing",
-            file=str(pub_root) if pub_root else "config/project.yaml",
+            "Publication root directory from config/project.toml missing",
+            file=str(pub_root) if pub_root else "config/project.toml",
             field="paths.publication_root",
         )
 
     ctx.mark_checked("CFG-009")
     if not site_example_path.is_file():
-        ctx.add("CFG-009", "ERROR", "config/site.example.yaml missing", file="config/site.example.yaml")
+        ctx.add("CFG-009", "ERROR", "config/site.example.json missing", file="config/site.example.json")
     else:
-        _, error = load_yaml_file(site_example_path)
+        _, error = load_structured_file(site_example_path)
         if error:
-            ctx.add("CFG-009", "ERROR", f"Invalid YAML: {error}", file="config/site.example.yaml")
+            ctx.add("CFG-009", "ERROR", f"Invalid JSON: {error}", file="config/site.example.json")
 
     ctx.mark_checked("CFG-010")
     if not site_path.is_file():
-        ctx.add("CFG-010", "WARNING", "config/site.yaml missing", file="config/site.yaml")
+        ctx.add("CFG-010", "WARNING", "config/site.json missing", file="config/site.json")
     else:
         validate_site_config(ctx, site_path)
 
-    display_path = root / "config" / "display.yaml"
+    display_path = root / "config" / "display.toml"
     ctx.mark_checked("CFG-015")
-    if display_path.is_file() and yaml is not None and validate_display is not None:
-        display_data, display_error = load_yaml_file(display_path)
+    if display_path.is_file() and validate_display is not None:
+        display_data, display_error = load_structured_file(display_path)
         if display_error:
-            ctx.add("CFG-015", "ERROR", f"Invalid display configuration: {display_error}", file="config/display.yaml")
+            ctx.add("CFG-015", "ERROR", f"Invalid display configuration: {display_error}", file="config/display.toml")
         else:
             for message in validate_display(display_data or {}):
-                ctx.add("CFG-016", "ERROR", message, file="config/display.yaml")
+                ctx.add("CFG-016", "ERROR", message, file="config/display.toml")
 
     validate_page_registry_profiles(ctx)
 
@@ -401,14 +410,14 @@ def validate_page_registry_profiles(ctx: ValidationContext) -> None:
     """Validate explicit browser profiles when a Page Registry is present."""
     root = ctx.root
     paths = (ctx.project_data or {}).get("paths") or {}
-    registry_value = str(paths.get("page_registry") or "config/page-registry.yaml")
+    registry_value = str(paths.get("page_registry") or "config/page-registry.json")
     path = root / registry_value
     ctx.mark_checked("UI-004")
     if not path.is_file():
         return
-    data, error = load_yaml_file(path)
+    data, error = load_structured_file(path)
     if error:
-        ctx.add("UI-004", "ERROR", f"Invalid Page Registry YAML: {error}", file=registry_value)
+        ctx.add("UI-004", "ERROR", f"Invalid Page Registry JSON: {error}", file=registry_value)
         return
     pages = data.get("pages", []) if isinstance(data, dict) else []
     if not isinstance(pages, list):
@@ -428,10 +437,10 @@ def validate_page_registry_profiles(ctx: ValidationContext) -> None:
 
 
 def validate_site_config(ctx: ValidationContext, site_path: Path) -> None:
-    rel = "config/site.yaml"
-    data, error = load_yaml_file(site_path)
+    rel = "config/site.json"
+    data, error = load_structured_file(site_path)
     if error:
-        ctx.add("CFG-011", "ERROR", f"Invalid YAML: {error}", file=rel)
+        ctx.add("CFG-011", "ERROR", f"Invalid structured configuration: {error}", file=rel)
         return
 
     site = data.get("site", {}) if isinstance(data, dict) else {}
@@ -443,7 +452,7 @@ def validate_site_config(ctx: ValidationContext, site_path: Path) -> None:
     ctx.mark_checked("CFG-011")
     site_pub = site.get("publication_root")
     if site_pub and normalize_path(str(site_pub)) != normalize_path(str(project_pub)):
-        ctx.add("CFG-011", "ERROR", "site.publication_root must match config/project.yaml paths.publication_root", file=rel, field="site.publication_root")
+        ctx.add("CFG-011", "ERROR", "site.publication_root must match config/project.toml paths.publication_root", file=rel, field="site.publication_root")
 
     deploy_target = publication.get("deploy_target")
     ctx.mark_checked("CFG-012")
@@ -502,9 +511,9 @@ def validate_environment_file(ctx: ValidationContext, rel_file: str, path: Path)
 
     text = path.read_text(encoding="utf-8")
     scan_secrets_in_text(rel_file, text, ctx)
-    data, error = load_yaml_file(path)
+    data, error = load_structured_file(path)
     if error:
-        ctx.add("ENV-001", "ERROR", f"Invalid YAML: {error}", file=rel_file)
+        ctx.add("ENV-001", "ERROR", f"Invalid structured data: {error}", file=rel_file)
         return
 
     environments = data.get("environments") if isinstance(data, dict) else None
@@ -566,9 +575,9 @@ def validate_references_registry(ctx: ValidationContext, rel_file: str, path: Pa
 
     text = path.read_text(encoding="utf-8")
     scan_secrets_in_text(rel_file, text, ctx)
-    data, error = load_yaml_file(path)
+    data, error = load_structured_file(path)
     if error:
-        ctx.add("REF-001", "ERROR", f"Invalid YAML: {error}", file=rel_file)
+        ctx.add("REF-001", "ERROR", f"Invalid structured data: {error}", file=rel_file)
         return
 
     ctx.mark_checked("REF-002")
@@ -616,11 +625,11 @@ def validate_references_registry(ctx: ValidationContext, rel_file: str, path: Pa
 
 
 def validate_plugin_manifest(ctx: ValidationContext, plugin_id: str, manifest_path: Path) -> None:
-    rel = f"tools/plugins/{plugin_id}/manifest.yaml"
-    data, error = load_yaml_file(manifest_path)
+    rel = f"tools/plugins/{plugin_id}/manifest.json"
+    data, error = load_structured_file(manifest_path)
     ctx.mark_checked("PLUGIN-001")
     if error:
-        ctx.add("PLUGIN-001", "ERROR", f"Invalid YAML: {error}", file=rel)
+        ctx.add("PLUGIN-001", "ERROR", f"Invalid structured data: {error}", file=rel)
         return
 
     plugin = data.get("plugin", {}) if isinstance(data, dict) else {}
@@ -662,21 +671,24 @@ def validate_security(ctx: ValidationContext) -> None:
     for directory in (root / "config", root / "environments", root / "references" / "registry"):
         if not directory.is_dir():
             continue
-        for path in sorted(directory.glob("*.yaml")):
+        for path in sorted([*directory.glob("*.json"), *directory.glob("*.toml")]):
             rel = path.relative_to(root).as_posix()
             try:
                 scan_secrets_in_text(rel, path.read_text(encoding="utf-8"), ctx)
+                scan_structured_secrets(rel, load_document(path), ctx)
             except OSError:
+                continue
+            except (UnicodeError, ValueError):
                 continue
 
     ctx.mark_checked("SEC-005")
-    for rel in (".env", "config/local.yaml"):
+    for rel in (".env", "config/local.json"):
         if git_tracked(root, rel):
             ctx.add("SEC-005", "WARNING", f"{rel} is tracked by Git and should be gitignored", file=rel)
 
     ctx.mark_checked("SEC-006")
-    if ctx.include_local and (root / "config" / "local.yaml").is_file():
-        ctx.add("SEC-006", "INFO", "config/local.yaml exists locally", file="config/local.yaml")
+    if ctx.include_local and (root / "config" / "local.json").is_file():
+        ctx.add("SEC-006", "INFO", "config/local.json exists locally", file="config/local.json")
 
 
 def content_basenames(locale_dir: Path) -> Set[str]:
@@ -753,8 +765,8 @@ def discover_plugin_manifests(root: Path) -> list[tuple[str, Path]]:
     if not plugins_root.is_dir():
         return manifests
     for child in sorted(plugins_root.iterdir()):
-        if child.is_dir() and (child / "manifest.yaml").is_file():
-            manifests.append((child.name, child / "manifest.yaml"))
+        if child.is_dir() and (child / "manifest.json").is_file():
+            manifests.append((child.name, child / "manifest.json"))
     return manifests
 
 
@@ -764,6 +776,8 @@ def validate_site_link_policy(ctx: ValidationContext) -> None:
     ctx.mark_checked("LINK-001")
     ctx.mark_checked("LINK-002")
     ctx.mark_checked("LINK-003")
+    ctx.mark_checked("LINK-004")
+    ctx.mark_checked("LINK-005")
     if scan_site_links is None:
         ctx.add(
             "LINK-001",
@@ -775,7 +789,7 @@ def validate_site_link_policy(ctx: ValidationContext) -> None:
     try:
         violations = scan_site_links(ctx.root)
     except (OSError, ValueError, TypeError, KeyError) as exc:
-        ctx.add("LINK-001", "ERROR", f"Site link policy could not run: {exc}", file="config/site.yaml")
+        ctx.add("LINK-001", "ERROR", f"Site link policy could not run: {exc}", file="config/site.json")
         return
     for item in violations:
         rule_id = str(item.get("rule_id", "LINK-002"))
@@ -805,7 +819,7 @@ def validate_external_javascript_policy(ctx: ValidationContext) -> None:
     try:
         findings = scan_external_javascript(ctx.root)
     except (OSError, ValueError, TypeError, KeyError) as exc:
-        ctx.add("JS-001", "ERROR", f"External JavaScript policy could not run: {exc}", file="config/site.yaml")
+        ctx.add("JS-001", "ERROR", f"External JavaScript policy could not run: {exc}", file="config/site.json")
         return
     for item in findings:
         rule_id = str(item.get("rule_id", "JS-001"))
@@ -829,23 +843,23 @@ def run_validation(root: Path, include_local: bool = False) -> ValidationContext
     except (ValueError, KeyError, TypeError, OSError) as exc:
         ctx.add('BASE-001', 'ERROR', str(exc), file='TEMPLATE_BASE.md')
     validate_project_config(ctx)
-    if validate_catalog is not None and (root / "config" / "media.manifest.yaml").is_file():
+    if validate_catalog is not None and (root / "config" / "media.catalog.json").is_file():
         try:
             media_errors = validate_catalog(root)
             for index, message in enumerate(media_errors, start=1):
-                ctx.add("MEDIA-001", "ERROR", message, file="config/media.manifest.yaml", field=f"catalog entry {index}")
+                ctx.add("MEDIA-001", "ERROR", message, file="config/media.catalog.json", field=f"catalog entry {index}")
             ctx.mark_checked("MEDIA-001")
         except (OSError, ValueError, KeyError, TypeError) as exc:
-            ctx.add("MEDIA-001", "ERROR", str(exc), file="config/media.manifest.yaml")
+            ctx.add("MEDIA-001", "ERROR", str(exc), file="config/media.catalog.json")
     validate_site_link_policy(ctx)
     validate_external_javascript_policy(ctx)
-    validate_environment_file(ctx, "environments/environments.example.yaml", root / "environments" / "environments.example.yaml")
-    env_active = root / "environments" / "environments.yaml"
+    validate_environment_file(ctx, "environments/environments.example.json", root / "environments" / "environments.example.json")
+    env_active = root / "environments" / "environments.json"
     if env_active.is_file():
-        validate_environment_file(ctx, "environments/environments.yaml", env_active)
+        validate_environment_file(ctx, "environments/environments.json", env_active)
     registry_dir = root / "references" / "registry"
     if registry_dir.is_dir():
-        for path in sorted(registry_dir.glob("*.yaml")):
+        for path in sorted(registry_dir.glob("*.json")):
             validate_references_registry(ctx, path.relative_to(root).as_posix(), path)
     for plugin_id, manifest_path in discover_plugin_manifests(root):
         validate_plugin_manifest(ctx, plugin_id, manifest_path)
@@ -910,7 +924,7 @@ def build_dependency_error_result(
     duration_ms: int = 0,
 ) -> Dict[str, Any]:
     message = (
-        "PyYAML is required. Install dependencies before running core-validator "
+        "Python 3.12 or later is required by the HADA Base validator. "
         "(pip install -r tools/core/requirements.txt)."
     )
     finding = {
@@ -992,15 +1006,6 @@ def main(argv: Optional[List[str]] = None) -> int:
     args = parser.parse_args(argv)
 
     start = time.perf_counter()
-
-    if yaml is None:
-        try:
-            root_display = str(Path(args.root).resolve())
-        except OSError:
-            root_display = args.root
-        result = build_dependency_error_result(root_display, args.task_id, 0)
-        emit_result(result, args.format)
-        return 2
 
     try:
         root = Path(args.root).resolve()

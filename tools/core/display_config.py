@@ -6,7 +6,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-import yaml
+from structured_data import load_document
 
 
 THEMES = {"light", "dark"}
@@ -17,10 +17,10 @@ DEFAULT_STORAGE_KEY = "hada.display.v1"
 
 def load_display_config(root: Path) -> dict[str, Any]:
     """Load project display settings, falling back to the committed example."""
-    candidates = (root / "config" / "display.yaml", root / "config" / "display.example.yaml")
+    candidates = (root / "config" / "display.toml", root / "config" / "display.example.toml")
     for path in candidates:
         if path.is_file():
-            data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            data = load_document(path) or {}
             if not isinstance(data, dict):
                 raise ValueError(f"display configuration root must be a mapping: {path}")
             return data

@@ -1,0 +1,17 @@
+{
+  "local": {
+    "environment": "LOCAL"
+  },
+  "paths": {
+    "publication_root": "site",
+    "xampp_root": "C:/xampp"
+  },
+  "development": {
+    "test_base_domain": null
+  },
+  "secrets": {
+    "ftp": null,
+    "api_keys": null
+  },
+  "notes": "Copy this file to config/local.json for machine-specific settings.\nconfig/local.json is excluded by .gitignore.\n"
+}

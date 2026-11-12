@@ -1,0 +1,387 @@
+{
+  "schema_version": "0.3",
+  "items": [
+    {
+      "media_id": "future-vehicle-01-aether-skimmer",
+      "type": "image",
+      "source": "AI/inbox/media/generated/future-vehicle-01-aether-skimmer.png",
+      "origin": "generated",
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ]
+    },
+    {
+      "media_id": "future-vehicle-02-river-crawler",
+      "type": "image",
+      "source": "AI/inbox/media/generated/future-vehicle-02-river-crawler.png",
+      "origin": "generated",
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ]
+    },
+    {
+      "media_id": "future-vehicle-03-cloud-ferry",
+      "type": "image",
+      "source": "AI/inbox/media/generated/future-vehicle-03-cloud-ferry.png",
+      "origin": "generated",
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ]
+    },
+    {
+      "media_id": "future-vehicle-04-canyon-glider-revised",
+      "type": "image",
+      "source": "AI/inbox/media/generated/future-vehicle-04-canyon-glider-revised.png",
+      "origin": "generated",
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ]
+    },
+    {
+      "media_id": "magic-bike-01-violet-crystal",
+      "type": "image",
+      "source": "AI/inbox/media/generated/magic-bike-01-violet-crystal.png",
+      "origin": "generated",
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ]
+    },
+    {
+      "media_id": "magic-bike-02-amber-rune",
+      "type": "image",
+      "source": "AI/inbox/media/generated/magic-bike-02-amber-rune.png",
+      "origin": "generated",
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ]
+    },
+    {
+      "media_id": "magic-bike-03-ember-engine",
+      "type": "image",
+      "source": "AI/inbox/media/generated/magic-bike-03-ember-engine.png",
+      "origin": "generated",
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ]
+    },
+    {
+      "media_id": "magic-bike-04-moonstone-engine",
+      "type": "image",
+      "source": "AI/inbox/media/generated/magic-bike-04-moonstone-engine.png",
+      "origin": "generated",
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ]
+    },
+    {
+      "media_id": "001-whispering-river-valley",
+      "type": "image",
+      "source": "AI/inbox/media/generated/otherworld-landscapes-20261108/001-whispering-river-valley.png",
+      "origin": "generated",
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ]
+    },
+    {
+      "media_id": "002-rootbound-city",
+      "type": "image",
+      "source": "AI/inbox/media/generated/otherworld-landscapes-20261108/002-rootbound-city.png",
+      "origin": "generated",
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ]
+    },
+    {
+      "media_id": "003-glassfire-coast",
+      "type": "image",
+      "source": "AI/inbox/media/generated/otherworld-landscapes-20261108/003-glassfire-coast.png",
+      "origin": "generated",
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ]
+    },
+    {
+      "media_id": "004-sky-island-lake",
+      "type": "image",
+      "source": "AI/inbox/media/generated/otherworld-landscapes-20261108/004-sky-island-lake.png",
+      "origin": "generated",
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ]
+    },
+    {
+      "media_id": "005-copper-dune-ruin",
+      "type": "image",
+      "source": "AI/inbox/media/generated/otherworld-landscapes-20261108/005-copper-dune-ruin.png",
+      "origin": "generated",
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ]
+    },
+    {
+      "media_id": "006-moonlit-mushroom-wood",
+      "type": "image",
+      "source": "AI/inbox/media/generated/otherworld-landscapes-20261108/006-moonlit-mushroom-wood.png",
+      "origin": "generated",
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ]
+    },
+    {
+      "media_id": "007-cloudspan-bridge",
+      "type": "image",
+      "source": "AI/inbox/media/generated/otherworld-landscapes-20261108/007-cloudspan-bridge.png",
+      "origin": "generated",
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ]
+    },
+    {
+      "media_id": "008-moon-garden-isle",
+      "type": "image",
+      "source": "AI/inbox/media/generated/otherworld-landscapes-20261108/008-moon-garden-isle.png",
+      "origin": "generated",
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ]
+    },
+    {
+      "media_id": "manga-extra-pages-01-cover",
+      "type": "image",
+      "source": "AI/inbox/media/manual/manga-extra-pages/01-cover.png",
+      "origin": "manual",
+      "set_id": "manga-extra-pages",
+      "set_relative_path": "01-cover.png",
+      "sequence_position": 1,
+      "status": "pending_approval",
+      "issues": [],
+      "planned_master": "assets/media/master/manga-extra-pages/01-cover.png",
+      "planned_public": "assets/media/web/manga-extra-pages/01-cover.jpg",
+      "planned_thumbnail": "assets/media/thumbnails/manga-extra-pages/01-cover.jpg"
+    },
+    {
+      "media_id": "manga-extra-pages-02-frontispiece",
+      "type": "image",
+      "source": "AI/inbox/media/manual/manga-extra-pages/02-frontispiece.png",
+      "origin": "manual",
+      "set_id": "manga-extra-pages",
+      "set_relative_path": "02-frontispiece.png",
+      "sequence_position": 2,
+      "status": "pending_approval",
+      "issues": [],
+      "planned_master": "assets/media/master/manga-extra-pages/02-frontispiece.png",
+      "planned_public": "assets/media/web/manga-extra-pages/02-frontispiece.jpg",
+      "planned_thumbnail": "assets/media/thumbnails/manga-extra-pages/02-frontispiece.jpg"
+    },
+    {
+      "media_id": "manga-extra-pages-03-back-cover",
+      "type": "image",
+      "source": "AI/inbox/media/manual/manga-extra-pages/03-back-cover.png",
+      "origin": "manual",
+      "set_id": "manga-extra-pages",
+      "set_relative_path": "03-back-cover.png",
+      "sequence_position": 3,
+      "status": "pending_approval",
+      "issues": [],
+      "planned_master": "assets/media/master/manga-extra-pages/03-back-cover.png",
+      "planned_public": "assets/media/web/manga-extra-pages/03-back-cover.jpg",
+      "planned_thumbnail": "assets/media/thumbnails/manga-extra-pages/03-back-cover.jpg"
+    },
+    {
+      "media_id": "manga-mode-demo-00001",
+      "type": "image",
+      "source": "AI/inbox/media/manual/manga-mode-demo/00001.png",
+      "origin": "manual",
+      "set_id": "manga-mode-demo",
+      "set_relative_path": "00001.png",
+      "sequence_position": 1,
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ],
+      "planned_master": "assets/media/master/manga-mode-demo/00001.png",
+      "planned_public": "assets/media/web/manga-mode-demo/00001.jpg",
+      "planned_thumbnail": "assets/media/thumbnails/manga-mode-demo/00001.jpg"
+    },
+    {
+      "media_id": "manga-mode-demo-00002",
+      "type": "image",
+      "source": "AI/inbox/media/manual/manga-mode-demo/00002.png",
+      "origin": "manual",
+      "set_id": "manga-mode-demo",
+      "set_relative_path": "00002.png",
+      "sequence_position": 2,
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ],
+      "planned_master": "assets/media/master/manga-mode-demo/00002.png",
+      "planned_public": "assets/media/web/manga-mode-demo/00002.jpg",
+      "planned_thumbnail": "assets/media/thumbnails/manga-mode-demo/00002.jpg"
+    },
+    {
+      "media_id": "manga-mode-demo-00003",
+      "type": "image",
+      "source": "AI/inbox/media/manual/manga-mode-demo/00003.png",
+      "origin": "manual",
+      "set_id": "manga-mode-demo",
+      "set_relative_path": "00003.png",
+      "sequence_position": 3,
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ],
+      "planned_master": "assets/media/master/manga-mode-demo/00003.png",
+      "planned_public": "assets/media/web/manga-mode-demo/00003.jpg",
+      "planned_thumbnail": "assets/media/thumbnails/manga-mode-demo/00003.jpg"
+    },
+    {
+      "media_id": "manga-mode-demo-00004",
+      "type": "image",
+      "source": "AI/inbox/media/manual/manga-mode-demo/00004.png",
+      "origin": "manual",
+      "set_id": "manga-mode-demo",
+      "set_relative_path": "00004.png",
+      "sequence_position": 4,
+      "status": "review_required",
+      "issues": [
+        "media_id already exists"
+      ],
+      "planned_master": "assets/media/master/manga-mode-demo/00004.png",
+      "planned_public": "assets/media/web/manga-mode-demo/00004.jpg",
+      "planned_thumbnail": "assets/media/thumbnails/manga-mode-demo/00004.jpg"
+    }
+  ],
+  "sets": [
+    {
+      "set_id": "manga-extra-pages",
+      "source_directory": "AI/inbox/media/manual/manga-extra-pages",
+      "action": "create",
+      "status": "pending_approval",
+      "issues": [],
+      "collection": {
+        "collection_id": "manga-extra-pages",
+        "route": "manga-extra-pages",
+        "title": {
+          "en": "manga-extra-pages",
+          "jp": "manga-extra-pages"
+        },
+        "presentation": "sequence",
+        "listing": {
+          "enabled": true
+        },
+        "source_directory": "assets/media/web/manga-extra-pages",
+        "sequence": {
+          "order": "filename",
+          "reading_direction": "rtl",
+          "first_page_side": "right",
+          "view": "single",
+          "spread_enabled": true
+        },
+        "viewer": {
+          "enabled": true
+        }
+      },
+      "preview": {
+        "image_count": 3,
+        "source_file_count": 3,
+        "ordered_items": [
+          {
+            "position": 1,
+            "source": "01-cover.png",
+            "public": "assets/media/web/manga-extra-pages/01-cover.jpg",
+            "status": "pending_approval"
+          },
+          {
+            "position": 2,
+            "source": "02-frontispiece.png",
+            "public": "assets/media/web/manga-extra-pages/02-frontispiece.jpg",
+            "status": "pending_approval"
+          },
+          {
+            "position": 3,
+            "source": "03-back-cover.png",
+            "public": "assets/media/web/manga-extra-pages/03-back-cover.jpg",
+            "status": "pending_approval"
+          }
+        ]
+      }
+    },
+    {
+      "set_id": "manga-mode-demo",
+      "source_directory": "AI/inbox/media/manual/manga-mode-demo",
+      "action": "create",
+      "status": "pending_approval",
+      "issues": [],
+      "collection": {
+        "collection_id": "manga-mode-demo",
+        "route": "manga-mode-demo",
+        "title": {
+          "en": "manga-mode-demo",
+          "jp": "manga-mode-demo"
+        },
+        "presentation": "sequence",
+        "listing": {
+          "enabled": true
+        },
+        "source_directory": "assets/media/web/manga-mode-demo",
+        "sequence": {
+          "order": "filename",
+          "reading_direction": "rtl",
+          "first_page_side": "right",
+          "view": "single",
+          "spread_enabled": true
+        },
+        "viewer": {
+          "enabled": true
+        }
+      },
+      "preview": {
+        "image_count": 4,
+        "source_file_count": 4,
+        "ordered_items": [
+          {
+            "position": 1,
+            "source": "00001.png",
+            "public": "assets/media/web/manga-mode-demo/00001.jpg",
+            "status": "review_required"
+          },
+          {
+            "position": 2,
+            "source": "00002.png",
+            "public": "assets/media/web/manga-mode-demo/00002.jpg",
+            "status": "review_required"
+          },
+          {
+            "position": 3,
+            "source": "00003.png",
+            "public": "assets/media/web/manga-mode-demo/00003.jpg",
+            "status": "review_required"
+          },
+          {
+            "position": 4,
+            "source": "00004.png",
+            "public": "assets/media/web/manga-mode-demo/00004.jpg",
+            "status": "review_required"
+          }
+        ]
+      }
+    }
+  ]
+}

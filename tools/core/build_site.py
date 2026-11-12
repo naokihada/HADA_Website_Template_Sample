@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import html
+import json
 import re
 import shutil
 import sys
@@ -13,22 +14,19 @@ from typing import Any, Optional, Tuple
 
 try:
     import markdown
-    import yaml
 except ImportError:
     markdown = None  # type: ignore[assignment]
-    yaml = None  # type: ignore[assignment]
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
 from term_dictionary import load_term_dictionary  # noqa: E402
+from structured_data import load_document  # noqa: E402
 from translation_provider import MockTranslationProvider, translate_with_dictionary  # noqa: E402
 from i18n_pipeline import master_files, parse_blocks, select_locale_content, snapshot_path, source_hash, translate_blocks  # noqa: E402
-from assets import load_manifest, safe_relative, validate_assets  # noqa: E402
 from display_config import display_runtime_settings  # noqa: E402
 from external_javascript_policy import load_policy as load_external_javascript_policy, scan as scan_external_javascript  # noqa: E402
-from gallery_contract import gallery_card_href, load_gallery_settings  # noqa: E402
 from page_registry import build_html_masters  # noqa: E402
 from media_library import build_media_library, inject_inline_media, page_media  # noqa: E402
 from site_link_policy import load_policy as load_link_policy, scan as scan_site_links, site_url  # noqa: E402
@@ -41,8 +39,6 @@ FRONT_MATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n?", re.DOTALL)
 
 def dependency_error_message() -> str:
     missing = []
-    if yaml is None:
-        missing.append("PyYAML")
     if markdown is None:
         missing.append("markdown")
     return f"Missing dependencies: {', '.join(missing)}. Install with: pip install -r tools/core/requirements.txt"
@@ -50,9 +46,12 @@ def dependency_error_message() -> str:
 
 def parse_front_matter(text: str) -> Tuple[dict[str, Any], str]:
     match = FRONT_MATTER_RE.match(text)
-    if not match or yaml is None:
+    if not match:
         return {}, text
-    meta = yaml.safe_load(match.group(1)) or {}
+    try:
+        meta = json.loads(match.group(1))
+    except json.JSONDecodeError:
+        return {}, text
     body = text[match.end() :]
     if not isinstance(meta, dict):
         meta = {}
@@ -62,27 +61,8 @@ def parse_front_matter(text: str) -> Tuple[dict[str, Any], str]:
 def format_front_matter(meta: dict[str, Any], body: str) -> str:
     if not meta:
         return body
-    header = yaml.safe_dump(meta, allow_unicode=True, sort_keys=False).strip()
+    header = json.dumps(meta, ensure_ascii=False, indent=2)
     return f"---\n{header}\n---\n\n{body.lstrip()}"
-
-
-def background_visual(root: Path, metadata: dict[str, Any]) -> Optional[str]:
-    visual = metadata.get("visual") or {}
-    fade = visual.get("background_fade") if isinstance(visual, dict) else None
-    image_id = fade.get("image_id") if isinstance(fade, dict) else None
-    if not isinstance(image_id, str):
-        return None
-    try:
-        manifest = load_manifest(root)
-    except (OSError, ValueError, RuntimeError):
-        return None
-    for item in manifest.get("images", []):
-        if not isinstance(item, dict) or item.get("image_id") != image_id or item.get("status") != "approved":
-            continue
-        web = str(item.get("web", ""))
-        if web.startswith("assets/images/web/"):
-            return Path(web).name
-    return None
 
 
 def markdown_to_html(
@@ -121,7 +101,7 @@ def markdown_to_html(
     visual_css = ""
     background_image = page_visuals.get("background") or background_image
     if background_image:
-        background_url = background_image if str(background_image).startswith("/") else f"/assets/images/{background_image}"
+        background_url = background_image if str(background_image).startswith("/") else f"/assets/media/web/{background_image}"
         visual_css = (
             "  .background-fade{position:fixed;inset:0;z-index:-1;pointer-events:none;"
             "background-image:linear-gradient(135deg,transparent 0%,"
@@ -211,11 +191,11 @@ def build_master_pages(
     link_policy: Optional[dict[str, Any]] = None,
 ) -> None:
     """Build locale snapshots and minimal HTML from *_master.md sources."""
-    if yaml is None or markdown is None:
+    if markdown is None:
         raise RuntimeError(dependency_error_message())
 
-    project_path = root / "config" / "project.yaml"
-    config = yaml.safe_load(project_path.read_text(encoding="utf-8")) if project_path.is_file() else {}
+    project_path = root / "config" / "project.toml"
+    config = load_document(project_path) if project_path.is_file() else {}
     locales_cfg = ((config or {}).get("locales") or {}).get("supported") or ["jp", "en"]
     locales = [str(locale) for locale in locales_cfg]
     publication = ((config or {}).get("paths") or {}).get("publication_root", "site")
@@ -225,7 +205,7 @@ def build_master_pages(
     output_root = publication_override.resolve() if publication_override else (root / publication).resolve()
     if output_root == root.resolve() or not output_root.is_relative_to(root.resolve()):
         raise ValueError("Publication root must be inside the project")
-    entries = load_term_dictionary(root / "config" / "term_dictionary.yaml")
+    entries = load_term_dictionary(root / "config" / "term_dictionary.json")
     display_settings = display_runtime_settings(root)
     generated_snapshot_root = None
     if publication_override:
@@ -282,7 +262,6 @@ def build_master_pages(
                 markdown_to_html(
                     body,
                     locale,
-                    background_image=background_visual(root, master_meta),
                     display_settings=display_settings,
                     ui_profile=str(master_meta.get("ui_profile", "shared-shell")),
                     locale=locale,
@@ -294,148 +273,23 @@ def build_master_pages(
             )
 
 
-def publish_web_assets(root: Path, output: Path) -> None:
-    """Copy only approved JPEG derivatives into the configured publication root."""
-    manifest_path = root / "config" / "media.manifest.yaml"
-    if not manifest_path.is_file():
-        return
-    if validate_assets(root) != 0:
-        raise ValueError("Image asset validation failed")
-    manifest = load_manifest(root)
-    for item in manifest.get("images", []):
-        if not isinstance(item, dict) or item.get("status") != "approved":
-            continue
-        source = root / safe_relative(root, str(item.get("web", "")))
-        if source.suffix.lower() != ".jpg" or not source.is_file():
-            raise ValueError(f"Invalid approved web derivative: {item.get('image_id', '')}")
-        target = output / "assets" / "images" / source.name
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, target)
-        thumbnail = root / safe_relative(root, str(item.get("thumbnail", "")))
-        if thumbnail.suffix.lower() != ".jpg" or not thumbnail.is_file():
-            raise ValueError(f"Invalid approved thumbnail: {item.get('image_id', '')}")
-        thumbnail_target = output / "assets" / "images" / "thumbnails" / thumbnail.name
-        thumbnail_target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(thumbnail, thumbnail_target)
-
-
-def localized(value: Any, locale: str, fallback: str = "") -> str:
-    if isinstance(value, dict):
-        return str(value.get(locale) or value.get("en") or value.get("jp") or next(iter(value.values()), fallback))
-    return str(value) if value is not None else fallback
-
-
-def gallery_entries(root: Path) -> list[dict[str, Any]]:
-    manifest = load_manifest(root)
-    entries: list[dict[str, Any]] = []
-    for item in manifest.get("images", []):
-        if not isinstance(item, dict) or item.get("status") != "approved":
-            continue
-        usage = item.get("usage", [])
-        usages = {str(usage)} if isinstance(usage, str) else {str(value) for value in usage}
-        gallery = item.get("gallery") or {}
-        if "gallery" in usages or (isinstance(gallery, dict) and gallery.get("visible") is True):
-            entries.append(item)
-    return entries
-
-
-def write_generated_html(path: Path, content: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(content, encoding="utf-8", newline="\r\n")
-
-
-def build_gallery(root: Path, output: Path, locales: list[str]) -> None:
-    """Generate locale gallery indexes and details from approved media entries."""
-    manifest_path = root / "config" / "media.manifest.yaml"
-    if not manifest_path.is_file():
-        return
-    gallery_settings = load_gallery_settings(root)
-    link_policy = load_link_policy(root)
-    if gallery_settings.get("enabled", True) is False:
-        return
-    entries = gallery_entries(root)
-    for locale in locales:
-        route = str(gallery_settings.get("route", "gallery")).strip("/") or "gallery"
-        gallery_root = output / locale / route
-        cards: list[str] = []
-        for item in entries:
-            image_id = str(item["image_id"])
-            title = html.escape(localized(item.get("title"), locale, image_id))
-            alt = html.escape(localized(item.get("alt"), locale, title))
-            caption = html.escape(localized(item.get("caption"), locale, ""))
-            thumbnail = Path(str(item["thumbnail"])).name
-            card_href = html.escape(
-                gallery_card_href(
-                    gallery_settings,
-                    image_id,
-                    Path(str(item["web"])).name,
-                    locale=locale,
-                    link_policy=link_policy,
-                ),
-                quote=True,
-            )
-            cards.append(
-                f'<figure><a href="{card_href}">'
-                f'<img src="{html.escape(site_url(f"/assets/images/thumbnails/{thumbnail}", link_policy), quote=True)}" alt="{alt}" loading="lazy">'
-                f'</a><figcaption><strong>{title}</strong><br>{caption}</figcaption></figure>'
-            )
-            detail = (
-                "<!DOCTYPE html>\n<html lang=\"{lang}\"><head><meta charset=\"UTF-8\">"
-                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
-                "<title>{title}</title><link rel=\"stylesheet\" href=\"{stylesheet}\"><style>body{{max-width:960px;margin:2rem auto;padding:0 1rem;"
-                "font-family:system-ui,sans-serif}}img{{max-width:100%;height:auto}}"
-                "a{{color:inherit}}</style></head><body data-ui-profile=\"standalone\"><p><a href=\"{back_href}\">"
-                "{back}</a></p><main><h1>{title}</h1><img src=\"{web_href}\" alt=\"{alt}\">"
-                "<p>{caption}</p>{credit}</main></body></html>\n"
-            ).format(
-                lang=html.escape(locale),
-                title=title,
-                back="Back to gallery" if locale != "jp" else "ギャラリーへ戻る",
-                stylesheet=html.escape(site_url("/assets/css/core.css", link_policy), quote=True),
-                back_href=html.escape(site_url(f"/{locale}/{route}/", link_policy), quote=True),
-                web_href=html.escape(site_url(f"/assets/images/{Path(str(item['web'])).name}", link_policy), quote=True),
-                alt=alt,
-                caption=caption,
-                credit=(f"<p>{html.escape(localized(item.get('credit'), locale, ''))}</p>" if item.get("credit") else ""),
-            )
-            write_generated_html(gallery_root / f"{image_id}.html", detail)
-        title_value = localized((gallery_settings.get("title") or {}), locale, "Gallery")
-        index = (
-            "<!DOCTYPE html>\n<html lang=\"{lang}\"><head><meta charset=\"UTF-8\">"
-            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
-            "<title>{title}</title><link rel=\"stylesheet\" href=\"{stylesheet}\"><style>body{{max-width:1100px;margin:2rem auto;padding:0 1rem;"
-            "font-family:system-ui,sans-serif}}.gallery{{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}}"
-            "figure{{margin:0}}img{{width:100%;aspect-ratio:1;object-fit:cover}}a{{color:inherit}}</style></head>"
-            "<body data-ui-profile=\"standalone\"><p><a href=\"{home_href}\">{home}</a></p><main><h1>{title}</h1><div class=\"gallery\">{cards}</div>"
-            "</main></body></html>\n"
-        ).format(
-            lang=html.escape(locale),
-            title=html.escape(title_value),
-            stylesheet=html.escape(site_url("/assets/css/core.css", link_policy), quote=True),
-            home_href=html.escape(site_url(f"/{locale}/index.html", link_policy), quote=True),
-            home="Home" if locale != "jp" else "ホーム",
-            cards="\n".join(cards),
-        )
-        write_generated_html(gallery_root / "index.html", index)
-
-
 def build_site(root: Path, provider: Optional[MockTranslationProvider] = None, candidate_root: Optional[Path] = None, mode: str = "build-content") -> None:
     if mode not in {"build-content", "build-html-master", "build-safe", "build-force"}:
         raise ValueError(f"Unsupported build mode: {mode}")
     if mode in {"build-safe", "build-force"} and candidate_root is None:
         raise ValueError(f"{mode} requires --candidate-root; publication is never written directly")
-    if yaml is None or markdown is None:
+    if markdown is None:
         raise RuntimeError(dependency_error_message())
 
     provider = provider or MockTranslationProvider()
     display_settings = display_runtime_settings(root)
-    dictionary_path = root / "config" / "term_dictionary.yaml"
+    dictionary_path = root / "config" / "term_dictionary.json"
     entries = load_term_dictionary(dictionary_path)
 
     jp_dir = root / "content" / MASTER_LOCALE
     en_dir = root / "content" / TARGET_LOCALE
-    config_path = root / 'config/project.yaml'
-    config = yaml.safe_load(config_path.read_text(encoding='utf-8')) if config_path.exists() else {}
+    config_path = root / 'config/project.toml'
+    config = load_document(config_path) if config_path.exists() else {}
     publication = (config or {}).get('paths', {}).get('publication_root', 'site')
     from validate_framework import forbidden_segment
     if not isinstance(publication, str) or forbidden_segment(publication):
@@ -454,7 +308,6 @@ def build_site(root: Path, provider: Optional[MockTranslationProvider] = None, c
             shutil.copytree(publication_source, output, dirs_exist_ok=True)
     link_policy = load_link_policy(root)
     build_master_pages(root, provider, publication_override=candidate_root, link_policy=link_policy)
-    publish_web_assets(root, output)
     site_jp = output / MASTER_LOCALE
     site_en = output / TARGET_LOCALE
     site_jp.mkdir(parents=True, exist_ok=True)
@@ -493,7 +346,6 @@ def build_site(root: Path, provider: Optional[MockTranslationProvider] = None, c
             markdown_to_html(
                 jp_body,
                 "ja",
-                background_image=background_visual(root, jp_meta),
                 display_settings=display_settings,
                 locale=MASTER_LOCALE,
                 link_policy=link_policy,
@@ -505,7 +357,6 @@ def build_site(root: Path, provider: Optional[MockTranslationProvider] = None, c
             markdown_to_html(
                 current_en_body,
                 "en",
-                background_image=background_visual(root, jp_meta),
                 display_settings=display_settings,
                 ui_profile=str(jp_meta.get("ui_profile", "shared-shell")),
                 locale=TARGET_LOCALE,
@@ -515,7 +366,6 @@ def build_site(root: Path, provider: Optional[MockTranslationProvider] = None, c
             encoding="utf-8",
             newline="\r\n",
         )
-    build_gallery(root, output, supported_locales)
     build_media_library(root, output, supported_locales)
     candidate_link_policy = dict(link_policy)
     candidate_link_policy["roots"] = ["."]
@@ -544,7 +394,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument("--mode", choices=["build-content", "build-html-master", "build-safe", "build-force"], default="build-content")
     args = parser.parse_args(argv)
 
-    if yaml is None or markdown is None:
+    if markdown is None:
         print(dependency_error_message(), file=sys.stderr)
         return 2
 

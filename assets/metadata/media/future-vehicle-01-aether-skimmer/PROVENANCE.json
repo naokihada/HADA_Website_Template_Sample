@@ -1,0 +1,15 @@
+{
+  "media_id": "future-vehicle-01-aether-skimmer",
+  "type": "image",
+  "origin": "generated",
+  "source_sha256": "sha256:4f0b88c0ba432281a287169ba86f93e233134315c2bc0afcacc457d261e29641",
+  "public_sha256": "sha256:09db19a79eca6ff2af68e283b701c7e01bd32a6ac230d0e8277f162989bb91e2",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-08T15:11:46.600120+00:00",
+  "provider": "chatgpt_image",
+  "prompt_profile": "editorial-illustration",
+  "prompt": "Create a square illustration for this website page.\nTreat the supplied theme as a guide, but make the individual scene distinct.\nDo not include readable text, logos, borders, or interface elements.\nRefined editorial composition with a clear focal subject and thoughtful\nnegative space. Keep visual details consistent with the website theme.\nno readable text, no logos, no embedded watermark, no frame"
+}

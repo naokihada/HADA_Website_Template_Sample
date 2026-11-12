@@ -1,0 +1,88 @@
+{
+  "site": {
+    "id": "example-site",
+    "name": "Example Site",
+    "publication_root": "site",
+    "template_scaffold": "present"
+  },
+  "paths": {
+    "generated_root": "build",
+    "local_test_root": "site",
+    "page_registry": "config/page-registry.json",
+    "template_references": "references/template-releases",
+    "conversation_archive": "AI/history/conversations"
+  },
+  "locales": {
+    "default": "en",
+    "supported": [
+      "en",
+      "jp"
+    ]
+  },
+  "content": {
+    "master_root": "content"
+  },
+  "publication": {
+    "deploy_target": "site",
+    "locales": {
+      "en": "site/en",
+      "jp": "site/jp"
+    },
+    "assets": "site/assets"
+  },
+  "plugins": {
+    "enabled": []
+  },
+  "rss": {
+    "default_state": "NO_CONTENT"
+  },
+  "external_sources": {
+    "wordpress_com": null,
+    "self_hosted_wordpress": null
+  },
+  "link_policy": {
+    "enabled": true,
+    "roots": [
+      "content/pages",
+      "site"
+    ],
+    "attributes": [
+      "href",
+      "src",
+      "action"
+    ],
+    "internal_hosts": [
+      "example.com"
+    ],
+    "canonical_host": "example.com",
+    "base_path": "/",
+    "external_links": {
+      "require_new_tab": true,
+      "required_rel": [
+        "noopener",
+        "noreferrer"
+      ]
+    }
+  },
+  "external_javascript": {
+    "policy": "forbidden",
+    "declarations": []
+  },
+  "verification": {
+    "browser": {
+      "enabled": false,
+      "route_source": "auto",
+      "block_external_requests": true,
+      "viewports": [
+        {
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "width": 390,
+          "height": 844
+        }
+      ]
+    }
+  }
+}

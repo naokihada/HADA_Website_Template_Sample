@@ -6,17 +6,17 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-import yaml
+from structured_data import load_document
 
 
 SCAFFOLDS = {"present", "absent", "managed"}
 
 
 def load_project(root: Path) -> dict[str, Any]:
-    path = root / "config" / "project.yaml"
+    path = root / "config" / "project.toml"
     if not path.is_file():
         return {}
-    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    data = load_document(path) or {}
     return data if isinstance(data, dict) else {}
 
 
@@ -37,7 +37,7 @@ def resolve_site(root: Path) -> dict[str, Any]:
         "template_scaffold": scaffold,
         "generated_root": str(paths.get("generated_root") or "build"),
         "local_test_root": str(paths.get("local_test_root") or publication),
-        "page_registry": str(paths.get("page_registry") or "config/page-registry.yaml"),
+        "page_registry": str(paths.get("page_registry") or "config/page-registry.json"),
         "template_references": str(paths.get("template_references") or "references/template-releases"),
         "browser": ((data.get("verification") or {}).get("browser") if isinstance(data.get("verification"), dict) else {}) or {},
     }

@@ -11,12 +11,8 @@ import uuid
 from pathlib import Path
 from typing import Any
 
-try:
-    import yaml
-except ImportError:  # pragma: no cover
-    yaml = None  # type: ignore[assignment]
-
 import file_transaction as tx
+from structured_data import load_document
 from site_contract import publication_path, resolve_site
 
 EXIT_SUCCESS = 0
@@ -26,10 +22,8 @@ SAFE_OWNERS = {"template", "generated"}
 
 
 def load_manifest(root: Path) -> dict[str, Any]:
-    if yaml is None:
-        raise RuntimeError("PyYAML is required")
-    path = root / "config/template.manifest.yaml"
-    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    path = root / "config/website-template.json"
+    data = load_document(path) or {}
     return data if isinstance(data, dict) else {}
 
 
@@ -56,23 +50,21 @@ def ownership_patterns(root: Path) -> list[tuple[str, str, int]]:
 
 def generated_media_paths(root: Path) -> set[str]:
     """Resolve approved derivative destinations without claiming all project images."""
-    if yaml is None:
-        return set()
-    manifest_path = root / "config/media.manifest.yaml"
+    manifest_path = root / "config/media.catalog.json"
     if not manifest_path.is_file():
         return set()
-    data = yaml.safe_load(manifest_path.read_text(encoding="utf-8")) or {}
+    data = json.loads(manifest_path.read_text(encoding="utf-8")) or {}
     publication = _normalized(str(resolve_site(root)["publication_root"]))
     result: set[str] = set()
-    for item in (data.get("images", []) if isinstance(data, dict) else []):
+    for item in (data.get("media", []) if isinstance(data, dict) else []):
         if not isinstance(item, dict) or item.get("status") != "approved":
             continue
-        web = Path(str(item.get("web", ""))).name
+        web = Path(str(item.get("public_file", ""))).name
         thumbnail = Path(str(item.get("thumbnail", ""))).name
         if web:
-            result.add(f"{publication}/assets/images/{web}")
+            result.add(f"{publication}/{str(item.get('public_file', '')).replace(chr(92), '/')}")
         if thumbnail:
-            result.add(f"{publication}/assets/images/thumbnails/{thumbnail}")
+            result.add(f"{publication}/{str(item.get('thumbnail', '')).replace(chr(92), '/')}")
     return result
 
 
@@ -99,7 +91,9 @@ def candidate_files(candidate: Path) -> set[str]:
     return {
         path.relative_to(candidate).as_posix()
         for path in candidate.rglob("*")
-        if path.is_file() and ".build" not in path.relative_to(candidate).parts
+        if path.is_file()
+        and ".build" not in path.relative_to(candidate).parts
+        and ".generated" not in path.relative_to(candidate).parts
     }
 
 

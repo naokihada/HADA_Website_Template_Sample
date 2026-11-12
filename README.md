@@ -25,6 +25,8 @@ endorse any real company or service.
 | Markdown → HTML | `site/jp/`, `site/en/`, `site/de/` |
 | Publication Root | `site/` |
 | PWA Timer Demo | `site/timer.html` — client-only, `03:00` default, best-effort notifications |
+| Image gallery sample | `/en/gallery/`, `/jp/gallery/`, `/de/gallery/` — five thumbnail cards with individual image detail pages |
+| Media library and image viewer | `/en/media/`, `/jp/media/`, `/de/media/` by default — configurable through `paths.media_route`; localized galleries, same-tab viewer, and sequence readers |
 | Static hierarchical navigation | `site/navigation-demo/` — localized per-page HTML, About sub-navigation, and breadcrumbs without external JavaScript |
 
 Fictional sample data: **Sample Tea Co.** / **Hanako Sato** (佐藤花子).

@@ -16,6 +16,8 @@ Per-release record template: `AI/reports/RELEASE.md`
 
 Agent-neutral workspace: `AI/`
 
-Media catalog, intake, and static collection guide: `docs/MEDIA.md`
+Media catalog, intake, generated routes, UI, and collection contract:
+`SPEC.md` → **23. JSON media library**. This is the sole normative media
+specification.
 
 Static navigation and breadcrumb authoring guide: `docs/NAVIGATION.md`

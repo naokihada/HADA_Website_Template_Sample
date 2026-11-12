@@ -1,11 +1,14 @@
 ---
-visual:
-  background_fade:
-    image_id: restaurant-home-001
 ---
 
 # ホーム
 
-HADA Website Operations Framework v0.1.0 のサンプルサイトです。
+HADA Website Template の機能デモです。
 
-株式会社サンプル製茶の佐藤花子です。
+JSONカタログから生成したメディアページと階層ナビゲーションを確認できます。
+
+## メディアライブラリ
+
+メディアライブラリから階層化された単ページリーダーへ移動できます。
+
+[メディアライブラリを開く](/jp/media/)

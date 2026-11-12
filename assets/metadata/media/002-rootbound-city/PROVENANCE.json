@@ -1,0 +1,16 @@
+{
+  "media_id": "002-rootbound-city",
+  "type": "image",
+  "origin": "generated",
+  "source_sha256": "sha256:d9437dda5b4fbf7cc1f1566d9621c528ee0fdc55788db8f637b15d6c0e8ff734",
+  "public_sha256": "sha256:b1422d990918641ab2cc71bc45bc06b4e98638272bd1ffaa80755f5f219fc696",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-08T10:37:33.325178+00:00",
+  "provider": "chatgpt_image",
+  "prompt_profile": "editorial-illustration",
+  "prompt": "Use case: stylized-concept. Asset type: landscape fantasy gallery image. Primary request: an ancient white-stone city built into enormous tree roots above a deep emerald forest, slender bridges and warm lanterns, a distant waterfall, no visible people. Style/medium: richly detailed high-end fantasy environment concept art, painterly realism. Composition/framing: wide 3:2 landscape, clear architectural depth, no border. Lighting/mood: late afternoon sun shafts through leaves. Constraints: no text, no lettering, no logo, no watermark, no collage.",
+  "thumbnail_sha256": "sha256:4066d54238c6a171b1c2a3225c5c510f1508e73b249273cc8cdbd34e74847b13"
+}

@@ -1,0 +1,15 @@
+{
+  "media_id": "magic-bike-02-amber-rune",
+  "type": "image",
+  "origin": "generated",
+  "source_sha256": "sha256:cf3b1227ff5117cd3671b34d0d19d9473dc4987b5e20f6fcce473e5f85a354cb",
+  "public_sha256": "sha256:a8fc01df9c810a72290848efbe10e8015ba16ff5d0d250ee1f5c71fdc8a15efc",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-08T15:11:47.057195+00:00",
+  "provider": "chatgpt_image",
+  "prompt_profile": "editorial-illustration",
+  "prompt": "Create a square illustration for this website page.\nTreat the supplied theme as a guide, but make the individual scene distinct.\nDo not include readable text, logos, borders, or interface elements.\nRefined editorial composition with a clear focal subject and thoughtful\nnegative space. Keep visual details consistent with the website theme.\nno readable text, no logos, no embedded watermark, no frame"
+}

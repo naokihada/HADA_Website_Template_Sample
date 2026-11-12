@@ -1,0 +1,16 @@
+{
+  "media_id": "006-moonlit-mushroom-wood",
+  "type": "image",
+  "origin": "generated",
+  "source_sha256": "sha256:4a7803d0ca856fa66e4318226fa833f31cf9fab893973cc23c8edcaa65577f0d",
+  "public_sha256": "sha256:c25973a12009353499baf443541ad297cb86a888c7497ef351c8aeff46be86a2",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-08T10:37:33.684814+00:00",
+  "provider": "chatgpt_image",
+  "prompt_profile": "editorial-illustration",
+  "prompt": "Use case: stylized-concept. Asset type: landscape fantasy gallery image. Primary request: an ancient woodland at night with giant luminous mushrooms, a narrow silver stream, layered fern banks, and faint firefly-like lights, no people or creatures. Style/medium: intricate fantasy environment illustration with painterly realism and tactile foliage. Composition/framing: wide 3:2 landscape, inviting depth along the stream, no border. Lighting/mood: deep indigo night, subtle cyan and amber bioluminescence. Constraints: no text, no lettering, no logo, no watermark, no collage.",
+  "thumbnail_sha256": "sha256:faccd2b053c88b26b277b14a7b6f125cc855eab4c1509eeb758a9327cb66b0c4"
+}

@@ -3,7 +3,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-import yaml
+import json
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools/core'))
 import template_base as tb
@@ -22,7 +22,7 @@ class BaseTests(unittest.TestCase):
             'version': '0.1.3', 'release': 'v0.1.3', 'release_repository': 'naokihada/HADA_Website_Template'},
             'compatibility': {'schema_version': '0.1', 'data_format_version': '0.1'},
             'files': {'template_base': 'TEMPLATE_BASE.md'}}
-        (self.root / 'config/template.manifest.yaml').write_text(yaml.safe_dump(self.manifest))
+        (self.root / 'config/website-template.json').write_text(json.dumps(self.manifest))
 
     def test_legacy_absence_detects_manifest(self):
         self.assertIsNone(tb.check(self.root))
@@ -52,8 +52,8 @@ class BaseTests(unittest.TestCase):
             self.assertIsNotNone(vf.forbidden_segment(value))
 
     def test_custom_publication_root(self):
-        (self.root / 'config/term_dictionary.yaml').write_text('entries: []\n')
-        (self.root / 'config/project.yaml').write_text('paths:\n  publication_root: custom-web\n')
+        (self.root / 'config/term_dictionary.json').write_text('{"entries": []}\n')
+        (self.root / 'config/project.toml').write_text('[paths]\npublication_root = "custom-web"\n')
         for locale in ('jp', 'en'):
             (self.root / 'content' / locale).mkdir(parents=True)
         (self.root / 'content/jp/index.md').write_text('# Example\n')

@@ -21,18 +21,20 @@ class PromoteBuildTests(unittest.TestCase):
             (root / "build/assets/css").mkdir(parents=True)
             (root / "site/assets/images").mkdir(parents=True)
             (root / "build/assets/images").mkdir(parents=True)
-            (root / "config/project.yaml").write_text(
-                "paths:\n  publication_root: site\n  generated_root: build\n",
+            (root / "build/.generated/content/pages").mkdir(parents=True)
+            (root / "config/project.toml").write_text(
+                '[paths]\npublication_root = "site"\ngenerated_root = "build"\n',
                 encoding="utf-8",
             )
-            (root / "config/template.manifest.yaml").write_text(
-                "ownership:\n  template:\n    - site/assets/css/core.css\n  generated:\n    - site/en/**\n  user:\n    - site/assets/images/**\n",
+            (root / "config/website-template.json").write_text(
+                '{"ownership": {"template": ["site/assets/css/core.css"], "generated": ["site/en/**"], "user": ["site/assets/images/**"]}}',
                 encoding="utf-8",
             )
             (root / "site/assets/css/core.css").write_text("old", encoding="utf-8")
             (root / "build/assets/css/core.css").write_text("new", encoding="utf-8")
             (root / "site/assets/images/user.jpg").write_bytes(b"old-user")
             (root / "build/assets/images/user.jpg").write_bytes(b"new-user")
+            (root / "build/.generated/content/pages/demo_DE.md").write_text("snapshot", encoding="utf-8")
             plan = run(root)
             self.assertEqual(plan["status"], "PASS")
             self.assertEqual([item["path"] for item in plan["safe_updates"]], ["assets/css/core.css"])
@@ -46,8 +48,8 @@ class PromoteBuildTests(unittest.TestCase):
             (root / "config").mkdir()
             (root / "site").mkdir()
             (root / "build").mkdir()
-            (root / "config/project.yaml").write_text("paths:\n  publication_root: site\n  generated_root: build\n", encoding="utf-8")
-            (root / "config/template.manifest.yaml").write_text("ownership: {}\n", encoding="utf-8")
+            (root / "config/project.toml").write_text('[paths]\npublication_root = "site"\ngenerated_root = "build"\n', encoding="utf-8")
+            (root / "config/website-template.json").write_text('{"ownership": {}}', encoding="utf-8")
             (root / "site/unknown.html").write_text("old", encoding="utf-8")
             (root / "build/unknown.html").write_text("new", encoding="utf-8")
             plan = run(root)

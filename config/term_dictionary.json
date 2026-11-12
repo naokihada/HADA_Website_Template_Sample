@@ -1,0 +1,19 @@
+{
+  "version": "0.1",
+  "entries": [
+    {
+      "source": "メディアカタログ",
+      "target": "media catalog",
+      "type": "technical",
+      "enabled": true,
+      "note": "Template media architecture term"
+    },
+    {
+      "source": "HADA Website Operations Framework",
+      "target": "HADA Website Operations Framework",
+      "type": "service",
+      "enabled": true,
+      "note": "Product name"
+    }
+  ]
+}

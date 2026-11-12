@@ -1,0 +1,50 @@
+[project]
+name = "HADA Website Operations Framework"
+id = "hada-website-ops"
+version = "0.1.0"
+mode = "NEW"
+
+[repositories]
+development = "HADA_Website_Template_Dev"
+release = "HADA_Website_Template"
+sample = "HADA_Website_Template_Sample"
+
+[paths]
+publication_root = "site"
+generated_root = "build"
+media_route = "media"
+page_registry = "config/page-registry.json"
+template_references = "references/template-releases"
+content_master = "content"
+references = "references"
+tools_core = "tools/core"
+tools_plugins = "tools/plugins"
+agent_workspace = "AI"
+term_dictionary = "config/term_dictionary.json"
+
+[locales]
+master = "jp"
+default = "en"
+supported = [
+    "en",
+    "jp",
+    "de",
+]
+
+[plugins]
+registry = "tools/plugins"
+
+[references]
+registry_file = "references/registry/references.example.json"
+
+[environments]
+config_example = "environments/environments.example.json"
+
+[verification.browser]
+enabled = true
+route_source = "auto"
+block_external_requests = true
+viewports = [
+    { width = 1920, height = 1080 },
+    { width = 390, height = 844 },
+]

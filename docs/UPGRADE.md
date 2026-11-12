@@ -25,32 +25,34 @@ Dry-run and failed upgrades do not advance the Base.
 
 | Field | Location | Meaning |
 |---|---|---|
-| Template version | `config/template.manifest.yaml` → `template.version` | HADA Website Template Release |
-| Project version | `config/project.yaml` → `project.version` | Your site project metadata |
+| Template version | `config/website-template.json` → `template.version` | HADA Website Template Release |
+| Project version | `config/project.toml` → `project.version` | Your site project metadata |
 
 Do not use `project.version` as the template version.
 
-### v0.4.0 media data change
+The updater requires a direct migration edge from the detected current Template
+version to the selected Release version; it does not traverse multiple migration
+edges. When the manifest declares only stepwise paths, upgrade through each stable
+Release in order and complete any `REVIEW_REQUIRED` schema migration before moving
+to the next version. Release preparation verifies that the candidate has a direct
+edge from the latest prior stable Public tag.
 
-The v0.4.0 media catalog is a new data structure and may require migration from
-the v0.3 image registry. Before merging or applying the upgrade, preserve the
-existing manifest and review its assets and page bindings. The optional
-`python tools/core/media_library.py migrate-legacy --root . --apply` command
-writes a separate `config/media.manifest.v0.4.yaml` candidate; it does not
-replace the active manifest, rewrite publication HTML, or delete files. Review
-the candidate and media paths before merging it manually. Ambiguous ownership or
-missing source data remains `REVIEW_REQUIRED`.
+### Media catalog format
+
+The media catalog master is `config/media.catalog.json`. Catalogs must use the
+current JSON structure before running media tooling. YAML media manifests and
+the legacy migration command are not supported by this template version.
 
 Generated originals are private and are not copied into the publication root.
 Video and PDF metadata processing is best-effort and reports when local tools
-are unavailable. See `docs/MEDIA.md` for media intake, page bindings, and
-collection behavior.
+are unavailable. See root `SPEC.md` §23 for the normative media intake, page
+bindings, generated routes, and collection behavior.
 
 ---
 
 ## 3. Check current template version
 
-1. If `config/template.manifest.yaml` exists → read `template.version` (**detected**)
+1. If `config/website-template.json` exists → read `template.version` (**detected**)
 2. Else legacy v0.1.1 sites may match release fingerprint (mechanical identification)
 3. If unknown → upgrade stops with **BLOCKED** unless you pass `--assume-version` explicitly
 
@@ -101,12 +103,12 @@ python tools/core/upgrade_from_release.py --root . --dry-run
 Never automatically overwritten:
 
 - `content/` (Content Master)
-- `config/term_dictionary.yaml`, `config/site.yaml`, `config/local.yaml`
+- `config/term_dictionary.json`, `config/site.json`, `config/local.json`
 - `site/assets/` (except template scaffold), `site/en/`, `site/jp/` HTML
 - User-filled `AI/reports/`, `AI/tasks/`
 - `references/registry/` (non-example), `references/cache/`
 
-See `config/template.manifest.yaml` for the authoritative list.
+See `config/website-template.json` for the authoritative list.
 
 ---
 
@@ -121,9 +123,25 @@ The engine compares **Previous Template**, **Current Site**, and **New Template*
 | Both changed | **REVIEW_REQUIRED** |
 | Unchanged | Skipped |
 
-`config/project.yaml` uses safe key-level merge (preserves `project.name`, `project.mode`).
+`config/project.toml` uses safe key-level merge (preserves `project.name`, `project.mode`).
 
 Generated HTML/content may require review if manually edited.
+
+By default, any conflict prevents all planned changes from being applied. For
+operators who explicitly choose incremental adoption, `--apply-safe` can apply
+only conflict-free template-owned additions and updates after isolated
+verification. It never applies deletions, project configuration, adoption
+version metadata, or linked footer-version updates while conflicts remain. The
+command still exits `REVIEW_REQUIRED`; resolve the listed conflicts and rerun
+the upgrade to complete adoption. A partial application is backed up and
+recorded under `AI/history/`.
+
+When HTML files under the configured Content Master or Publication Root contain the
+recognized `Built with HADA Website Template (vX.Y.Z)` label linked to the Template's
+configured GitHub repository, the upgrade plan updates that label to the target Release
+version. Unlinked labels and links to other repositories are left unchanged. Matching
+page-registry source hashes are refreshed, and all edits are included in candidate
+verification and the backed-up transaction. No matching attribution is a no-op.
 
 ---
 
@@ -201,7 +219,7 @@ See `docs/VALIDATION.md` for validator rules and baseline.
 
 First automated migration path. Adds:
 
-- `config/template.manifest.yaml`
+- `config/website-template.json`
 - `tools/core/upgrade_from_release.py`
 - `docs/UPGRADE.md`, `CHANGELOG.md`
 

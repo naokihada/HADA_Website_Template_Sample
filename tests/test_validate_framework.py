@@ -25,10 +25,10 @@ def copy_foundation_skeleton(target: Path) -> None:
         "AGENTS.md",
         "README.md",
         ".gitignore",
-        "config/project.yaml",
-        "config/site.example.yaml",
-        "environments/environments.example.yaml",
-        "references/registry/references.example.yaml",
+        "config/project.toml",
+        "config/site.example.json",
+        "environments/environments.example.json",
+        "references/registry/references.example.json",
         "site/README.md",
     ):
         src = REPO_ROOT / rel
@@ -71,10 +71,10 @@ def i18n_rule_ids(payload: dict) -> set[str]:
 
 
 class ValidateFrameworkTests(unittest.TestCase):
-    def test_pyyaml_available(self) -> None:
-        import yaml
+    def test_python_312_tomllib_available(self) -> None:
+        import tomllib
 
-        self.assertIsNotNone(yaml)
+        self.assertIsNotNone(tomllib)
 
     def test_foundation_baseline_passes(self) -> None:
         result = run_validator(["--root", str(REPO_ROOT), "--format", "json"])
@@ -86,9 +86,9 @@ class ValidateFrameworkTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             copy_foundation_skeleton(root)
-            project = (root / "config" / "project.yaml").read_text(encoding="utf-8")
-            project = project.replace("    - jp\n", "    - jp\n    - de\n", 1)
-            (root / "config" / "project.yaml").write_text(project, encoding="utf-8")
+            project = (root / "config" / "project.toml").read_text(encoding="utf-8")
+            project = project.replace('    "jp",\n', '    "jp",\n    "de",\n', 1)
+            (root / "config" / "project.toml").write_text(project, encoding="utf-8")
             (root / "content" / "de").mkdir(parents=True, exist_ok=True)
             (root / "site" / "de").mkdir(parents=True, exist_ok=True)
             result = run_validator(["--root", str(root), "--format", "json"])
@@ -124,9 +124,9 @@ class ValidateFrameworkTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             copy_foundation_skeleton(root)
-            project = (root / "config" / "project.yaml").read_text(encoding="utf-8")
-            (root / "config" / "project.yaml").write_text(
-                project.replace("mode: NEW", "mode: INVALID", 1),
+            project = (root / "config" / "project.toml").read_text(encoding="utf-8")
+            (root / "config" / "project.toml").write_text(
+                project.replace('mode = "NEW"', 'mode = "INVALID"', 1),
                 encoding="utf-8",
             )
             result = run_validator(["--root", str(root), "--format", "json"])
@@ -139,8 +139,8 @@ class ValidateFrameworkTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             copy_foundation_skeleton(root)
-            secret_file = root / "config" / "credentials.yaml"
-            secret_file.write_text("credentials:\n  api_key: super-secret-value-123\n", encoding="utf-8")
+            secret_file = root / "config" / "credentials.json"
+            secret_file.write_text('{"credentials": {"api_key": "super-secret-value-123"}}', encoding="utf-8")
             result = run_validator(["--root", str(root), "--format", "json"])
             self.assertEqual(result.returncode, 1)
             self.assertNotIn("super-secret-value-123", result.stdout)
@@ -149,8 +149,8 @@ class ValidateFrameworkTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             copy_foundation_skeleton(root)
-            (root / "config" / "site.yaml").write_text(
-                "site:\n  publication_root: site\npublication:\n  deploy_target: tools/output\n",
+            (root / "config" / "site.json").write_text(
+                json.dumps({"site": {"publication_root": "site"}, "publication": {"deploy_target": "tools/output"}}),
                 encoding="utf-8",
             )
             result = run_validator(["--root", str(root), "--format", "json"])

@@ -1,0 +1,12 @@
+{
+  "media_id": "manga-extra-pages-01-cover",
+  "type": "image",
+  "origin": "manual",
+  "source_sha256": "sha256:63a98acb0c5685917f1ef8e6b9f51f21b1ef5da4a9bbee786dbadb08525d76b3",
+  "public_sha256": "sha256:9a2a73c8a3a039699564740aee65340291637ab6902ac06b68a41c6e193f2338",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-09T18:24:42.927842+00:00"
+}

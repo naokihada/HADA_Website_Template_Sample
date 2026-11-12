@@ -14,6 +14,10 @@ Agent-neutral workspace for tasks, handoffs, ReSPEC checkpoints, reports, histor
 
 `AI/` is an agent-neutral operation workspace. It is not the Content Master, Publication Root, or current implementation specification.
 
+`AI/history/conversations/` is an optional user-owned archive for explicitly imported
+conversation exports. It is disabled by default, ignored by Git, and never populated by
+passive collection or automatic migration.
+
 ## Handoff rules
 
 - Do not delete completed Handoff evidence by default.

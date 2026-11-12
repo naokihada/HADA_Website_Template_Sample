@@ -1,9 +1,1 @@
----
-visual:
-  background_fade:
-    image_id: restaurant-about-001
----
-
-# 概要
-
-株式会社サンプル製茶についての概要ページです。担当は佐藤花子です。
+---\r\nlogical_page: demo\r\npage_id: demo\r\n---\r\n\r\n# HADA Website Template\r\n\r\nJSONカタログで定義したメディア表示を確認できます。\r\n

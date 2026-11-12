@@ -1,0 +1,16 @@
+{
+  "media_id": "003-glassfire-coast",
+  "type": "image",
+  "origin": "generated",
+  "source_sha256": "sha256:727b926d68127d73a307ed3de410bd3acf764e59d2e9aae3f210e5d0856870f0",
+  "public_sha256": "sha256:db776da3495f264f9550055c6d64ae3f7c7bf324e4db7c51adece4ce505ce6f6",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-08T10:37:33.413517+00:00",
+  "provider": "chatgpt_image",
+  "prompt_profile": "editorial-illustration",
+  "prompt": "Use case: stylized-concept. Asset type: landscape fantasy gallery image. Primary request: a lonely volcanic coast in an otherworld, black glass cliffs, luminous turquoise tide pools, distant mountains with faint glowing cracks, dramatic ocean spray, no people. Style/medium: premium detailed fantasy environment painting, believable geology. Composition/framing: wide 3:2 landscape, sweeping coastline from foreground to horizon, no border. Lighting/mood: blue twilight with restrained bioluminescent accents. Constraints: no text, no lettering, no logo, no watermark, no collage.",
+  "thumbnail_sha256": "sha256:47797bbc67552680e4af9cbfc199f44825ab8585fd69f0a9eb5c53a7fdf8ffa4"
+}

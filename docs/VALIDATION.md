@@ -78,7 +78,7 @@ python tools/core/validate_framework.py [--root PATH] [--format text|json|both] 
 | `--root` | `.` | Repository root (directory containing `AGENTS.md`) |
 | `--format` | `both` | `text`, `json`, or `both` (human text, then `---JSON---`, then JSON) |
 | `--task-id` | null | Optional correlation ID included in JSON output |
-| `--include-local` | off | If set, emit SEC-006 INFO when `config/local.yaml` exists |
+| `--include-local` | off | If set, emit SEC-006 INFO when `config/local.json` exists |
 | `--strict` | off | Treat WARNING findings as ERROR (exit 1) |
 
 **Requirements:** Python 3.10+; PyYAML `>=6.0`. If PyYAML is missing, exit code is `2`
@@ -144,13 +144,13 @@ Rule IDs help interpret validator output. Findings are sorted by `(rule_id, file
 | STRUCT-018 | ERROR | `tests/` exists |
 | STRUCT-019 | ERROR | `docs/` exists |
 | STRUCT-020 | ERROR | `config/` exists |
-| STRUCT-023 | ERROR | `paths.publication_root` from `config/project.yaml` resolves to an existing directory |
+| STRUCT-023 | ERROR | `paths.publication_root` from `config/project.toml` resolves to an existing directory |
 
 ### CFG-* (configuration)
 
 | rule_id | Severity | Condition / purpose |
 |---|---|---|
-| CFG-001 | ERROR | `config/project.yaml` valid YAML |
+| CFG-001 | ERROR | `config/project.toml` valid YAML |
 | CFG-002 | ERROR | `project.id`, `name`, `version`, `mode` present |
 | CFG-003 | ERROR | `project.mode` is NEW, RECOVERY, MIGRATION, or MAINTENANCE |
 | CFG-004 | ERROR | `paths.publication_root`, `content_master`, `tools_core`, `tools_plugins` present |
@@ -158,9 +158,9 @@ Rule IDs help interpret validator output. Findings are sorted by `(rule_id, file
 | CFG-006 | ERROR | Each supported locale is a valid locale code such as `en`, `jp`, or `de` |
 | CFG-007 | ERROR | `paths.publication_root` resolves to existing directory |
 | CFG-008 | ERROR | `paths.content_master` resolves to existing directory |
-| CFG-009 | ERROR | `config/site.example.yaml` valid YAML |
-| CFG-010 | WARNING | `config/site.yaml` missing |
-| CFG-011 | ERROR | If `config/site.yaml` present: valid YAML; `site.publication_root` matches project publication root |
+| CFG-009 | ERROR | `config/site.example.json` valid YAML |
+| CFG-010 | WARNING | `config/site.json` missing |
+| CFG-011 | ERROR | If `config/site.json` present: valid YAML; `site.publication_root` matches project publication root |
 | CFG-012 | ERROR | If present: `publication.deploy_target` equals project publication root, or `site` / `site/` |
 | CFG-013 | ERROR | If present: each `publication.locales.*` path stays under publication root with no forbidden segments |
 | CFG-014 | ERROR | If present: each `plugins.enabled[].state` is a valid plugin lifecycle state |
@@ -168,7 +168,7 @@ Rule IDs help interpret validator output. Findings are sorted by `(rule_id, file
 
 ### ENV-* (environments)
 
-Applied to `environments/environments.example.yaml` and `environments/environments.yaml` if present.
+Applied to `environments/environments.example.json` and `environments/environments.json` if present.
 
 | rule_id | Severity | Condition / purpose |
 |---|---|---|
@@ -242,8 +242,8 @@ Pattern-based checks on committed YAML under `config/`, `environments/`, `refere
 | SEC-002 | ERROR | AWS key pattern `AKIA[0-9A-Z]{16}` |
 | SEC-003 | WARNING | Private local absolute paths in committed YAML |
 | SEC-004 | ERROR | Forbidden path segments in publication paths |
-| SEC-005 | WARNING | `.env` or `config/local.yaml` tracked by Git |
-| SEC-006 | INFO | `config/local.yaml` exists locally (with `--include-local`) |
+| SEC-005 | WARNING | `.env` or `config/local.json` tracked by Git |
+| SEC-006 | INFO | `config/local.json` exists locally (with `--include-local`) |
 
 **Forbidden path segments (case insensitive):** `AI`, `Cursor`, `content`, `tools`, `config`, `references`, `docs`, `.cursor`
 
@@ -320,7 +320,7 @@ Typical findings on the clean template:
 
 | rule_id | Severity | Why it appears | Why it is expected | Becomes a problem when |
 |---|---|---|---|---|
-| CFG-010 | WARNING | `config/site.yaml` is not committed | Site project not configured yet | You need site-specific config and the file is still missing after setup |
+| CFG-010 | WARNING | `config/site.json` is not committed | Site project not configured yet | You need site-specific config and the file is still missing after setup |
 | ENV-009 | INFO | `web.hostname` is null in environment example | Hostnames not configured in template | You deploy without setting hostname in your environment config |
 | I18N-004 | INFO | No Markdown files in `content/en/` or `content/jp/` | Clean template ships empty content directories | You add content to one locale only (also triggers I18N-002/003) |
 
@@ -359,13 +359,13 @@ copy of `tools/core/*.py`. This isolates tests from accidental edits to the live
 
 | Path | Role |
 |---|---|
-| `tests/fixtures/term_dictionary.yaml` | Dictionary entries for translation unit tests |
+| `tests/fixtures/term_dictionary.json` | Dictionary entries for translation unit tests |
 | `tests/fixtures/content/jp/*.md` | Sample Japanese content for build/integration tests |
 
 Fixtures use fictional names for testing. Changing fixtures may change test expectations;
 run the full suite after fixture edits.
 
-Production dictionary: `config/term_dictionary.yaml` (copy from `config/term_dictionary.example.yaml`).
+Production dictionary: `config/term_dictionary.json` (copy from `config/term_dictionary.example.json`).
 
 ---
 

@@ -1,0 +1,12 @@
+{
+  "media_id": "manga-extra-pages-03-back-cover",
+  "type": "image",
+  "origin": "manual",
+  "source_sha256": "sha256:0f45bb322dfa5139f46f666ec5843c181d86b236156e4528b936a974ff908a42",
+  "public_sha256": "sha256:60a26442b6eaadafa7dd7ee39c50d3e0e7655359d447dec575e39a96ecec2513",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-09T18:24:43.115623+00:00"
+}

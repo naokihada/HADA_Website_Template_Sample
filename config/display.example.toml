@@ -1,0 +1,59 @@
+[display]
+enabled = true
+
+[display.theme]
+enabled = true
+default = "light"
+
+[display.theme.dark_mode]
+enabled = true
+respect_system_preference = true
+
+[display.text_size]
+enabled = true
+default = "standard"
+levels = [
+    "standard",
+    "large",
+    "xlarge",
+]
+
+[display.mode]
+default = "standard"
+allowed = [
+    "standard",
+]
+
+[display.persistence]
+enabled = true
+storage = "local_storage"
+key = "hada.display.v1"
+
+[display.accessibility]
+normal_text_min_contrast = 4.5
+large_text_min_contrast = 3.0
+minimum_font_size = "1rem"
+preserve_background_treatment = true
+foreground_adjustment_order = [
+    "color",
+    "font_weight",
+    "font_size",
+    "font_family",
+]
+
+[[display.accessibility.contrast_pairs]]
+name = "standard-text-on-page"
+foreground = "#111111"
+background = "#ffffff"
+minimum = 4.5
+
+[[display.accessibility.contrast_pairs]]
+name = "muted-text-on-page"
+foreground = "#555555"
+background = "#ffffff"
+minimum = 4.5
+
+[javascript]
+external = false
+required_for_content = false
+local_optional = true

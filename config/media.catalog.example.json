@@ -1,0 +1,123 @@
+{
+  "schema_version": "0.3",
+  "media": [
+    {
+      "media_id": "sample-image-00001",
+      "type": "image",
+      "source": {
+        "file": "assets/media/master/sample-image-00001.png",
+        "visibility": "private",
+        "origin": "manual"
+      },
+      "public_file": "assets/media/web/sample-image-00001.jpg",
+      "thumbnail": "assets/media/thumbnails/sample-image-00001.jpg",
+      "title": {
+        "en": "Sample image 1",
+        "jp": "サンプル画像 1"
+      },
+      "alt": {
+        "en": "Template media feature example",
+        "jp": "テンプレートのメディア機能例"
+      },
+      "status": "approved"
+    }
+  ],
+  "collections": [
+    {
+      "collection_id": "sample-library",
+      "route": "media-library",
+      "title": {
+        "en": "Media library",
+        "jp": "メディアライブラリ"
+      },
+      "presentation": "gallery",
+      "listing": {
+        "enabled": true
+      },
+      "children": [
+        {
+          "collection_id": "sample-series",
+          "route": "media-reader/sample",
+          "title": {
+            "en": "Sample sequence",
+            "jp": "サンプルシーケンス"
+          },
+          "publication_date": "2026-01-15",
+          "updated_date": "2026-11-08",
+          "presentation": "gallery",
+          "children": [
+            {
+              "collection_id": "sample-volume",
+              "route": "media-reader/sample/volume-01",
+              "title": {
+                "en": "Volume 1",
+                "jp": "第1巻"
+              },
+              "presentation": "gallery",
+              "children": [
+                {
+                  "collection_id": "sample-chapter",
+                  "route": "media-reader/sample/volume-01/chapter-01",
+                  "title": {
+                    "en": "Chapter 1",
+                    "jp": "第1話"
+                  },
+                  "presentation": "sequence",
+                  "listing": {
+                    "enabled": false
+                  },
+                  "media_ids": [
+                    "sample-image-00001"
+                  ],
+                  "sequence": {
+                    "order": "filename",
+                    "reading_direction": "rtl",
+                    "first_page_side": "right",
+                    "view": "single",
+                    "spread_enabled": false
+                  },
+                  "viewer": {
+                    "enabled": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "page_bindings": [
+    {
+      "page_id": "demo",
+      "role": "page_header",
+      "media_ids": [
+        "sample-image-00001"
+      ]
+    }
+  ],
+  "processing": {
+    "defaults": {
+      "metadata_strip": true,
+      "embedded_signal_transform": false,
+      "domain_mark": false,
+      "output_format": "jpeg",
+      "quality": 88,
+      "minimum_quality": 55,
+      "max_width": 0,
+      "max_height": 0,
+      "max_bytes": 0,
+      "background": "#ffffff",
+      "watermark": {
+        "enabled": false,
+        "type": "text",
+        "text_source": "domain",
+        "position": "bottom-left",
+        "font_size_ratio": 0.07,
+        "opacity": 0.88,
+        "margin_ratio": 0.025,
+        "scale_ratio": 0.12
+      }
+    }
+  }
+}

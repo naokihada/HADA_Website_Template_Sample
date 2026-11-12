@@ -1,0 +1,39 @@
+{
+  "environments": {
+    "LOCAL": {
+      "description": "Local developer environment",
+      "approval_required": false,
+      "publication_root": "site",
+      "web": {
+        "protocol": "http",
+        "hostname": null
+      },
+      "notes": "Align with local XAMPP or equivalent setup"
+    },
+    "STAGING": {
+      "description": "Pre-production verification",
+      "approval_required": true,
+      "publication_root": "site",
+      "web": {
+        "protocol": "https",
+        "hostname": null
+      },
+      "deployment": {
+        "method": null
+      }
+    },
+    "PRODUCTION": {
+      "description": "Live production site",
+      "approval_required": true,
+      "publication_root": "site",
+      "web": {
+        "protocol": "https",
+        "hostname": null
+      },
+      "deployment": {
+        "method": null
+      },
+      "notes": "All production changes require human approval"
+    }
+  }
+}

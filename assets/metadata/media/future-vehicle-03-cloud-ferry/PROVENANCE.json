@@ -1,0 +1,15 @@
+{
+  "media_id": "future-vehicle-03-cloud-ferry",
+  "type": "image",
+  "origin": "generated",
+  "source_sha256": "sha256:f9d8579d99e8785eec7c5202c204a6b190a426b7eeb92a8b941c133f7cbcec8e",
+  "public_sha256": "sha256:9e8f905a59eae0bf8721a137f6e78e7426196a805e7d27eb611c5a1eda5184fb",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-08T15:11:46.790310+00:00",
+  "provider": "chatgpt_image",
+  "prompt_profile": "editorial-illustration",
+  "prompt": "Create a square illustration for this website page.\nTreat the supplied theme as a guide, but make the individual scene distinct.\nDo not include readable text, logos, borders, or interface elements.\nRefined editorial composition with a clear focal subject and thoughtful\nnegative space. Keep visual details consistent with the website theme.\nno readable text, no logos, no embedded watermark, no frame"
+}

@@ -7,6 +7,12 @@ source_file: content/jp/index.md
 
 [en]# ホーム[/en]
 
-[en]HADA Website Operations Framework v0.1.0 のサンプルサイトです。[/en]
+[en]HADA Website Template feature demonstration.[/en]
 
-[en]Sample Tea Co.のHanako Satoです。[/en]
+[en]Explore media pages generated from the JSON catalog.[/en]
+
+[en]## Media Library[/en]
+
+[en]Browse the hierarchical media library and open its sequence reader.[/en]
+
+[en][Open the media library](/en/media/)[/en]

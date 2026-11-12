@@ -27,4 +27,13 @@ def validate(manifest):
     files = manifest['files']
     if not isinstance(files, dict) or files.get('template_base') != 'TEMPLATE_BASE.md':
         raise ValueError('files.template_base must be TEMPLATE_BASE.md')
+    base = manifest.get('base_compatibility')
+    if base is not None:
+        if not isinstance(base, dict):
+            raise ValueError('base_compatibility must be a mapping')
+        for key in ('template_id', 'minimum_version', 'tested_version'):
+            if not isinstance(base.get(key), str) or not base[key].strip():
+                raise ValueError('base_compatibility.' + key + ' is required')
+        if base['template_id'] != 'hada-base-template':
+            raise ValueError('base_compatibility.template_id must be hada-base-template')
     return manifest

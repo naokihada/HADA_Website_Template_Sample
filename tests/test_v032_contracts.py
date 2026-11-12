@@ -17,8 +17,8 @@ class V032ContractTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as name:
             root = Path(name)
             (root / "config").mkdir()
-            (root / "config/project.yaml").write_text(
-                "site:\n  publication_root: jp_co_hada_www\n  template_scaffold: absent\npaths:\n  content_master: content\n",
+            (root / "config/project.toml").write_text(
+                '[site]\npublication_root = "jp_co_hada_www"\ntemplate_scaffold = "absent"\n\n[paths]\ncontent_master = "content"\n',
                 encoding="utf-8",
             )
             self.assertEqual(resolve_site(root)["publication_root"], "jp_co_hada_www")

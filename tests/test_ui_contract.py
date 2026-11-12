@@ -6,6 +6,7 @@ from __future__ import annotations
 import sys
 import tempfile
 import unittest
+import json
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools" / "core"))
@@ -18,8 +19,8 @@ class UIContractTests(unittest.TestCase):
             root = Path(name)
             (root / "config").mkdir()
             (root / "site/jp").mkdir(parents=True)
-            (root / "config/project.yaml").write_text(
-                "paths:\n  publication_root: site\n",
+            (root / "config/project.toml").write_text(
+                "[paths]\npublication_root = \"site\"\n",
                 encoding="utf-8",
             )
             (root / "site/jp/index.html").write_text(
@@ -32,16 +33,15 @@ class UIContractTests(unittest.TestCase):
 
     def test_registry_profile_overrides_html_profile(self) -> None:
         with tempfile.TemporaryDirectory() as name:
-            import yaml
 
             root = Path(name)
             (root / "config").mkdir()
             (root / "site/jp").mkdir(parents=True)
-            (root / "config/project.yaml").write_text(
-                "paths:\n  publication_root: site\n  page_registry: config/page-registry.yaml\n",
+            (root / "config/project.toml").write_text(
+                "[paths]\npublication_root = \"site\"\npage_registry = \"config/page-registry.json\"\n",
                 encoding="utf-8",
             )
-            (root / "config/page-registry.yaml").write_text(yaml.safe_dump({
+            (root / "config/page-registry.json").write_text(json.dumps({
                 "pages": [{
                     "page_id": "home",
                     "ui_profile": "standalone",
@@ -61,7 +61,7 @@ class UIContractTests(unittest.TestCase):
             root = Path(name)
             (root / "config").mkdir()
             (root / "site").mkdir()
-            (root / "config/project.yaml").write_text("paths:\n  publication_root: site\n", encoding="utf-8")
+            (root / "config/project.toml").write_text("[paths]\npublication_root = \"site\"\n", encoding="utf-8")
             (root / "site/index.html").write_text("<html><title>Home</title><body></body></html>", encoding="utf-8")
             self.assertEqual(route_inventory(root)[0]["profile"], "review_required")
 

@@ -1,25 +1,29 @@
 ---
-title: Sample i18n Demo
-description: Three-locale i18n demonstration
-logical_page: demo
-source_locale: mixed
-role: page
-visual:
-  background_fade:
-    image_id: restaurant-background-001
-source_file: content/pages/demo_master.md
-source_hash: sha256:555b4c0de6d897c1326fdd4245ee3b314a57edaa6358a24f3c935d568f48840b
-target_locale: JP
-translation_status: SOURCE
+{
+  "source_file": "content/pages/demo_master.md",
+  "source_hash": "sha256:f95bbec40bb176ed7e4a34a5ba6fc40153f9321bf0d426b23ab6f2a76969ed55",
+  "source_locale": "mixed",
+  "target_locale": "JP",
+  "translation_status": "SOURCE"
+}
 ---
 
-# Sample i18n Demo
+---
+title: "Sample i18n Demo"
+description: "HADA Website Template media feature demonstration"
+logical_page: demo
+page_id: demo
+source_locale: mixed
+role: page
+---
 
-This page demonstrates a shared structure for Japanese, English, and German output.
+# HADA Website Template Demo
 
-## Sample Artwork
+This page demonstrates localized output and the JSON media catalog.
 
-The same logical-page artwork is reused across all three locales.
+## Media Catalog
+
+Page visuals are resolved from the shared JSON page binding.
 
 <!-- i18n: no-translate -->
 HADA Website Template

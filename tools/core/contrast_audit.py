@@ -9,10 +9,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-try:
-    import yaml
-except ImportError:  # pragma: no cover - dependency is validated by the framework
-    yaml = None  # type: ignore[assignment]
+from structured_data import load_document
 
 
 COLOR_RE = re.compile(r"^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")
@@ -134,13 +131,11 @@ def audit_policy(policy: dict[str, Any]) -> dict[str, Any]:
 
 
 def load_policy(root: Path) -> dict[str, Any]:
-    candidates = (root / "config" / "display.yaml", root / "config" / "display.example.yaml")
+    candidates = (root / "config" / "display.toml", root / "config" / "display.example.toml")
     for path in candidates:
         if not path.is_file():
             continue
-        if yaml is None:
-            raise RuntimeError("PyYAML is required")
-        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        data = load_document(path) or {}
         display = data.get("display") if isinstance(data, dict) else {}
         policy = display.get("accessibility") if isinstance(display, dict) else {}
         return policy if isinstance(policy, dict) else {}

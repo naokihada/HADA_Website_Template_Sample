@@ -15,7 +15,7 @@ TOOLS_CORE = Path(__file__).resolve().parents[1] / "tools" / "core"
 REPO_ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR = TOOLS_CORE / "validate_framework.py"
 BUILD_SITE = TOOLS_CORE / "build_site.py"
-FIXTURE_DICTIONARY = REPO_ROOT / "tests" / "fixtures" / "term_dictionary.yaml"
+FIXTURE_DICTIONARY = REPO_ROOT / "tests" / "fixtures" / "term_dictionary.json"
 
 if str(TOOLS_CORE) not in sys.path:
     sys.path.insert(0, str(TOOLS_CORE))
@@ -50,11 +50,11 @@ def copy_minimal_project(target: Path) -> None:
         "AGENTS.md",
         "README.md",
         ".gitignore",
-        "config/project.yaml",
-        "config/site.example.yaml",
-        "config/term_dictionary.yaml",
-        "environments/environments.example.yaml",
-        "references/registry/references.example.yaml",
+        "config/project.toml",
+        "config/site.example.json",
+        "config/term_dictionary.json",
+        "environments/environments.example.json",
+        "references/registry/references.example.json",
         "site/README.md",
         "site/index.html",
         "tests/fixtures/content/jp/index.md",
@@ -100,9 +100,9 @@ class TranslationTests(unittest.TestCase):
         self.assertIn("[en]", result)
 
     def test_term_dictionary_hit(self) -> None:
-        source = "佐藤花子"
+        source = "メディアカタログ"
         result = translate_with_dictionary(source, self.entries, self.provider)
-        self.assertEqual(result, "Hanako Sato")
+        self.assertEqual(result, "media catalog")
 
     def test_term_dictionary_miss_uses_provider(self) -> None:
         source = "通常の文章"
@@ -110,20 +110,18 @@ class TranslationTests(unittest.TestCase):
         self.assertEqual(result, "[en]通常の文章[/en]")
 
     def test_dictionary_precedence_over_mock(self) -> None:
-        source = "株式会社サンプル製茶の佐藤花子です。"
+        source = "メディアカタログを使います。"
         result = translate_with_dictionary(source, self.entries, self.provider)
-        self.assertIn("Sample Tea Co.", result)
-        self.assertIn("Hanako Sato", result)
-        self.assertNotIn("株式会社サンプル製茶", result)
-        self.assertNotIn("佐藤花子", result)
+        self.assertIn("media catalog", result)
+        self.assertNotIn("メディアカタログ", result)
 
     def test_company_name_preserved(self) -> None:
-        result = translate_with_dictionary("株式会社サンプル製茶", self.entries, self.provider)
-        self.assertEqual(result, "Sample Tea Co.")
+        result = translate_with_dictionary("メディアカタログ", self.entries, self.provider)
+        self.assertEqual(result, "media catalog")
 
-    def test_person_name_preserved(self) -> None:
-        result = translate_with_dictionary("佐藤花子", self.entries, self.provider)
-        self.assertEqual(result, "Hanako Sato")
+    def test_template_service_name_preserved(self) -> None:
+        result = translate_with_dictionary("HADA Website Operations Framework", self.entries, self.provider)
+        self.assertEqual(result, "HADA Website Operations Framework")
 
     def test_markdown_to_html(self) -> None:
         html = markdown_to_html("# Title\n\nBody text.", "en", title="Title")
@@ -133,7 +131,7 @@ class TranslationTests(unittest.TestCase):
     def test_page_visual_css_is_inside_a_style_element(self) -> None:
         html = markdown_to_html("# Title", "en", background_image="demo.jpg")
         self.assertIn("<style>\n  .background-fade{", html)
-        self.assertIn("url('/assets/images/demo.jpg')", html)
+        self.assertIn("url('/assets/media/web/demo.jpg')", html)
         self.assertIn("</style>", html)
 
     def test_locale_wrappers_preserve_translated_heading_anchors(self) -> None:
@@ -192,11 +190,11 @@ class TranslationTests(unittest.TestCase):
 
     def test_single_term_dictionary_file(self) -> None:
         config_dir = REPO_ROOT / "config"
-        self.assertTrue((config_dir / "term_dictionary.yaml").is_file())
+        self.assertTrue((config_dir / "term_dictionary.json").is_file())
         extra = [
             p.name
-            for p in config_dir.glob("term_dictionary*.yaml")
-            if p.name not in ("term_dictionary.yaml", "term_dictionary.example.yaml")
+            for p in config_dir.glob("term_dictionary*.json")
+            if p.name not in ("term_dictionary.json", "term_dictionary.example.json")
         ]
         self.assertEqual(extra, [])
 
@@ -209,9 +207,9 @@ class TranslationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             copy_minimal_project(root)
-            project = (root / "config" / "project.yaml").read_text(encoding="utf-8")
-            project = project.replace("    - jp\n", "    - jp\n    - de\n", 1)
-            (root / "config" / "project.yaml").write_text(project, encoding="utf-8")
+            project = (root / "config" / "project.toml").read_text(encoding="utf-8")
+            project = project.replace('    "jp",\n', '    "jp",\n    "de",\n', 1)
+            (root / "config" / "project.toml").write_text(project, encoding="utf-8")
             pages = root / "content" / "pages"
             pages.mkdir(parents=True, exist_ok=True)
             master = pages / "demo_master.md"
@@ -242,7 +240,7 @@ class TranslationTests(unittest.TestCase):
             de = (pages / "demo_DE.md").read_text(encoding="utf-8")
             self.assertIn("HADA Website Template", en)
             self.assertIn("value = 'HADA'", de)
-            self.assertIn("source_hash: " + source_hash(master.read_text(encoding="utf-8")), en)
+            self.assertIn('"source_hash": "' + source_hash(master.read_text(encoding="utf-8")), en)
             self.assertEqual(len(parse_blocks(master.read_text(encoding="utf-8"))), 4)
 
     def test_candidate_build_keeps_generated_snapshots_inside_candidate(self) -> None:

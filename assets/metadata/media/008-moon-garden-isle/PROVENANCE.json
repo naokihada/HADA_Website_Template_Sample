@@ -1,0 +1,16 @@
+{
+  "media_id": "008-moon-garden-isle",
+  "type": "image",
+  "origin": "generated",
+  "source_sha256": "sha256:6a5ba1d95864e193851bd003414cda0b1bad916f967cf9c2cf76e307a851e320",
+  "public_sha256": "sha256:a26a3afe310ed1f5711db94739921c5c88d895e5b9ff4dda3754333a81f89f83",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-08T10:37:33.866205+00:00",
+  "provider": "chatgpt_image",
+  "prompt_profile": "editorial-illustration",
+  "prompt": "Use case: stylized-concept. Asset type: landscape fantasy gallery image. Primary request: a hidden island garden in an otherworldly sea, terraced waterfalls, ancient pale stone steps, red maple-like trees, and distant moonlit cliffs, no people. Style/medium: polished fantasy environment concept art with natural, detailed vegetation and water. Composition/framing: wide 3:2 landscape, layered composition from garden foreground to sea horizon, no border. Lighting/mood: moonlit blue hour with warm lantern pools. Constraints: no text, no lettering, no logo, no watermark, no collage.",
+  "thumbnail_sha256": "sha256:d9005b2017cb43af4045f7a869832b6ca19688415f92598eed69ae51c313ed02"
+}

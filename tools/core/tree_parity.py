@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+from typing import List, Optional
 
 
 def digest(path: Path) -> str:
@@ -31,15 +32,17 @@ def compare(expected: Path, candidate: Path) -> dict[str, object]:
     return {"status": "PASS" if not added and not removed and not changed else "REVIEW_REQUIRED", "added": added, "removed": removed, "changed": changed}
 
 
-def main() -> int:
+def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("expected")
     parser.add_argument("candidate")
-    parser.add_argument("--report", default="tree-parity.json")
-    args = parser.parse_args()
+    parser.add_argument("--report", help="Optional path for a JSON report; omitted means read-only")
+    args = parser.parse_args(argv)
     result = compare(Path(args.expected), Path(args.candidate))
-    Path(args.report).write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8", newline="\r\n")
-    print(json.dumps(result, indent=2))
+    rendered = json.dumps(result, indent=2)
+    if args.report:
+        Path(args.report).write_text(rendered + "\n", encoding="utf-8", newline="\r\n")
+    print(rendered)
     return 0 if result["status"] == "PASS" else 1
 
 

@@ -1,0 +1,15 @@
+{
+  "media_id": "future-vehicle-02-river-crawler",
+  "type": "image",
+  "origin": "generated",
+  "source_sha256": "sha256:0d9b7ea9b00b376271a9dacfc0f77c2e829c7c0492313ea11150809bdf0a5c58",
+  "public_sha256": "sha256:e679bfc4f9078504b173428570b957ff9c12f58f5ec361db6f1befa78d2c993f",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-08T15:11:46.699106+00:00",
+  "provider": "chatgpt_image",
+  "prompt_profile": "editorial-illustration",
+  "prompt": "Create a square illustration for this website page.\nTreat the supplied theme as a guide, but make the individual scene distinct.\nDo not include readable text, logos, borders, or interface elements.\nRefined editorial composition with a clear focal subject and thoughtful\nnegative space. Keep visual details consistent with the website theme.\nno readable text, no logos, no embedded watermark, no frame"
+}

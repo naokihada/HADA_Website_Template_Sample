@@ -10,10 +10,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
 
-try:
-    import yaml
-except ImportError:  # pragma: no cover - dependency check handles this
-    yaml = None  # type: ignore[assignment]
+from structured_data import load_document
 
 
 EXTERNAL_URL_RE = re.compile(r"^https?://", re.IGNORECASE)
@@ -24,14 +21,12 @@ INLINE_JS_RE = re.compile(
 
 
 def _read_config(root: Path) -> dict[str, Any]:
-    if yaml is None:
-        return {}
-    for path in (root / "config" / "site.yaml", root / "config" / "site.example.yaml"):
+    for path in (root / "config" / "site.json", root / "config" / "site.example.json"):
         if not path.is_file():
             continue
         try:
-            data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-        except (OSError, yaml.YAMLError):
+            data = load_document(path) or {}
+        except (OSError, ValueError):
             return {}
         return data if isinstance(data, dict) else {}
     return {}
@@ -144,7 +139,7 @@ def scan(root: Path, policy: dict[str, Any] | None = None) -> list[dict[str, Any
     findings: list[dict[str, Any]] = [
         {
             "rule_id": "JS-002",
-            "file": "config/site.yaml",
+            "file": "config/site.json",
             "line": 1,
             "url": item.get("url", ""),
             "reason": item["reason"],

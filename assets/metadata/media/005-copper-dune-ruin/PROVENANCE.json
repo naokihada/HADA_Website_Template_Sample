@@ -1,0 +1,16 @@
+{
+  "media_id": "005-copper-dune-ruin",
+  "type": "image",
+  "origin": "generated",
+  "source_sha256": "sha256:b4446a0e2b43650c89c985e0e70582816de69150422963e5e931d00c1e71d416",
+  "public_sha256": "sha256:3d8ec772b7d0f4427d5168b31b14675e3f8f2d415d9c0ff5e2c92f5039b85653",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-08T10:37:33.590125+00:00",
+  "provider": "chatgpt_image",
+  "prompt_profile": "editorial-illustration",
+  "prompt": "Use case: stylized-concept. Asset type: landscape fantasy gallery image. Primary request: a vast desert of pale copper sand with a colossal abandoned ring-shaped ruin half buried in dunes, distant caravan-sized silhouettes absent, sparse blue crystal outcrops, no people. Style/medium: refined fantasy matte painting with fine sand and weathered stone detail. Composition/framing: wide 3:2 landscape, monumental ruin offset in frame, no border. Lighting/mood: warm sunset and long shadows, dusty atmosphere. Constraints: no text, no lettering, no logo, no watermark, no collage.",
+  "thumbnail_sha256": "sha256:029ce5de9b6fab828ee602418d542b93067c374e1883027a8e52b10413f42ad4"
+}

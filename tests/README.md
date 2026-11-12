@@ -16,13 +16,19 @@ Record results in `AI/reports/TEST.md`.
 | `test_file_transaction.py` | 3 | Hash-bound backup and conflict safety |
 | `test_legacy_workspace.py` | 2 | Retired workspace migration safety |
 | `test_navigation.py` | 5 | Static hierarchy, breadcrumb, localization markup, and responsive CSS contract |
+| `test_manifest_schema.py` | 5 | Specialized manifest and HADA Base compatibility metadata |
+| `test_record_why.py` | 10 | Append-only, owner-stated WHY lifecycle |
+| `test_import_conversation.py` | 5 | Opt-in, copy-only conversation archive imports |
+| `test_media_library.py` | 16 | Media catalog, recursive sets, static viewer markup, and image-saving deterrence |
+| `test_media_viewer_browser.py` | 1 | Real-browser fit/actual sizing, image-saving deterrence, viewer interaction, and no-JavaScript fallback |
 
 The suite includes the framework, translation, upgrade, PWA Timer, asset,
 gallery, safe HTML Master, navigation, release snapshot, Site Contract, and display policy
 regressions. Run every `test_*.py` module for the current total.
 
 `test_site_link_policy.py` verifies root-relative URLs and treats an apex host
-and its `www` alias as one site. `test_external_javascript_policy.py` verifies
+and its `www` alias as one site, and checks canonical plus `hreflang` metadata
+against the configured canonical host. `test_external_javascript_policy.py` verifies
 the default prohibition and the explicit optional client-only declaration path.
 
 The optional browser contract is provided by `tests/test_browser_ui.py`. It uses

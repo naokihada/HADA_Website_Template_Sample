@@ -1,12 +1,15 @@
 # Local configuration (never commit secrets)
-config/local.yaml
-config/*.local.yaml
+config/local.json
+config/local.toml
+config/*.local.json
+config/*.local.toml
 .env
 .env.*
 *.pem
 *.key
 credentials.json
-secrets.yaml
+secrets.json
+secrets.toml
 
 # Reference cache (rebuildable)
 references/cache/**/*

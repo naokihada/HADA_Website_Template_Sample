@@ -1,0 +1,12 @@
+{
+  "media_id": "manga-mode-demo-00001",
+  "type": "image",
+  "origin": "manual",
+  "source_sha256": "sha256:996286df851a1cb98ad5fba4343c884c52105e26098724dc9ddabed1e5ea732c",
+  "public_sha256": "sha256:b8fe84391faebb5c0fbbaa62e5d71a14f84a2bc8056a608c5128c98a84a62314",
+  "metadata_processing": "preserved:processing disabled",
+  "embedded_signal_transform": "disabled",
+  "domain_mark": false,
+  "source_visibility": "private",
+  "imported_at": "2026-11-09T17:29:38.770053+00:00"
+}
